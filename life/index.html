@@ -1,0 +1,481 @@
+<html><head><title>Life Tutorial</title>
+    <style>
+    body {
+        font-family: Calibri, sans-serif;
+        margin: 20px;
+    }
+    p {
+        max-width: 600px;
+        line-height: 1.4;
+    }
+    td {padding-right:10px}
+
+    .name {color:#770099}
+    .name {color:#aa0066}
+    .call {color:#bb5500}
+    .literal {color:#006666}
+    .comment {color:#006666; background:#ffffaa}
+
+    .name {color:#B137A2}
+    .call {color:#b16918}
+    .literal {color:#2D9999}
+    .highlight {background:#fcf9db}
+
+    .name {color:#d09}
+    .call {color:#d60}
+    .literal {color:#088}
+    .comment {color:#444; background:#eee}
+    .highlight {background:#ffc}
+    .highlight .comment, .comment .highlight {background:#f0edd3}
+
+    td {padding-right:10px}
+    .code {
+        font-family: Consolas;
+        border-left: solid 5px #e7e7e7;
+        color: #444;
+        padding-left: 12px;
+    }
+    .console {
+        font-family: Consolas;
+        padding: 16px;
+        background: #444;
+        color: #eee;
+        width: 700px;
+    }
+    </style>
+    </head>
+    <body>
+    <h1>Life</h1>
+<h2><a href="life.love">Download life.love</a></h2>
+<img src="1.png">
+<h2>Rules</h2>
+<p>There is a grid of cells, which are either alive of dead.</p>
+<p>After a step of time:</p>
+<ul>
+<li>Alive cells with exactly two or three alive neighbors live on</li>
+<li>Dead cells with exactly three alive neighbors become alive</li>
+</ul>
+<p>All other cells die.</p>
+<p>Create an initial configuration of cells, hold a key to step forward in time, and observe.</p>
+<h3>Controls</h3>
+<table>
+<tr><td><b>Left click</b></td><td>Make cell alive</td></tr>
+<tr><td><b>Right click</b></td><td>Make cell dead</td></tr>
+<tr><td><b>Any key</b></td><td>Step forward in time</td></tr>
+</table>
+<h2>Overview</h2>
+<p>The cells are stored as a grid of boolean values, true for alive and false for dead.</p>
+<img src="2.png">
+<p>When time steps forward, a new grid is created, and whether the cells of this new grid are alive or dead is based on the current grid.</p>
+<p>After the new grid has been created, the current grid is replaced with the new grid.</p>
+<h2>Coding</h2>
+<h3>Drawing a cell</h3>
+<p>A cell is drawn as a square.</p>
+<pre class="code">
+function <span class="name">love.draw</span>()
+    <span class="call">love.graphics.rectangle</span>(
+        <span class="literal">'fill'</span>,
+        <span class="literal">0</span>,
+        <span class="literal">0</span>,
+        <span class="literal">4</span>,
+        <span class="literal">4</span>
+    )
+end
+</pre>
+<img src="3.png">
+<h3>Drawing a row of cells</h3>
+<p>A row of cells are drawn, with 1 pixel between each cell.</p>
+<pre class="code">
+function <span class="name">love.draw</span>()
+    <span class="highlight">for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">70</span> do</span>
+        <span class="highlight">local <span class="name">cellSize</span> = <span class="literal">5</span></span>
+        <span class="highlight">local <span class="name">cellDrawSize</span> = <span class="name">cellSize</span> - <span class="literal">1</span></span>
+
+        <span class="call">love.graphics.rectangle</span>(
+            <span class="literal">'fill'</span>,
+            <span class="highlight">(<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,</span>
+            <span class="literal">0</span>,
+            <span class="highlight"><span class="name">cellDrawSize</span></span>,
+            <span class="highlight"><span class="name">cellDrawSize</span></span>
+        )
+    <span class="highlight">end</span>
+end
+</pre>
+<img src="4.png">
+<h3>Drawing all the cells</h3>
+<p>All of the rows are drawn.</p>
+<pre class="code">
+function <span class="name">love.draw</span>()
+    <span class="highlight">for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">50</span> do</span>
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">70</span> do
+            local <span class="name">cellSize</span> = <span class="literal">5</span>
+            local <span class="name">cellDrawSize</span> = <span class="name">cellSize</span> - <span class="literal">1</span>
+
+            <span class="call">love.graphics.rectangle</span>(
+                <span class="literal">'fill'</span>,
+                (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                <span class="highlight">(<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,</span>
+                <span class="name">cellDrawSize</span>,
+                <span class="name">cellDrawSize</span>
+            )
+        end
+    <span class="highlight">end</span>
+end
+</pre>
+<img src="5.png">
+<h3>Setting colors</h3>
+<p>The background and dead cell colors are set.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+end
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">50</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">70</span> do
+            local <span class="name">cellSize</span> = <span class="literal">5</span>
+            local <span class="name">cellDrawSize</span> = <span class="name">cellSize</span> - <span class="literal">1</span>
+
+            <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">220</span>, <span class="literal">220</span>, <span class="literal">220</span>)</span>
+            <span class="call">love.graphics.rectangle</span>(
+                <span class="literal">'fill'</span>,
+                (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                <span class="name">cellDrawSize</span>,
+                <span class="name">cellDrawSize</span>
+            )
+        end
+    end
+end
+</pre>
+<img src="6.png">
+<h3>Selecting cells</h3>
+<p>The cell position that the mouse cursor is over is stored.</p>
+<p>This is calculated by taking the mouse position and dividing it by the cell size, flooring this number, then adding 1 to it.</p>
+<p>For example, if the mouse is at position 17 on the X axis and the cell size is 5, dividing 17 by 5 gives 3.4, flooring 3.4 gives 3, and adding 1 gives 4, meaning that the mouse is in cell 4 on the X axis.</p>
+<p>The cell size is needed to calculate this, so it moved into <b>love.load</b>.</p>
+<p>The square at this position is set to the selected color.</p>
+<p>For now, this position is drawn to the screen as text.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">cellSize</span> = <span class="literal">5</span>
+end
+
+function <span class="name">love.update</span>()
+    <span class="name">selectedX</span> = <span class="call">math.floor</span>(<span class="call">love.mouse.getX</span>() / <span class="name">cellSize</span>) + <span class="literal">1</span>
+    <span class="name">selectedY</span> = <span class="call">math.floor</span>(<span class="call">love.mouse.getY</span>() / <span class="name">cellSize</span>) + <span class="literal">1</span>
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="comment">-- Removed: local cellSize = 5
+</span>
+    <span class="comment">-- Temporary
+</span>    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)
+    <span class="call">love.graphics.print</span>(<span class="literal">'selected x: '</span>..<span class="name">selectedX</span>..<span class="literal">', selected y: '</span>..<span class="name">selectedY</span>)
+end
+</pre>
+<img src="7.png">
+<h3>Highlighting cells</h3>
+<p>The square under the mouse cursor is set to the selected color.</p>
+<pre class="code">
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">50</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">70</span> do
+            <span class="comment">-- Removed: local cellSize = 5
+</span>            local <span class="name">cellDrawSize</span> = <span class="name">cellSize</span> - <span class="literal">1</span>
+
+            <span class="highlight">if <span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span> then</span>
+            <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">255</span>)</span>
+            <span class="highlight">else</span>
+                <span class="call">love.graphics.setColor</span>(<span class="literal">220</span>, <span class="literal">220</span>, <span class="literal">220</span>)
+            <span class="highlight">end</span>
+
+            <span class="call">love.graphics.rectangle</span>(
+                <span class="literal">'fill'</span>,
+                (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                <span class="name">cellDrawSize</span>,
+                <span class="name">cellDrawSize</span>
+            )
+        end
+    end
+end
+</pre>
+<img src="8.png">
+<h3>Creating the grid</h3>
+<p>A grid is created to store the cells.</p>
+<p>Each cell is represented by a boolean value: true for alive, false for dead.</p>
+<p>If the cell is alive, the alive color is used to draw the cell.</p>
+<p>To test this, some cells are manually set to alive.</p>
+<p>The grid's width/height in cells is reused from drawing the cells, so variables are made for these.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">gridXCount</span> = <span class="literal">70</span>
+    <span class="name">gridYCount</span> = <span class="literal">50</span>
+
+    <span class="name">grid</span> = {}
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        <span class="name">grid</span>[<span class="name">y</span>] = {}
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] = <span class="literal">false</span>
+        end
+    end
+
+    <span class="comment">-- Temporary
+</span>    <span class="name">grid</span>[<span class="literal">1</span>][<span class="literal">1</span>] = <span class="literal">true</span>
+    <span class="name">grid</span>[<span class="literal">1</span>][<span class="literal">2</span>] = <span class="literal">true</span>
+end
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="highlight"><span class="name">gridYCount</span></span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="highlight"><span class="name">gridXCount</span></span> do
+            local <span class="name">cellDrawSize</span> = <span class="name">cellSize</span> - <span class="literal">1</span>
+
+            if <span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span> then
+                <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+            <span class="highlight">elseif <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] then</span>
+            <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">0</span>, <span class="literal">255</span>)</span>
+            else
+                <span class="call">love.graphics.setColor</span>(<span class="literal">220</span>, <span class="literal">220</span>, <span class="literal">220</span>)
+            end
+
+            <span class="call">love.graphics.rectangle</span>(
+                <span class="literal">'fill'</span>,
+                (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                <span class="name">cellDrawSize</span>,
+                <span class="name">cellDrawSize</span>
+            )
+        end
+    end
+end
+</pre>
+<img src="9.png">
+<h3>Set cells alive with left mouse button</h3>
+<p>If the left mouse button is down, the selected cell is set to alive.</p>
+<pre class="code">
+function <span class="name">love.update</span>()
+    <span class="comment">-- etc.
+</span>
+    if <span class="call">love.mouse.isDown</span>(<span class="literal">1</span>) then
+        <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>] = <span class="literal">true</span>
+    end
+end
+</pre>
+<img src="10.png">
+<h3>Only set cell alive when mouse is within grid</h3>
+<p>Setting the cell to alive is only possible if the selected X/Y position is within the grid.</p>
+<pre class="code">
+function <span class="name">love.update</span>()
+    <span class="name">selectedX</span> = <span class="call">math.floor</span>(<span class="call">love.mouse.getX</span>() / <span class="name">cellSize</span>) + <span class="literal">1</span>
+    <span class="name">selectedY</span> = <span class="call">math.floor</span>(<span class="call">love.mouse.getY</span>() / <span class="name">cellSize</span>) + <span class="literal">1</span>
+
+    if <span class="call">love.mouse.isDown</span>(<span class="literal">1</span>)
+    <span class="highlight">and <span class="name">selectedX</span> <= <span class="name">gridXCount</span></span>
+    <span class="highlight">and <span class="name">selectedY</span> <= <span class="name">gridYCount</span></span> then
+        <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>] = <span class="literal">true</span>
+    end
+end
+</pre>
+<h3>Getting number of neighbors</h3>
+<p>Changing the grid after a step of time requires knowing how many alive neighbors each cell has.</p>
+<p>For now, right clicking a cell will print out how many alive neighbors it has.</p>
+<p><b>grid[selectedY + dy]</b> is checked to see if it exists before <b>grid[selectedY + dy][selectedX + dx]</b>, because if <b>selectedY + dy</b> is not on the grid, then <b>grid[selectedY + dy]</b> will return nil, and <b>grid[selectedY + dy][selectedX + dx]</b> will error because the <b>[selectedX + dx]</b> part is trying to index nil.</p>
+<pre class="code">
+function <span class="name">love.mousepressed</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    <span class="comment">-- Temporary.
+</span>    if <span class="name">button</span> == <span class="literal">2</span> then
+        local <span class="name">neighbourCount</span> = <span class="literal">0</span>
+
+        <span class="call">print</span>(<span class="literal">'Finding neighbors of grid['</span>..<span class="name">selectedY</span>..<span class="literal">']['</span>..<span class="name">selectedX</span>..<span class="literal">']'</span>)
+
+        for <span class="name">dy</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
+            for <span class="name">dx</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
+
+                <span class="call">print</span>(<span class="literal">'Checking grid['</span>..<span class="name">selectedY</span> + <span class="name">dy</span>..<span class="literal">']['</span>..<span class="name">selectedX</span> + <span class="name">dx</span>..<span class="literal">']'</span>)
+
+                if not (<span class="name">dy</span> == <span class="literal">0</span> and <span class="name">dx</span> == <span class="literal">0</span>)
+                and <span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>]
+                and <span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>][<span class="name">selectedX</span> + <span class="name">dx</span>] then
+                    
+                    <span class="call">print</span>(<span class="literal">'Neighbour found'</span>)
+                    <span class="name">neighbourCount</span> = <span class="name">neighbourCount</span> + <span class="literal">1</span>
+                end
+            end
+        end
+
+        <span class="call">print</span>(<span class="literal">'Total neighbors: '</span>..<span class="name">neighbourCount</span>)
+    end    
+end
+</pre>
+<pre class="console">
+Finding neighbors of grid[10][10]
+Checking grid[9][9]
+Checking grid[9][10]
+Checking grid[9][11]
+Neighbour found
+Checking grid[10][9]
+Checking grid[10][11]
+Checking grid[11][9]
+Checking grid[11][10]
+Neighbour found
+Checking grid[11][11]
+Total neighbors: 2
+</pre>
+<h3>Changing grid on key press</h3>
+<p>When a key is pressed, a new grid is created, and the old grid is replaced by the new grid.</p>
+<p>For now, all of the cells in the new grid will be alive.</p>
+<pre class="code">
+function <span class="name">love.keypressed</span>()
+    local <span class="name">nextGrid</span> = {}
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        <span class="name">nextGrid</span>[<span class="name">y</span>] = {}
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="name">nextGrid</span>[<span class="name">y</span>][<span class="name">x</span>] = <span class="literal">true</span>
+        end
+    end
+
+    <span class="name">grid</span> = <span class="name">nextGrid</span>
+end
+</pre>
+<img src="11.png">
+<h3>Changing grid based on neighbors</h3>
+<p>The code for finding the number of alive neighbors a cell has is moved to here.</p>
+<p>A cell in the new grid is alive if it has 3 neighbors, or it is alive in the old grid and has 2 neighbors.</p>
+<pre class="code">
+function <span class="name">love.keypressed</span>()
+    local <span class="name">nextGrid</span> = {}
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        <span class="name">nextGrid</span>[<span class="name">y</span>] = {}
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            local <span class="name">neighbourCount</span> = <span class="literal">0</span>
+
+            for <span class="name">dy</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
+                for <span class="name">dx</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
+                    if not (<span class="name">dy</span> == <span class="literal">0</span> and <span class="name">dx</span> == <span class="literal">0</span>)
+                    and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>]
+                    and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>] then
+                        <span class="name">neighbourCount</span> = <span class="name">neighbourCount</span> + <span class="literal">1</span>
+                    end
+                end
+            end
+
+            <span class="name">nextGrid</span>[<span class="name">y</span>][<span class="name">x</span>] = <span class="highlight"><span class="name">neighbourCount</span> == <span class="literal">3</span> or (<span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] and <span class="name">neighbourCount</span> == <span class="literal">2</span>)</span>
+        end
+    end
+
+    <span class="name">grid</span> = <span class="name">nextGrid</span>
+end
+</pre>
+<img src="12.png">
+<h3>Making cells dead with right click</h3>
+<p>When a cell is right clicked it becomes dead.</p>
+<pre class="code">
+function <span class="name">love.update</span>()
+    <span class="comment">-- etc.
+</span>
+    if <span class="call">love.mouse.isDown</span>(<span class="literal">1</span>) then
+        <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>] = <span class="literal">true</span>
+    <span class="highlight">elseif <span class="call">love.mouse.isDown</span>(<span class="literal">2</span>) then</span>
+    <span class="highlight">    <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>] = <span class="literal">false</span></span>
+    end
+end
+</pre>
+<h3>Turning key repeat on</h3>
+<p>Key repeat is turned on so holding a key down will call <b>love.keypressed</b> repeatedly.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="call">love.keyboard.setKeyRepeat</span>(<span class="literal">true</span>)
+end
+</pre>
+<h2>Final code</h2>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+
+    <span class="name">cellSize</span> = <span class="literal">5</span>
+    
+    <span class="name">gridXCount</span> = <span class="literal">70</span>
+    <span class="name">gridYCount</span> = <span class="literal">50</span>
+
+    <span class="name">grid</span> = {}
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        <span class="name">grid</span>[<span class="name">y</span>] = {}
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] = <span class="literal">false</span>
+        end
+    end
+
+    <span class="call">love.keyboard.setKeyRepeat</span>(<span class="literal">true</span>)
+end
+
+function <span class="name">love.update</span>()
+    <span class="name">selectedX</span> = <span class="call">math.floor</span>(<span class="call">love.mouse.getX</span>() / <span class="name">cellSize</span>) + <span class="literal">1</span>
+    <span class="name">selectedY</span> = <span class="call">math.floor</span>(<span class="call">love.mouse.getY</span>() / <span class="name">cellSize</span>) + <span class="literal">1</span>
+    
+    if <span class="call">love.mouse.isDown</span>(<span class="literal">1</span>)
+    and <span class="name">selectedX</span> <= <span class="name">gridXCount</span>
+    and <span class="name">selectedY</span> <= <span class="name">gridYCount</span> then
+        <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>] = <span class="literal">true</span>
+    elseif <span class="call">love.mouse.isDown</span>(<span class="literal">2</span>) then
+        <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>] = <span class="literal">false</span>
+    end
+end
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">50</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">70</span> do
+            local <span class="name">cellDrawSize</span> = <span class="name">cellSize</span> - <span class="literal">1</span>
+
+            if <span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span> then
+                <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+            elseif <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] then
+                <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">0</span>, <span class="literal">255</span>)
+            else
+                <span class="call">love.graphics.setColor</span>(<span class="literal">220</span>, <span class="literal">220</span>, <span class="literal">220</span>)
+            end
+
+            <span class="call">love.graphics.rectangle</span>(
+                <span class="literal">'fill'</span>,
+                (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                <span class="name">cellDrawSize</span>,
+                <span class="name">cellDrawSize</span>
+            )
+        end
+    end
+end
+
+function <span class="name">love.keypressed</span>()
+    local <span class="name">nextGrid</span> = {}
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        <span class="name">nextGrid</span>[<span class="name">y</span>] = {}
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            local <span class="name">neighbors</span> = <span class="literal">0</span>
+
+            for <span class="name">dy</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
+                for <span class="name">dx</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
+                    if not (<span class="name">dy</span> == <span class="literal">0</span> and <span class="name">dx</span> == <span class="literal">0</span>)
+                    and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>]
+                    and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>] then
+                        <span class="name">neighbors</span> = <span class="name">neighbors</span> + <span class="literal">1</span>
+                    end
+                end
+            end
+
+            <span class="name">nextGrid</span>[<span class="name">y</span>][<span class="name">x</span>] = <span class="name">neighbors</span> == <span class="literal">3</span> or (<span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] and <span class="name">neighbors</span> == <span class="literal">2</span>)
+        end
+    end
+
+    <span class="name">grid</span> = <span class="name">nextGrid</span>
+end
+</pre>
+</body></html

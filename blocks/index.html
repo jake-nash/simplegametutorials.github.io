@@ -1,0 +1,1541 @@
+<html><head><title>Blocks Tutorial</title>
+    <style>
+    body {
+        font-family: Calibri, sans-serif;
+        margin: 20px;
+    }
+    p {
+        max-width: 600px;
+        line-height: 1.4;
+    }
+    td {padding-right:10px}
+
+    .name {color:#770099}
+    .name {color:#aa0066}
+    .call {color:#bb5500}
+    .literal {color:#006666}
+    .comment {color:#006666; background:#ffffaa}
+
+    .name {color:#B137A2}
+    .call {color:#b16918}
+    .literal {color:#2D9999}
+    .highlight {background:#fcf9db}
+
+    .name {color:#d09}
+    .call {color:#d60}
+    .literal {color:#088}
+    .comment {color:#444; background:#eee}
+    .highlight {background:#ffc}
+    .highlight .comment, .comment .highlight {background:#f0edd3}
+
+    td {padding-right:10px}
+    .code {
+        font-family: Consolas;
+        border-left: solid 5px #e7e7e7;
+        color: #444;
+        padding-left: 12px;
+    }
+    .console {
+        font-family: Consolas;
+        padding: 16px;
+        background: #444;
+        color: #eee;
+        width: 700px;
+    }
+    </style>
+    </head>
+    <body>
+    <h1>Blocks</h1>
+<h2><a href="blocks.love">Download blocks.love</a></h2>
+<img src="1.png">
+<h2>Rules</h2>
+<p>There are seven types of pieces. Each piece contains four blocks.</p>
+<img src="2.png">
+<p>Pieces fall from the top of the playing area. The player can move the pieces left and right and rotate them. When a piece comes to rest, the next piece falls.</p>
+<p>The type of the next piece that will fall is shown above the playing area.</p>
+<img src="3.png">
+<p>When an unbroken row of blocks is formed the row disappears and all the blocks above it move down one row.</p>
+<p>The game ends when the stack of blocks reaches the top of the playing area and the next piece would overlap a block already on the stack.</p>
+<h2>Controls</h2>
+<table>
+<tr><td><b>Left arrow</b></td><td>Move left</td></tr>
+<tr><td><b>Right arrow</b></td><td>Move right</td></tr>
+<tr><td><b>z</b></td><td>Rotate counter-clockwise</td></tr>
+<tr><td><b>x</b></td><td>Rotate clockwise</td></tr>
+<tr><td><b>c</b></td><td>Drop</td></tr>
+</table>
+<h2>Overview</h2>
+<h3>Representing data</h3>
+<p>A grid stores the inert blocks which have already fallen.</p>
+<p>The state of a cell can be empty or filled with a block of a certain color. The string <b>' '</b> (a space) represents an empty cell, and the strings <b>'i'</b>, <b>'j'</b>, <b>'l'</b>, <b>'o'</b>, <b>'s'</b>, <b>'t'</b> and <b>'z'</b> represent blocks of different colors.</p>
+<img src="4.png">
+<p>All the different types of pieces are stored with their rotated variations.</p>
+<img src="5.png">
+<p>The currently falling piece is stored as a number representing which type of piece it is, a number representing which rotation variation it is at, and number representing its X and Y position on the playing area.</p>
+<h3>Basic logic</h3>
+<p>A new piece is created at the top of the screen, unless it would overlap an inert block, in which case the game is over.</p>
+<p>The player can move the piece left and right, unless this new position would overlap an inert block or be outside the playing area.</p>
+<p>After an amount of time has passed, the piece moves down, unless this new position would overlap an inert block or be outside the playing area, in which case it has come to rest.</p>
+<p>When a rotate button is pressed, the piece changes to its next rotation variation, unless this variation would overlap an inert block or be outside the playing area.</p>
+<p>When the drop button is pressed, the piece moves down until the next position would overlap an inert block or be outside the playing area, at which point it has come to rest.</p>
+<p>When the piece comes to rest, meaning that if it moved down it would overlap an inert piece of be outside the playing area, the blocks of the pieces are added to the inert pieces, and the next piece is created.</p>
+<p>A sequence of one of each of the seven pieces in a random order is created, and the next piece is taken from this sequence. Once all of the pieces have been taken, a new random sequence is created.</p>
+<h2>Coding</h2>
+<h3>Drawing the grid of blocks</h3>
+<p>A square is drawn for each block in the playing area.</p>
+<pre class="code">
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">18</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">10</span> do
+            local <span class="name">blockSize</span> = <span class="literal">20</span>
+            local <span class="name">blockDrawSize</span> = <span class="name">blockSize</span> - <span class="literal">1</span>
+            <span class="call">love.graphics.rectangle</span>(
+                <span class="literal">'fill'</span>,
+                (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+                (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+                <span class="name">blockDrawSize</span>,
+                <span class="name">blockDrawSize</span>
+            )
+        end
+    end
+end
+</pre>
+<img src="6.png">
+<h3>Colors</h3>
+<p>The background color and block color are set.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="highlight"><span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)</span>
+end
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">18</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">10</span> do
+            <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">222</span>, <span class="literal">222</span>, <span class="literal">222</span>)</span>
+            local <span class="name">blockSize</span> = <span class="literal">20</span>
+            local <span class="name">blockDrawSize</span> = <span class="name">blockSize</span> - <span class="literal">1</span>
+            <span class="call">love.graphics.rectangle</span>(
+                <span class="literal">'fill'</span>,
+                (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+                (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+                <span class="name">blockDrawSize</span>,
+                <span class="name">blockDrawSize</span>
+            )
+        end
+    end
+end
+</pre>
+<img src="7.png">
+<h3>Inert blocks</h3>
+<p>The grid for the inert blocks is created and every cell is set to ' ' (a string containing the space character), representing an empty cell.</p>
+<p>The width and height of the grid in blocks is reused from drawing the blocks, so they are made into variables.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">gridXCount</span> = <span class="literal">10</span>
+    <span class="name">gridYCount</span> = <span class="literal">18</span>
+
+    <span class="name">inert</span> = {}
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        <span class="name">inert</span>[<span class="name">y</span>] = {}
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="name">inert</span>[<span class="name">y</span>][<span class="name">x</span>] = <span class="literal">' '</span>
+        end
+    end
+end
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="highlight"><span class="name">gridYCount</span></span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="highlight"><span class="name">gridXCount</span></span> do
+            <span class="comment">-- etc.
+</span>        end
+    end
+end
+</pre>
+<h3>Setting block color</h3>
+<p>When the blocks of the grid are drawn, the color is set based on what is stored in the inert grid.</p>
+<p>To test the inert blocks, some cells are set to values representing blocks of varying colors.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="comment">-- Temporary
+</span>    <span class="name">inert</span>[<span class="literal">18</span>][<span class="literal">1</span>] = <span class="literal">'i'</span>
+    <span class="name">inert</span>[<span class="literal">17</span>][<span class="literal">2</span>] = <span class="literal">'j'</span>
+    <span class="name">inert</span>[<span class="literal">16</span>][<span class="literal">3</span>] = <span class="literal">'l'</span>
+    <span class="name">inert</span>[<span class="literal">15</span>][<span class="literal">4</span>] = <span class="literal">'o'</span>
+    <span class="name">inert</span>[<span class="literal">14</span>][<span class="literal">5</span>] = <span class="literal">'s'</span>
+    <span class="name">inert</span>[<span class="literal">13</span>][<span class="literal">6</span>] = <span class="literal">'t'</span>
+    <span class="name">inert</span>[<span class="literal">12</span>][<span class="literal">7</span>] = <span class="literal">'z'</span>
+end
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="highlight">local <span class="name">colors</span> = {</span>
+            <span class="highlight">    [<span class="literal">' '</span>] = {<span class="literal">222</span>, <span class="literal">222</span>, <span class="literal">222</span>},</span>
+            <span class="highlight">    <span class="name">i</span> = {<span class="literal">120</span>, <span class="literal">195</span>, <span class="literal">239</span>},</span>
+            <span class="highlight">    <span class="name">j</span> = {<span class="literal">236</span>, <span class="literal">231</span>, <span class="literal">108</span>},</span>
+            <span class="highlight">    <span class="name">l</span> = {<span class="literal">124</span>, <span class="literal">218</span>, <span class="literal">193</span>},</span>
+            <span class="highlight">    <span class="name">o</span> = {<span class="literal">234</span>, <span class="literal">177</span>, <span class="literal">121</span>},</span>
+            <span class="highlight">    <span class="name">s</span> = {<span class="literal">211</span>, <span class="literal">136</span>, <span class="literal">236</span>},</span>
+            <span class="highlight">    <span class="name">t</span> = {<span class="literal">248</span>, <span class="literal">147</span>, <span class="literal">196</span>},</span>
+            <span class="highlight">    <span class="name">z</span> = {<span class="literal">169</span>, <span class="literal">221</span>, <span class="literal">118</span>},</span>
+            <span class="highlight">}</span>
+            <span class="highlight">local <span class="name">block</span> = <span class="name">inert</span>[<span class="name">y</span>][<span class="name">x</span>]</span>
+            <span class="highlight">local <span class="name">color</span> = <span class="name">colors</span>[<span class="name">block</span>]</span>
+            <span class="call">love.graphics.setColor</span>(<span class="highlight"><span class="name">color</span></span>)
+                
+            local <span class="name">blockSize</span> = <span class="literal">20</span>
+            local <span class="name">blockDrawSize</span> = <span class="name">blockSize</span> - <span class="literal">1</span>
+            <span class="call">love.graphics.rectangle</span>(
+                <span class="literal">'fill'</span>,
+                (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+                (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+                <span class="name">blockDrawSize</span>,
+                <span class="name">blockDrawSize</span>
+            )
+        end
+    end
+end
+</pre>
+<img src="8.png">
+<h3>Storing the piece structures</h3>
+<p>Each rotation of a piece structure is stored as a 4 by 4 grid.</p>
+<pre class="code">
+{
+    {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+    {<span class="literal">'i'</span>, <span class="literal">'i'</span>, <span class="literal">'i'</span>, <span class="literal">'i'</span>},
+    {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+    {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+}
+</pre>
+<p>Each piece structure is stored as a table of piece rotations.</p>
+<pre class="code">
+{
+    {
+        {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+        {<span class="literal">'i'</span>, <span class="literal">'i'</span>, <span class="literal">'i'</span>, <span class="literal">'i'</span>},
+        {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+        {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+    },
+    {
+        {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+        {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+        {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+        {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+    },
+}
+</pre>
+<p>All of piece structures are stored in a table.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">pieceStructures</span> = {
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'i'</span>, <span class="literal">'i'</span>, <span class="literal">'i'</span>, <span class="literal">'i'</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'o'</span>, <span class="literal">'o'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'o'</span>, <span class="literal">'o'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>},
+                {<span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>},
+                {<span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'s'</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>},
+                {<span class="literal">'s'</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'s'</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'z'</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'z'</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'z'</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+    }
+end
+</pre>
+<h3>Storing the current piece</h3>
+<p>The currently falling piece is represented by a number indicating which type it is, and a number indicating which rotation it is at.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">pieceType</span> = <span class="literal">1</span>
+    <span class="name">pieceRotation</span> = <span class="literal">1</span>
+end
+</pre>
+<h3>Drawing the piece</h3>
+<p>The piece is drawn by looping through the grid and, unless the block is empty, drawing a square with a color determined by the block type.</p>
+<pre class="code">
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.
+</span>
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">4</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">4</span> do
+            local <span class="name">block</span> = <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">pieceRotation</span>][<span class="name">y</span>][<span class="name">x</span>]
+            if <span class="name">block</span> ~= <span class="literal">' '</span> then
+                local <span class="name">colors</span> = {
+                    <span class="name">i</span> = {<span class="literal">120</span>, <span class="literal">195</span>, <span class="literal">239</span>},
+                    <span class="name">j</span> = {<span class="literal">236</span>, <span class="literal">231</span>, <span class="literal">108</span>},
+                    <span class="name">l</span> = {<span class="literal">124</span>, <span class="literal">218</span>, <span class="literal">193</span>},
+                    <span class="name">o</span> = {<span class="literal">234</span>, <span class="literal">177</span>, <span class="literal">121</span>},
+                    <span class="name">s</span> = {<span class="literal">211</span>, <span class="literal">136</span>, <span class="literal">236</span>},
+                    <span class="name">t</span> = {<span class="literal">248</span>, <span class="literal">147</span>, <span class="literal">196</span>},
+                    <span class="name">z</span> = {<span class="literal">169</span>, <span class="literal">221</span>, <span class="literal">118</span>},
+                }
+                
+                local <span class="name">color</span> = <span class="name">colors</span>[<span class="name">block</span>]
+                <span class="call">love.graphics.setColor</span>(<span class="name">color</span>)
+
+                local <span class="name">blockSize</span> = <span class="literal">20</span>
+                local <span class="name">blockDrawSize</span> = <span class="name">blockSize</span> - <span class="literal">1</span>
+                <span class="call">love.graphics.rectangle</span>(
+                    <span class="literal">'fill'</span>,
+                    (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+                    (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+                    <span class="name">blockDrawSize</span>,
+                    <span class="name">blockDrawSize</span>
+                )
+            end
+        end
+    end
+end
+</pre>
+<img src="9.png">
+<h3>Simplifying code</h3>
+<p>The code for drawing the inert blocks and drawing the falling piece's blocks is the same, so a function is made.</p>
+<pre class="code">
+function <span class="name">love.draw</span>()
+    <span class="highlight">local function <span class="name">drawBlock</span>(<span class="name">block</span>, <span class="name">x</span>, <span class="name">y</span>)</span>
+        local <span class="name">colors</span> = {
+            [<span class="literal">' '</span>] = {<span class="literal">222</span>, <span class="literal">222</span>, <span class="literal">222</span>},
+            <span class="name">i</span> = {<span class="literal">120</span>, <span class="literal">195</span>, <span class="literal">239</span>},
+            <span class="name">j</span> = {<span class="literal">236</span>, <span class="literal">231</span>, <span class="literal">108</span>},
+            <span class="name">l</span> = {<span class="literal">124</span>, <span class="literal">218</span>, <span class="literal">193</span>},
+            <span class="name">o</span> = {<span class="literal">234</span>, <span class="literal">177</span>, <span class="literal">121</span>},
+            <span class="name">s</span> = {<span class="literal">211</span>, <span class="literal">136</span>, <span class="literal">236</span>},
+            <span class="name">t</span> = {<span class="literal">248</span>, <span class="literal">147</span>, <span class="literal">196</span>},
+            <span class="name">z</span> = {<span class="literal">169</span>, <span class="literal">221</span>, <span class="literal">118</span>},
+        }
+        local <span class="name">color</span> = <span class="name">colors</span>[<span class="name">block</span>]
+        <span class="call">love.graphics.setColor</span>(<span class="name">color</span>)
+       
+        local <span class="name">blockSize</span> = <span class="literal">20</span>
+        local <span class="name">blockDrawSize</span> = <span class="name">blockSize</span> - <span class="literal">1</span>
+        <span class="call">love.graphics.rectangle</span>(
+            <span class="literal">'fill'</span>,
+            (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+            (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+            <span class="name">blockDrawSize</span>,
+            <span class="name">blockDrawSize</span>
+        )
+    <span class="highlight">end</span>
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="highlight"><span class="call">drawBlock</span>(<span class="name">inert</span>[<span class="name">y</span>][<span class="name">x</span>], <span class="name">x</span>, <span class="name">y</span>)</span>
+        end
+    end
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">4</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">4</span> do
+            local <span class="name">block</span> = <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">pieceRotation</span>][<span class="name">y</span>][<span class="name">x</span>]
+            if <span class="name">block</span> ~= <span class="literal">' '</span> then
+                <span class="highlight"><span class="call">drawBlock</span>(<span class="name">block</span>, <span class="name">x</span>, <span class="name">y</span>)</span>
+            end
+        end
+    end
+end
+</pre>
+<h3>Rotation</h3>
+<p>When the <b>x</b> key is pressed, the piece rotation number is increased by 1, rotating the piece clockwise.</p>
+<p>If the rotation number is greater than the number of rotation positions (i.e. greater than the last position), the rotation number is set to 1 (i.e. the first position).</p>
+<p>Likewise, when the <b>z</b> key is pressed, the piece rotation number is decreased by 1, rotating the piece counter-clockwise.</p>
+<p>If the rotation number is less than 1 (i.e. less than the first position), the rotation number is set to the the number of rotation positions (i.e. the last position).</p>
+<pre class="code">
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">key</span> == <span class="literal">'x'</span> then
+        <span class="name">pieceRotation</span> = <span class="name">pieceRotation</span> + <span class="literal">1</span>
+        if <span class="name">pieceRotation</span> > #<span class="name">pieceStructures</span>[<span class="name">pieceType</span>] then
+            <span class="name">pieceRotation</span> = <span class="literal">1</span>
+        end
+
+    elseif <span class="name">key</span> == <span class="literal">'z'</span> then
+        <span class="name">pieceRotation</span> = <span class="name">pieceRotation</span> - <span class="literal">1</span>
+        if <span class="name">pieceRotation</span> < <span class="literal">1</span> then
+            <span class="name">pieceRotation</span> = #<span class="name">pieceStructures</span>[<span class="name">pieceType</span>]
+        end
+    end
+end
+</pre>
+<img src="10.png">
+<h3>Testing pieces</h3>
+<p>For testing, the up and down arrows cycle through the piece types.</p>
+<pre class="code">
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    <span class="comment">-- etc.
+</span>
+    <span class="comment">-- Temporary
+</span>
+    elseif <span class="name">key</span> == <span class="literal">'down'</span> then
+        <span class="name">pieceType</span> = <span class="name">pieceType</span> + <span class="literal">1</span>
+        if <span class="name">pieceType</span> > #<span class="name">pieceStructures</span> then
+            <span class="name">pieceType</span> = <span class="literal">1</span>
+        end
+        <span class="name">pieceRotation</span> = <span class="literal">1</span>
+
+    elseif <span class="name">key</span> == <span class="literal">'up'</span> then
+        <span class="name">pieceType</span> = <span class="name">pieceType</span> - <span class="literal">1</span>
+        if <span class="name">pieceType</span> < <span class="literal">1</span> then
+            <span class="name">pieceType</span> = #<span class="name">pieceStructures</span>
+        end
+        <span class="name">pieceRotation</span> = <span class="literal">1</span>
+    end
+end
+</pre>
+<img src="11.png">
+<h3>Setting piece position</h3>
+<p>The position of the piece in the playing area is stored, and the piece is drawn at that position.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">pieceX</span> = <span class="literal">3</span>
+    <span class="name">pieceY</span> = <span class="literal">0</span>
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.
+</span>
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">4</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">4</span> do
+            local <span class="name">block</span> = <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">pieceRotation</span>][<span class="name">y</span>][<span class="name">x</span>]
+            if <span class="name">block</span> ~= <span class="literal">' '</span> then
+                <span class="call">drawBlock</span>(<span class="name">block</span>, <span class="name">x</span> <span class="highlight">+ <span class="name">pieceX</span></span>, <span class="name">y</span> <span class="highlight">+ <span class="name">pieceY</span></span>)
+            end
+        end
+    end
+end
+</pre>
+<img src="12.png">
+<h3>Moving piece</h3>
+<p>The left and right arrows subtract or add 1 to the piece's X position.</p>
+<pre class="code">
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    <span class="comment">-- etc.
+</span>
+    elseif <span class="name">key</span> == <span class="literal">'left'</span> then
+        <span class="name">pieceX</span> = <span class="name">pieceX</span> - <span class="literal">1</span>
+
+    elseif <span class="name">key</span> == <span class="literal">'right'</span> then
+        <span class="name">pieceX</span> = <span class="name">pieceX</span> + <span class="literal">1</span>
+    end
+end
+</pre>
+<img src="13.png">
+<h3>Falling</h3>
+<p>A timer is used to increase the piece's Y position every 0.5 seconds.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">timer</span> = <span class="literal">0</span>
+    <span class="name">timerLimit</span> = <span class="literal">0.5</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
+        <span class="name">timer</span> = <span class="name">timer</span> - <span class="name">timerLimit</span>
+
+        <span class="name">pieceY</span> = <span class="name">pieceY</span> + <span class="literal">1</span>
+    end
+end
+</pre>
+<img src="14.png">
+<h3>Confining movement</h3>
+<p>To prevent the piece from moving off the left or right of the screen when it is moved or rotated, each of its blocks is checked to see if they are within the playing area before it is moved/rotated.</p>
+<p>Because this checking will be done in multiple places, it will be written as a function. This function is given the position and rotation to check, and returns true or false depending on whether the piece can move or rotate.</p>
+<p>To begin with, this function will always return true, so moving and rotating is still always possible.</p>
+<p>The code is changed from immediately setting positions/rotations, to creating variables for the changed values, and if the checking function returns true, the actual position/rotation is set.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    function <span class="name">canPieceMove</span>(<span class="name">testX</span>, <span class="name">testY</span>, <span class="name">testRotation</span>)
+        return <span class="literal">true</span>
+    end
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
+        <span class="name">timer</span> = <span class="name">timer</span> - <span class="name">timerLimit</span>
+
+        <span class="highlight">local <span class="name">testY</span> = <span class="name">pieceY</span> + <span class="literal">1</span></span>
+        <span class="highlight">if <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">testY</span>, <span class="name">pieceRotation</span>) then</span>
+        <span class="highlight">    <span class="name">pieceY</span> = <span class="name">testY</span></span>
+        <span class="highlight">end</span>
+    end
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">key</span> == <span class="literal">'x'</span> then
+        <span class="highlight">local <span class="name">testRotation</span></span> = <span class="name">pieceRotation</span> + <span class="literal">1</span>
+        if <span class="highlight"><span class="name">testRotation</span></span> > #<span class="name">pieceStructures</span>[<span class="name">pieceType</span>] then
+            <span class="highlight"><span class="name">testRotation</span></span> = <span class="literal">1</span>
+        end
+
+        <span class="highlight">if <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">pieceY</span>, <span class="name">testRotation</span>) then</span>
+        <span class="highlight">    <span class="name">pieceRotation</span> = <span class="name">testRotation</span></span>
+        <span class="highlight">end</span>
+
+    elseif <span class="name">key</span> == <span class="literal">'z'</span> then
+        <span class="highlight">local <span class="name">testRotation</span></span> = <span class="highlight"><span class="name">pieceRotation</span></span> - <span class="literal">1</span>
+        if <span class="highlight"><span class="name">testRotation</span></span> < <span class="literal">1</span> then
+            <span class="highlight"><span class="name">testRotation</span></span> = #<span class="name">pieceStructures</span>[<span class="name">pieceType</span>]
+        end
+
+        <span class="highlight">if <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">pieceY</span>, <span class="name">testRotation</span>) then</span>
+        <span class="highlight">    <span class="name">pieceRotation</span> = <span class="name">testRotation</span></span>
+        <span class="highlight">end</span>
+
+    elseif <span class="name">key</span> == <span class="literal">'left'</span> then
+        <span class="highlight">local <span class="name">testX</span></span> = <span class="name">pieceX</span> - <span class="literal">1</span>
+
+        <span class="highlight">if <span class="call">canPieceMove</span>(<span class="name">testX</span>, <span class="name">pieceY</span>, <span class="name">pieceRotation</span>) then</span>
+        <span class="highlight">    <span class="name">pieceX</span> = <span class="name">testX</span></span>
+        <span class="highlight">end</span>
+
+    elseif <span class="name">key</span> == <span class="literal">'right'</span> then
+        <span class="highlight">local <span class="name">testX</span></span> = <span class="name">pieceX</span> + <span class="literal">1</span>
+
+        <span class="highlight">if <span class="call">canPieceMove</span>(<span class="name">testX</span>, <span class="name">pieceY</span>, <span class="name">pieceRotation</span>) then</span>
+        <span class="highlight">    <span class="name">pieceX</span> = <span class="name">testX</span></span>
+        <span class="highlight">end</span>
+    end
+end
+</pre>
+<h3>Checking left of playing area</h3>
+<p>If any block is not empty and block's X position is less than 1 (i.e. off the left of the playing area) the function returns false.</p>
+<p>Otherwise the function returns true.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    function <span class="name">canPieceMove</span>(<span class="name">testX</span>, <span class="name">testY</span>, <span class="name">testRotation</span>)
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">4</span> do
+            for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">4</span> do
+                if <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">testRotation</span>][<span class="name">y</span>][<span class="name">x</span>] ~= <span class="literal">' '</span>
+                and (<span class="name">testX</span> + <span class="name">x</span>) < <span class="literal">1</span> then
+                    return <span class="literal">false</span>
+                end
+            end
+        end
+        
+        return <span class="literal">true</span>
+    end
+end
+</pre>
+<h3>Simplifying code</h3>
+<p>The number of blocks each piece has on the X and Y axes are reused from drawing the pieces, so variables are made for these.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="highlight"><span class="name">pieceXCount</span> = <span class="literal">4</span></span>
+    <span class="highlight"><span class="name">pieceYCount</span> = <span class="literal">4</span></span>
+
+    function <span class="name">canPieceMove</span>(<span class="name">testX</span>, <span class="name">testY</span>, <span class="name">testRotation</span>)
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="highlight"><span class="name">pieceXCount</span></span> do
+            for <span class="name">y</span> = <span class="literal">1</span>, <span class="highlight"><span class="name">pieceYCount</span></span> do
+                if <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">testRotation</span>][<span class="name">y</span>][<span class="name">x</span>] ~= <span class="literal">' '</span>
+                and (<span class="name">testX</span> + <span class="name">x</span>) < <span class="literal">1</span> then
+                    return <span class="literal">false</span>
+                end
+            end
+        end
+        
+        return <span class="literal">true</span>
+    end
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.
+</span>
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="highlight"><span class="name">pieceYCount</span></span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="highlight"><span class="name">pieceXCount</span></span> do
+            local <span class="name">block</span> = <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">pieceRotation</span>][<span class="name">y</span>][<span class="name">x</span>]
+            if <span class="name">block</span> ~= <span class="literal">' '</span> then
+                <span class="call">drawBlock</span>(<span class="name">block</span>, <span class="name">x</span> + <span class="name">pieceX</span>, <span class="name">y</span> + <span class="name">pieceY</span>)
+            end
+        end
+    end
+end
+</pre>
+<h3>Checking right of playing area</h3>
+<p>If any block's X position is greater than the width of the playing area (i.e. off the right of the playing area) the function also returns false.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    function <span class="name">canPieceMove</span>(<span class="name">testX</span>, <span class="name">testY</span>, <span class="name">testRotation</span>)
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">pieceYCount</span> do
+            for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">pieceXCount</span> do
+                if <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">testRotation</span>][<span class="name">y</span>][<span class="name">x</span>] ~= <span class="literal">' '</span> and <span class="highlight">(</span>
+                    (<span class="name">testX</span> + <span class="name">x</span>) < <span class="literal">1</span>
+                    <span class="highlight">or (<span class="name">testX</span> + <span class="name">x</span>) > <span class="name">gridXCount</span></span>
+                <span class="highlight">)</span> then
+                    return <span class="literal">false</span>
+                end
+            end
+        end
+        
+        return <span class="literal">true</span>
+    end
+end
+</pre>
+<h3>Checking bottom</h3>
+<p>If any block's Y position is greater than the height of the playing area (i.e off the bottom of the playing area) the function also returns false.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    function <span class="name">canPieceMove</span>(<span class="name">testX</span>, <span class="name">testY</span>, <span class="name">testRotation</span>)
+        for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">pieceYCount</span> do
+            for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">pieceXCount</span> do
+                if <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">testRotation</span>][<span class="name">y</span>][<span class="name">x</span>] ~= <span class="literal">' '</span> and (
+                    (<span class="name">testX</span> + <span class="name">x</span>) < <span class="literal">1</span>
+                    or (<span class="name">testX</span> + <span class="name">x</span>) > <span class="name">gridXCount</span>
+                    <span class="highlight">or (<span class="name">testY</span> + <span class="name">y</span>) > <span class="name">gridYCount</span></span>
+                ) then
+                    return <span class="literal">false</span>
+                end
+            end
+        end
+        
+        return <span class="literal">true</span>
+    end
+end
+</pre>
+<h3>Checking inert</h3>
+<p>If there is an inert block at any block's position, the function also returns false.</p>
+<p>To test this, an inert block is manually set.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="comment">-- Temporary
+</span>    <span class="name">inert</span>[<span class="literal">8</span>][<span class="literal">5</span>] = <span class="literal">'z'</span>
+
+    function <span class="name">canPieceMove</span>(<span class="name">testX</span>, <span class="name">testY</span>, <span class="name">testRotation</span>)
+        for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">pieceYCount</span> do
+            for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">pieceXCount</span> do
+                if <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">testRotation</span>][<span class="name">y</span>][<span class="name">x</span>] ~= <span class="literal">' '</span> and (
+                    (<span class="name">testX</span> + <span class="name">x</span>) < <span class="literal">1</span>
+                    or (<span class="name">testX</span> + <span class="name">x</span>) > <span class="name">gridXCount</span>
+                    or (<span class="name">testY</span> + <span class="name">y</span>) > <span class="name">gridYCount</span>
+                    <span class="highlight">or <span class="name">inert</span>[<span class="name">testY</span> + <span class="name">y</span>][<span class="name">testX</span> + <span class="name">x</span>] ~= <span class="literal">' '</span></span>
+                )
+                then
+                    return <span class="literal">false</span>
+                end
+            end
+        end
+        
+        return <span class="literal">true</span>
+    end
+end
+</pre>
+<img src="15.png">
+<h3>Simplifying code</h3>
+<p>The calculated block positions to test are reused, so these can be stored in variables.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    function <span class="name">canPieceMove</span>(<span class="name">testX</span>, <span class="name">testY</span>, <span class="name">testRotation</span>)
+        for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">pieceYCount</span> do
+            for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">pieceXCount</span> do
+                <span class="highlight">local <span class="name">testBlockX</span> = <span class="name">testX</span> + <span class="name">x</span></span>
+                <span class="highlight">local <span class="name">testBlockY</span> = <span class="name">testY</span> + <span class="name">y</span></span>
+
+                if <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">testRotation</span>][<span class="name">blockY</span>][<span class="name">blockX</span>] ~= <span class="literal">' '</span> and (
+                    <span class="highlight"><span class="name">testBlockX</span></span> < <span class="literal">1</span>
+                    or <span class="highlight"><span class="name">testBlockX</span></span> > <span class="name">gridXCount</span>
+                    or <span class="highlight"><span class="name">testBlockY</span></span> > <span class="name">gridYCount</span>
+                    or <span class="name">inert</span>[<span class="highlight"><span class="name">testBlockY</span></span>][<span class="highlight"><span class="name">testBlockX</span></span>] ~= <span class="literal">' '</span>
+                ) then
+                    return <span class="literal">false</span>
+                end
+            end
+        end
+        
+        return <span class="literal">true</span>
+    end
+end
+</pre>
+<h3>Drop</h3>
+<p>When the <b>c</b> key is pressed, the piece's Y position is increased by 1 while that position is movable.</p>
+<pre class="code">
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    <span class="comment">-- etc.
+</span>
+    elseif <span class="name">key</span> == <span class="literal">'c'</span> then
+        while <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">pieceY</span> + <span class="literal">1</span>, <span class="name">pieceRotation</span>) do
+            <span class="name">pieceY</span> = <span class="name">pieceY</span> + <span class="literal">1</span>
+        end
+    end
+end
+</pre>
+<h3>Resetting piece</h3>
+<p>If the timer ticks and the piece can't move down, the piece is reset to its initial position and rotation, and (for now) its initial type.</p>
+<pre class="code">
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
+        <span class="name">timer</span> = <span class="name">timer</span> - <span class="name">timerLimit</span>
+
+        <span class="name">testY</span> = <span class="name">pieceY</span> + <span class="literal">1</span>
+        if <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">testY</span>, <span class="name">pieceRotation</span>) then
+            <span class="name">pieceY</span> = <span class="name">testY</span>
+        <span class="highlight">else</span>
+        <span class="highlight">    <span class="name">pieceX</span> = <span class="literal">3</span></span>
+        <span class="highlight">    <span class="name">pieceY</span> = <span class="literal">0</span></span>
+        <span class="highlight">    <span class="name">pieceType</span> = <span class="literal">1</span></span>
+        <span class="highlight">    <span class="name">pieceRotation</span> = <span class="literal">1</span></span>
+        end
+    end
+end
+</pre>
+<h3>Simplifying code</h3>
+<p>The piece is set to its initial state in two places, so a function is made.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>    
+    <span class="highlight">function <span class="name">newPiece</span>()</span>
+        <span class="name">pieceX</span> = <span class="literal">3</span>
+        <span class="name">pieceY</span> = <span class="literal">0</span>
+        <span class="name">pieceType</span> = <span class="literal">1</span>
+        <span class="name">pieceRotation</span> = <span class="literal">1</span>
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="call">newPiece</span>()</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
+        <span class="name">timer</span> = <span class="name">timer</span> - <span class="name">timerLimit</span>
+
+        <span class="name">testY</span> = <span class="name">pieceY</span> + <span class="literal">1</span>
+        if <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">testY</span>, <span class="name">pieceRotation</span>) then
+            <span class="name">pieceY</span> = <span class="name">testY</span>
+        else
+            <span class="highlight"><span class="call">newPiece</span>()</span>
+        end
+    end
+end
+</pre>
+<h3>Creating the sequence of next pieces</h3>
+<p>The sequence for the next pieces is stored as a table containing the numbers representing piece types in a random order.</p>
+<p>Each number representing a piece type is looped through and inserted into the sequence at a random position from 1 (the first position) to 1 more than the number of piece types already in the sequence table (the last position).</p>
+<p>To test this, a new sequence is created when the <b>s</b> key is pressed and is printed.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>    
+    function <span class="name">newSequence</span>()
+        <span class="name">sequence</span> = {}
+        for <span class="name">pieceTypeIndex</span> = <span class="literal">1</span>, #<span class="name">pieceStructures</span> do
+            local <span class="name">position</span> = <span class="call">love.math.random</span>(#<span class="name">sequence</span> + <span class="literal">1</span>)
+            <span class="call">table.insert</span>(
+                <span class="name">sequence</span>,
+                <span class="name">position</span>,
+                <span class="name">pieceTypeIndex</span>
+            )
+        end
+    end
+
+    <span class="call">newSequence</span>()
+
+    function <span class="name">newPiece</span>()
+        <span class="comment">-- etc.
+</span>    end
+
+    <span class="call">newPiece</span>()
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    <span class="comment">-- etc.
+</span>
+    <span class="comment">-- Temporary
+</span>    elseif <span class="name">key</span> == <span class="literal">'s'</span> then
+        <span class="call">newSequence</span>()
+
+        <span class="call">print</span>(<span class="literal">'Sequence:'</span>)
+        for <span class="name">pieceTypeIndex</span>, <span class="name">pieceType</span> in <span class="call">ipairs</span>(<span class="name">sequence</span>) do
+            <span class="call">print</span>(<span class="name">pieceType</span>)
+        end
+    end
+end
+</pre>
+<pre class="console">
+Sequence:
+7
+4
+5
+2
+3
+6
+1
+</pre>
+<h3>New piece from sequence</h3>
+<p>When a new piece is created, it removes the last item of the sequence and uses it for the piece type.</p>
+<p>When the sequence is empty, a new sequence is created.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>    
+    function <span class="name">newPiece</span>()
+        <span class="name">pieceX</span> = <span class="literal">3</span>
+        <span class="name">pieceY</span> = <span class="literal">0</span>
+        <span class="name">pieceRotation</span> = <span class="literal">1</span>
+        <span class="highlight"><span class="name">pieceType</span> = <span class="call">table.remove</span>(<span class="name">sequence</span>)</span>
+
+        <span class="highlight">if #<span class="name">sequence</span> == <span class="literal">0</span> then</span>
+        <span class="highlight">    <span class="call">newSequence</span>()</span>
+        <span class="highlight">end</span>
+    end
+
+    <span class="call">newPiece</span>()
+end
+</pre>
+<h3>Add to inert</h3>
+<p>When the piece has come to rest, the blocks in the piece are added to the inert blocks.</p>
+<p>The piece's blocks are looped through, and if the block isn't empty then the inert block at this position is set to the piece's block.</p>
+<pre class="code">
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
+        <span class="name">timer</span> = <span class="name">timer</span> - <span class="name">timerLimit</span>
+
+        <span class="name">testY</span> = <span class="name">pieceY</span> + <span class="literal">1</span>
+        if <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">testY</span>, <span class="name">pieceRotation</span>) then
+            <span class="name">pieceY</span> = <span class="name">testY</span>
+        else
+            <span class="highlight"><span class="comment">-- Add piece to inert</span>
+</span>            <span class="highlight">for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">pieceYCount</span> do</span>
+            <span class="highlight">    for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">pieceXCount</span> do</span>
+            <span class="highlight">        local <span class="name">block</span> = <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">pieceRotation</span>][<span class="name">y</span>][<span class="name">x</span>]</span>
+            <span class="highlight">        if <span class="name">block</span> ~= <span class="literal">' '</span> then</span>
+            <span class="highlight">            <span class="name">inert</span>[<span class="name">pieceY</span> + <span class="name">y</span>][<span class="name">pieceX</span> + <span class="name">x</span>] = <span class="name">block</span></span>
+            <span class="highlight">        end</span>
+            <span class="highlight">    end</span>
+            <span class="highlight">end</span>
+
+            <span class="call">newPiece</span>()
+        end
+    end
+end
+</pre>
+<h3>New piece immediately after drop</h3>
+<p>When the piece is dropped the timer is set immediately to the limit so that adding the piece to the inert pieces and creating the new piece happen immediately.</p>
+<pre class="code">
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    <span class="comment">-- etc.
+</span>
+    elseif <span class="name">key</span> == <span class="literal">'c'</span> then
+        while <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">pieceY</span> + <span class="literal">1</span>, <span class="name">pieceRotation</span>) do
+            <span class="name">pieceY</span> = <span class="name">pieceY</span> + <span class="literal">1</span>
+            <span class="highlight"><span class="name">timer</span> = <span class="name">timerLimit</span></span>
+        end
+    end
+end
+</pre>
+<h3>Finding complete rows</h3>
+<p>Each row of the inert blocks is looped through, and if none of the columns of the row contain an empty block the row is complete.</p>
+<p>For now, the complete row is printed out.</p>
+<pre class="code">
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
+        <span class="name">timer</span> = <span class="name">timer</span> - <span class="name">timerLimit</span>
+
+        <span class="name">testY</span> = <span class="name">pieceY</span> + <span class="literal">1</span>
+        if <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">testY</span>, <span class="name">pieceRotation</span>) then
+            <span class="name">pieceY</span> = <span class="name">testY</span>
+        else
+            <span class="comment">-- Add piece to inert
+</span>            for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">pieceYCount</span> do
+                for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">pieceXCount</span> do
+                    if <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">pieceRotation</span>][<span class="name">y</span>][<span class="name">x</span>] ~= <span class="literal">' '</span> then
+                        <span class="name">inert</span>[<span class="name">pieceY</span> + <span class="name">y</span>][<span class="name">pieceX</span> + <span class="name">x</span>] = <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">pieceRotation</span>][<span class="name">y</span>][<span class="name">x</span>]
+                    end
+                end
+            end
+
+            <span class="highlight"><span class="comment">-- Find complete rows</span>
+</span>            <span class="highlight">for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do</span>
+            <span class="highlight">    local <span class="name">complete</span> = <span class="literal">true</span></span>
+            <span class="highlight">    for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do</span>
+            <span class="highlight">        if <span class="name">inert</span>[<span class="name">y</span>][<span class="name">x</span>] == <span class="literal">' '</span> then</span>
+            <span class="highlight">            <span class="name">complete</span> = <span class="literal">false</span></span>
+            <span class="highlight">        end</span>
+            <span class="highlight">    end</span>
+            <span class="highlight">    </span>
+            <span class="highlight">    <span class="comment">-- Temporary</span>
+</span>            <span class="highlight">    if <span class="name">complete</span> then</span>
+            <span class="highlight">       <span class="call">print</span>(<span class="literal">'Complete row: '</span>..<span class="name">y</span>)</span>
+            <span class="highlight">    end</span>
+            <span class="highlight">end</span>
+
+            <span class="call">newPiece</span>()
+        end
+    end
+end
+</pre>
+<h3>Removing complete rows</h3>
+<p>If the row is complete, the rows from the complete row to the row second from the top are looped through.</p>
+<p>Each block in the row is looped through and set to the value of the block above it. Because there is nothing above the top row it doesn't need to be looped through.</p>
+<p>The top row is then set to all empty blocks.</p>
+<pre class="code">
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+            <span class="comment">-- etc.
+</span>
+            for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+                local <span class="name">complete</span> = <span class="literal">true</span>
+                for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+                    if <span class="name">inert</span>[<span class="name">y</span>][<span class="name">x</span>] == <span class="literal">' '</span> then
+                        <span class="name">complete</span> = <span class="literal">false</span>
+                    end
+                end
+
+                if <span class="name">complete</span> then
+                    <span class="highlight">for <span class="name">removeY</span> = <span class="name">y</span>, <span class="literal">2</span>, -<span class="literal">1</span> do</span>
+                    <span class="highlight">    for <span class="name">removeX</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do</span>
+                    <span class="highlight">        <span class="name">inert</span>[<span class="name">removeY</span>][<span class="name">removeX</span>] = <span class="name">inert</span>[<span class="name">removeY</span> - <span class="literal">1</span>][<span class="name">removeX</span>]</span>
+                    <span class="highlight">    end</span>
+                    <span class="highlight">    </span>
+                    <span class="highlight">end</span>
+                
+                    <span class="highlight">for <span class="name">removeX</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do</span>
+                    <span class="highlight">    <span class="name">inert</span>[<span class="literal">1</span>][<span class="name">removeX</span>] = <span class="literal">' '</span></span>
+                    <span class="highlight">end</span>
+                end
+            end
+
+             <span class="comment">-- etc.
+</span>end
+</pre>
+<h3>Game over</h3>
+<p>If a newly created piece is in an unmovable position the game is over.</p>
+<p>For now, <b>love.load</b> is called to reset the game to its initial state.</p>
+<pre class="code">
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
+        <span class="name">timer</span> = <span class="name">timer</span> - <span class="name">timerLimit</span>
+
+        <span class="name">testY</span> = <span class="name">pieceY</span> + <span class="literal">1</span>
+        if <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">testY</span>, <span class="name">pieceRotation</span>) then
+            <span class="name">pieceY</span> = <span class="name">testY</span>
+        else
+            <span class="comment">-- Add piece to inert
+</span>            <span class="comment">-- Find complete rows
+</span>
+            <span class="call">newPiece</span>()
+
+            <span class="highlight">if not <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">pieceY</span>, <span class="name">pieceRotation</span>) then</span>
+            <span class="highlight">    <span class="call">love.load</span>()</span>
+            <span class="highlight">end</span>
+        end
+    end
+end
+</pre>
+<h3>Offsetting the playing area</h3>
+<p>The playing area is drawn 2 blocks from the left of the screen and 5 blocks from the top of the screen.</p>
+<pre class="code">
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="highlight">local <span class="name">offsetX</span> = <span class="literal">2</span></span>
+    <span class="highlight">local <span class="name">offsetY</span> = <span class="literal">5</span></span>
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="call">drawBlock</span>(<span class="name">inert</span>[<span class="name">y</span>][<span class="name">x</span>], <span class="name">x</span> <span class="highlight">+ <span class="name">offsetX</span></span>, <span class="name">y</span> <span class="highlight">+ <span class="name">offsetY</span></span>)
+        end
+    end
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">4</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">4</span> do
+            local <span class="name">block</span> = <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">pieceRotation</span>][<span class="name">y</span>][<span class="name">x</span>]
+            if <span class="name">block</span> ~= <span class="literal">' '</span> then
+                <span class="call">drawBlock</span>(<span class="name">block</span>, <span class="name">x</span> + <span class="name">pieceX</span> <span class="highlight">+ <span class="name">offsetX</span></span>, <span class="name">y</span> + <span class="name">pieceY</span> <span class="highlight">+ <span class="name">offsetY</span></span>)
+            end
+        end
+    end
+end
+</pre>
+<img src="16.png">
+<h3>Drawing next piece</h3>
+<p>The last piece of the sequence (the next piece to fall) is drawn at its first rotation position. It is offset 5 blocks from the left and 1 block from the top.</p>
+<pre class="code">
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.
+</span>
+    local function <span class="name">drawBlock</span>(<span class="name">block</span>, <span class="name">x</span>, <span class="name">y</span>)
+        local <span class="name">colors</span> = {
+            [<span class="literal">' '</span>] = {<span class="literal">222</span>, <span class="literal">222</span>, <span class="literal">222</span>},
+            <span class="name">i</span> = {<span class="literal">120</span>, <span class="literal">195</span>, <span class="literal">239</span>},
+            <span class="name">j</span> = {<span class="literal">236</span>, <span class="literal">231</span>, <span class="literal">108</span>},
+            <span class="name">l</span> = {<span class="literal">124</span>, <span class="literal">218</span>, <span class="literal">193</span>},
+            <span class="name">o</span> = {<span class="literal">234</span>, <span class="literal">177</span>, <span class="literal">121</span>},
+            <span class="name">s</span> = {<span class="literal">211</span>, <span class="literal">136</span>, <span class="literal">236</span>},
+            <span class="name">t</span> = {<span class="literal">248</span>, <span class="literal">147</span>, <span class="literal">196</span>},
+            <span class="name">z</span> = {<span class="literal">169</span>, <span class="literal">221</span>, <span class="literal">118</span>},
+            <span class="highlight"><span class="name">preview</span> = {<span class="literal">190</span>, <span class="literal">190</span>, <span class="literal">190</span>},</span>
+        }
+
+        <span class="comment">-- etc.
+</span>    end
+
+    <span class="comment">-- etc.
+</span>
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">pieceYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">pieceXCount</span> do
+            local <span class="name">block</span> = <span class="name">pieceStructures</span>[<span class="name">sequence</span>[#<span class="name">sequence</span>]][<span class="literal">1</span>][<span class="name">y</span>][<span class="name">x</span>]
+            if <span class="name">block</span> ~= <span class="literal">' '</span> then
+                <span class="call">drawBlock</span>(<span class="literal">'preview'</span>, <span class="name">x</span> + <span class="literal">5</span>, <span class="name">y</span> + <span class="literal">1</span>)
+            end
+        end
+    end
+end
+</pre>
+<img src="17.png">
+<h3>Resetting</h3>
+<p>When the game is over only some of the variables need to be reset, so a function is made.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+
+    <span class="name">pieceStructures</span> = { 
+        <span class="comment">-- etc.
+</span>    }
+
+    <span class="name">gridXCount</span> = <span class="literal">10</span>
+    <span class="name">gridYCount</span> = <span class="literal">18</span>
+
+    <span class="name">pieceYCount</span> = <span class="literal">4</span>
+    <span class="name">pieceXCount</span> = <span class="literal">4</span>
+
+    <span class="name">timerLimit</span> = <span class="literal">0.5</span>
+
+    function <span class="name">canPieceMove</span>(<span class="name">testX</span>, <span class="name">testY</span>, <span class="name">testRotation</span>)
+        <span class="comment">-- etc.
+</span>    end
+
+    function <span class="name">newSequence</span>()
+        <span class="comment">-- etc.
+</span>    end
+
+    function <span class="name">newPiece</span>()
+        <span class="comment">-- etc.
+</span>    end
+
+    <span class="highlight">function <span class="name">reset</span>()</span>
+        for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+            <span class="name">inert</span>[<span class="name">y</span>] = {}
+            for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+                <span class="name">inert</span>[<span class="name">y</span>][<span class="name">x</span>] = <span class="literal">' '</span>
+            end
+        end
+
+        <span class="call">newSequence</span>()
+        <span class="call">newPiece</span>()
+
+        <span class="name">timer</span> = <span class="literal">0</span>
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="call">reset</span>()</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+             <span class="comment">-- etc.
+</span>
+            if not <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">pieceY</span>, <span class="name">pieceRotation</span>) then
+                <span class="highlight"><span class="call">reset</span>()</span>
+            end
+        end
+    end
+end
+</pre>
+<h2>Final code</h2>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+
+    <span class="name">pieceStructures</span> = {
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'i'</span>, <span class="literal">'i'</span>, <span class="literal">'i'</span>, <span class="literal">'i'</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'o'</span>, <span class="literal">'o'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'o'</span>, <span class="literal">'o'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>},
+                {<span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>},
+                {<span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'s'</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>},
+                {<span class="literal">'s'</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'s'</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'z'</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'z'</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'z'</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+    }
+
+    <span class="name">gridXCount</span> = <span class="literal">10</span>
+    <span class="name">gridYCount</span> = <span class="literal">18</span>
+
+    <span class="name">pieceXCount</span> = <span class="literal">4</span>
+    <span class="name">pieceYCount</span> = <span class="literal">4</span>
+
+    <span class="name">timerLimit</span> = <span class="literal">0.5</span>
+
+    function <span class="name">canPieceMove</span>(<span class="name">testX</span>, <span class="name">testY</span>, <span class="name">testRotation</span>)
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">pieceXCount</span> do
+            for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">pieceYCount</span> do
+                local <span class="name">testBlockX</span> = <span class="name">testX</span> + <span class="name">x</span>
+                local <span class="name">testBlockY</span> = <span class="name">testY</span> + <span class="name">y</span>
+
+                if <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">testRotation</span>][<span class="name">y</span>][<span class="name">x</span>] ~= <span class="literal">' '</span>
+                and (
+                    <span class="name">testBlockX</span> < <span class="literal">1</span>
+                    or <span class="name">testBlockX</span> > <span class="name">gridXCount</span>
+                    or <span class="name">testBlockY</span> > <span class="name">gridYCount</span>
+                    or <span class="name">inert</span>[<span class="name">testBlockY</span>][<span class="name">testBlockX</span>] ~= <span class="literal">' '</span>
+                ) then
+                    return <span class="literal">false</span>
+                end
+            end
+        end
+        
+        return <span class="literal">true</span>
+    end
+
+    function <span class="name">newSequence</span>()
+        <span class="name">sequence</span> = {}
+        for <span class="name">pieceTypeIndex</span> = <span class="literal">1</span>, #<span class="name">pieceStructures</span> do
+            local <span class="name">position</span> = <span class="call">love.math.random</span>(#<span class="name">sequence</span> + <span class="literal">1</span>)
+            <span class="call">table.insert</span>(
+                <span class="name">sequence</span>,
+                <span class="name">position</span>,
+                <span class="name">pieceTypeIndex</span>
+            )
+        end
+    end
+
+    function <span class="name">newPiece</span>()
+        <span class="name">pieceX</span> = <span class="literal">3</span>
+        <span class="name">pieceY</span> = <span class="literal">0</span>
+        <span class="name">pieceRotation</span> = <span class="literal">1</span>
+        <span class="name">pieceType</span> = <span class="call">table.remove</span>(<span class="name">sequence</span>)
+
+        if #<span class="name">sequence</span> == <span class="literal">0</span> then
+            <span class="call">newSequence</span>()
+        end
+    end
+
+    function <span class="name">reset</span>()
+        <span class="name">inert</span> = {}
+        for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+            <span class="name">inert</span>[<span class="name">y</span>] = {}
+            for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+                <span class="name">inert</span>[<span class="name">y</span>][<span class="name">x</span>] = <span class="literal">' '</span>
+            end
+        end
+
+        <span class="call">newSequence</span>()
+        <span class="call">newPiece</span>()
+
+        <span class="name">timer</span> = <span class="literal">0</span>
+    end
+
+    <span class="call">reset</span>()
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
+        <span class="name">timer</span> = <span class="name">timer</span> - <span class="name">timerLimit</span>
+
+        local <span class="name">testY</span> = <span class="name">pieceY</span> + <span class="literal">1</span>
+        if <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">testY</span>, <span class="name">pieceRotation</span>) then
+            <span class="name">pieceY</span> = <span class="name">testY</span>
+        else
+            <span class="comment">-- Add piece to inert
+</span>            for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">pieceYCount</span> do
+                for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">pieceXCount</span> do
+                    local <span class="name">block</span> = <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">pieceRotation</span>][<span class="name">y</span>][<span class="name">x</span>]
+                    if <span class="name">block</span> ~= <span class="literal">' '</span> then
+                        <span class="name">inert</span>[<span class="name">pieceY</span> + <span class="name">y</span>][<span class="name">pieceX</span> + <span class="name">x</span>] = <span class="name">block</span>
+                    end
+                end
+            end
+
+            <span class="comment">-- Find complete rows
+</span>            for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+                local <span class="name">complete</span> = <span class="literal">true</span>
+                for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+                    if <span class="name">inert</span>[<span class="name">y</span>][<span class="name">x</span>] == <span class="literal">' '</span> then
+                        <span class="name">complete</span> = <span class="literal">false</span>
+                    end
+                end
+                
+                if <span class="name">complete</span> then
+                   for <span class="name">removeY</span> = <span class="name">y</span>, <span class="literal">2</span>, -<span class="literal">1</span> do
+                        for <span class="name">removeX</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+                            <span class="name">inert</span>[<span class="name">removeY</span>][<span class="name">removeX</span>] = <span class="name">inert</span>[<span class="name">removeY</span> - <span class="literal">1</span>][<span class="name">removeX</span>]
+                        end
+                        
+                    end
+                
+                    for <span class="name">removeX</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+                        <span class="name">inert</span>[<span class="literal">1</span>][<span class="name">removeX</span>] = <span class="literal">' '</span>
+                    end
+                end
+            end
+
+            <span class="call">newPiece</span>()
+
+            if not <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">pieceY</span>, <span class="name">pieceRotation</span>) then
+                <span class="call">reset</span>()
+            end
+        end
+    end
+end
+
+function <span class="name">love.draw</span>()
+    local function <span class="name">drawBlock</span>(<span class="name">block</span>, <span class="name">x</span>, <span class="name">y</span>)
+        local <span class="name">colors</span> = {
+            [<span class="literal">' '</span>] = {<span class="literal">222</span>, <span class="literal">222</span>, <span class="literal">222</span>},
+            <span class="name">i</span> = {<span class="literal">120</span>, <span class="literal">195</span>, <span class="literal">239</span>},
+            <span class="name">j</span> = {<span class="literal">236</span>, <span class="literal">231</span>, <span class="literal">108</span>},
+            <span class="name">l</span> = {<span class="literal">124</span>, <span class="literal">218</span>, <span class="literal">193</span>},
+            <span class="name">o</span> = {<span class="literal">234</span>, <span class="literal">177</span>, <span class="literal">121</span>},
+            <span class="name">s</span> = {<span class="literal">211</span>, <span class="literal">136</span>, <span class="literal">236</span>},
+            <span class="name">t</span> = {<span class="literal">248</span>, <span class="literal">147</span>, <span class="literal">196</span>},
+            <span class="name">z</span> = {<span class="literal">169</span>, <span class="literal">221</span>, <span class="literal">118</span>},
+            <span class="name">preview</span> = {<span class="literal">190</span>, <span class="literal">190</span>, <span class="literal">190</span>},
+        }
+        local <span class="name">color</span> = <span class="name">colors</span>[<span class="name">block</span>]
+        <span class="call">love.graphics.setColor</span>(<span class="name">color</span>)
+       
+        local <span class="name">blockSize</span> = <span class="literal">20</span>
+        local <span class="name">blockDrawSize</span> = <span class="name">blockSize</span> - <span class="literal">1</span>
+        <span class="call">love.graphics.rectangle</span>(
+            <span class="literal">'fill'</span>,
+            (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+            (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+            <span class="name">blockDrawSize</span>,
+            <span class="name">blockDrawSize</span>
+        )
+    end
+
+    local <span class="name">offsetX</span> = <span class="literal">2</span>
+    local <span class="name">offsetY</span> = <span class="literal">5</span>
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="call">drawBlock</span>(<span class="name">inert</span>[<span class="name">y</span>][<span class="name">x</span>], <span class="name">x</span> + <span class="name">offsetX</span>, <span class="name">y</span> + <span class="name">offsetY</span>)
+        end
+    end
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">pieceYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">pieceXCount</span> do
+            local <span class="name">block</span> = <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">pieceRotation</span>][<span class="name">y</span>][<span class="name">x</span>]
+            if <span class="name">block</span> ~= <span class="literal">' '</span> then
+                <span class="call">drawBlock</span>(<span class="name">block</span>, <span class="name">x</span> + <span class="name">pieceX</span> + <span class="name">offsetX</span>, <span class="name">y</span> + <span class="name">pieceY</span> + <span class="name">offsetY</span>)
+            end
+        end
+    end
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">pieceYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">pieceXCount</span> do
+            local <span class="name">block</span> = <span class="name">pieceStructures</span>[<span class="name">sequence</span>[#<span class="name">sequence</span>]][<span class="literal">1</span>][<span class="name">y</span>][<span class="name">x</span>]
+            if <span class="name">block</span> ~= <span class="literal">' '</span> then
+                <span class="call">drawBlock</span>(<span class="literal">'preview'</span>, <span class="name">x</span> + <span class="literal">5</span>, <span class="name">y</span> + <span class="literal">1</span>)
+            end
+        end
+    end
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">key</span> == <span class="literal">'x'</span> then
+        local <span class="name">testRotation</span> = <span class="name">pieceRotation</span> + <span class="literal">1</span>
+        if <span class="name">testRotation</span> > #<span class="name">pieceStructures</span>[<span class="name">pieceType</span>] then
+            <span class="name">testRotation</span> = <span class="literal">1</span>
+        end
+
+        if <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">pieceY</span>, <span class="name">testRotation</span>) then
+            <span class="name">pieceRotation</span> = <span class="name">testRotation</span>
+        end
+
+    elseif <span class="name">key</span> == <span class="literal">'z'</span> then
+        local <span class="name">testRotation</span> = <span class="name">pieceRotation</span> - <span class="literal">1</span>
+        if <span class="name">testRotation</span> < <span class="literal">1</span> then
+            <span class="name">testRotation</span> = #<span class="name">pieceStructures</span>[<span class="name">pieceType</span>]
+        end
+
+        if <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">pieceY</span>, <span class="name">testRotation</span>) then
+            <span class="name">pieceRotation</span> = <span class="name">testRotation</span>
+        end
+        
+    elseif <span class="name">key</span> == <span class="literal">'left'</span> then
+        local <span class="name">testX</span> = <span class="name">pieceX</span> - <span class="literal">1</span>
+
+        if <span class="call">canPieceMove</span>(<span class="name">testX</span>, <span class="name">pieceY</span>, <span class="name">pieceRotation</span>) then
+            <span class="name">pieceX</span> = <span class="name">testX</span>
+        end
+
+    elseif <span class="name">key</span> == <span class="literal">'right'</span> then
+        local <span class="name">testX</span> = <span class="name">pieceX</span> + <span class="literal">1</span>
+
+        if <span class="call">canPieceMove</span>(<span class="name">testX</span>, <span class="name">pieceY</span>, <span class="name">pieceRotation</span>) then
+            <span class="name">pieceX</span> = <span class="name">testX</span>
+        end
+
+    elseif <span class="name">key</span> == <span class="literal">'c'</span> then
+        while <span class="call">canPieceMove</span>(<span class="name">pieceX</span>, <span class="name">pieceY</span> + <span class="literal">1</span>, <span class="name">pieceRotation</span>) do
+            <span class="name">pieceY</span> = <span class="name">pieceY</span> + <span class="literal">1</span>
+            <span class="name">timer</span> = <span class="name">timerLimit</span>
+        end
+    end
+end
+</pre>
+</body></html

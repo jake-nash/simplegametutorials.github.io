@@ -1,0 +1,885 @@
+<html><head><title>Bird Tutorial</title>
+    <style>
+    body {
+        font-family: Calibri, sans-serif;
+        margin: 20px;
+    }
+    p {
+        max-width: 600px;
+        line-height: 1.4;
+    }
+    td {padding-right:10px}
+
+    .name {color:#770099}
+    .name {color:#aa0066}
+    .call {color:#bb5500}
+    .literal {color:#006666}
+    .comment {color:#006666; background:#ffffaa}
+
+    .name {color:#B137A2}
+    .call {color:#b16918}
+    .literal {color:#2D9999}
+    .highlight {background:#fcf9db}
+
+    .name {color:#d09}
+    .call {color:#d60}
+    .literal {color:#088}
+    .comment {color:#444; background:#eee}
+    .highlight {background:#ffc}
+    .highlight .comment, .comment .highlight {background:#f0edd3}
+
+    td {padding-right:10px}
+    .code {
+        font-family: Consolas;
+        border-left: solid 5px #e7e7e7;
+        color: #444;
+        padding-left: 12px;
+    }
+    .console {
+        font-family: Consolas;
+        padding: 16px;
+        background: #444;
+        color: #eee;
+        width: 700px;
+    }
+    </style>
+    </head>
+    <body>
+    <h1>Bird</h1>
+<h2><a href="bird.love">Download bird.love</a></h2>
+<img src="1.png">
+<h2>Rules</h2>
+<p>Fly through the spaces between the pipes by flapping.</p>
+<p>A point is scored for every pipe passed.</p>
+<h3>Controls</h3>
+<table>
+<tr><td><b>Any key</b></td><td>Flap</td></tr>
+</table>
+<h2>Overview</h2>
+<p>The bird doesn't actually move forward, it stays still on the X axis while the pipes move to the left.</p>
+<p>The bird is drawn by a yellow rectangle, and each pipe is drawn by two green rectangles.</p>
+<p>The bird's Y position moves down by a certain speed each frame. Each frame this speed is increased to simulate gravity.</p>
+<p>Qhen a key is pressed the bird's speed is set to a high number in the up direction.</p>
+<p>The pipes have the same width and the same height of the space between the segments.</p>
+<img src="2.png">
+<p>Each pipe has its own X position within the playing area and Y position of where the space starts.</p>
+<img src="3.png">
+<p>Since there are only two pipes in the playing area at one time, the information for only two pipes needs to stored. Once a pipe goes out of the playing area, it gets a new space position and its X position is reset to the right edge of the playing area.</p>
+<p>To see if the bird has collided with a pipe's two segments, three things need to be checked for each segment.</p>
+<p>The bird has collided with the top segment if...</p>
+<ul>
+<li>The left edge of the bird is to the left of the right edge of the pipe, and...</li>
+<li>The right edge of the bird is to the right of the left edge of the pipe, and...</li>
+<li>The top edge of the bird is above the bottom edge of the pipe segment</li>
+</ul>
+<img src="4.png">
+<p> </p>
+<img src="5.png">
+<p> </p>
+<img src="6.png">
+<p> </p>
+<img src="7.png">
+<p>The bird has collided with the bottom segment if...</p>
+<ul>
+<li>The left edge of the bird is to the left of the right edge of the pipe, and...</li>
+<li>The right edge of the bird is to the right of the left edge of the pipe, and...</li>
+<li>The bottom edge of the bird is below the top edge of the pipe segment</li>
+</ul>
+<img src="8.png">
+<p> </p>
+<img src="9.png">
+<h2>Coding</h2>
+<h3>Drawing the background</h3>
+<p>A blue rectangle is drawn for the background.</p>
+<pre class="code">
+function <span class="name">love.draw</span>()
+    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">100</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">300</span>, <span class="literal">388</span>)
+end
+</pre>
+<img src="10.png">
+<h3>Drawing the bird</h3>
+<p>A yellow rectangle is drawn for the bird.</p>
+<pre class="code">
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">0</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="literal">62</span>, <span class="literal">200</span>, <span class="literal">30</span>, <span class="literal">25</span>)
+end
+</pre>
+<img src="11.png">
+<h3>Moving the bird</h3>
+<p>The bird's Y position is made into a variable and every frame it increases by 30 multiplied by <b>dt</b>, making the bird move down 30 pixels per second.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="name">birdY</span> = <span class="literal">200</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">birdY</span> = <span class="name">birdY</span> + (<span class="literal">30</span> * <span class="name">dt</span>)
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">0</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="literal">62</span>, <span class="highlight"><span class="name">birdY</span></span>, <span class="literal">30</span>, <span class="literal">25</span>)
+end
+</pre>
+<img src="12.png">
+<h3>Gravity</h3>
+<p>Instead of moving at a constant speed, the number added to the bird's Y position also increases over time.</p>
+<p>The bird's speed is made into a variable which starts at 0, and every frame it increases by 516 multiplied by <b>dt</b>.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="name">birdY</span> = <span class="literal">200</span>
+    <span class="highlight"><span class="name">birdYSpeed</span> = <span class="literal">0</span></span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="highlight"><span class="name">birdYSpeed</span> = <span class="name">birdYSpeed</span> + (<span class="literal">516</span> * <span class="name">dt</span>)</span>
+    <span class="name">birdY</span> = <span class="name">birdY</span> + <span class="highlight">(<span class="name">birdYSpeed</span> * <span class="name">dt</span>)</span>
+end
+</pre>
+<h3>Flapping</h3>
+<p>Pressing any key sets the bird's speed so that it moves upwards.</p>
+<pre class="code">
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    <span class="name">birdYSpeed</span> = -<span class="literal">165</span>
+end
+</pre>
+<h3>Preventing flapping when above the playing area</h3>
+<p>So that the bird can't fly completely above the playing area, flapping is only possible if the top edge of the bird is not above the playing area.</p>
+<pre class="code">
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    <span class="highlight">if <span class="name">birdY</span> > <span class="literal">0</span> then</span>
+        <span class="name">birdYSpeed</span> = -<span class="literal">165</span>
+    <span class="highlight">end</span>
+end
+</pre>
+<h3>Drawing a pipe</h3>
+<p>For now, a solid rectangle is drawn for the pipe, with its left edge next to the playing area's right edge.</p>
+<p>The width and height of the playing area are reused from drawing the background, so these are made into variables.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="highlight"><span class="name">playingAreaWidth</span> = <span class="literal">300</span></span>
+    <span class="highlight"><span class="name">playingAreaHeight</span> = <span class="literal">388</span></span>
+end
+
+function <span class="name">love.draw</span>()
+    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">100</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="literal">0</span>, <span class="literal">0</span>, <span class="highlight"><span class="name">playingAreaWidth</span></span>, <span class="highlight"><span class="name">playingAreaHeight</span></span>)
+    
+    <span class="comment">-- etc.
+</span>
+    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">150</span>, <span class="literal">0</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="name">playingAreaWidth</span>, <span class="literal">0</span>, <span class="literal">54</span>, <span class="name">playingAreaHeight</span>)</span>
+end
+</pre>
+<img src="13.png">
+<h3>Drawing two pipe segments</h3>
+<p>Instead of drawing one rectangle, two rectangles are drawn for the upper and lower segments.</p>
+<p>The top rectangle's height is set to where the "space" between the two segments starts. For now, this is 150.</p>
+<p>The bottom rectangle starts at the Y position of the top rectangle's height plus amount of space between them (which is 100).</p>
+<p>The bottom rectangle's height is the playing area's height, minus the height of what is "already there" (the top rectangle and the space).</p>
+<p>The pipe width is the same for both segments, so this is made into a variable.</p>
+<pre class="code">
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="highlight">local <span class="name">pipeWidth</span> = <span class="literal">54</span></span>
+    <span class="highlight">local <span class="name">pipeSpaceY</span> = <span class="literal">150</span></span>
+    <span class="highlight">local <span class="name">pipeSpaceHeight</span> = <span class="literal">100</span></span>
+
+    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">150</span>, <span class="literal">0</span>)
+    <span class="call">love.graphics.rectangle</span>(
+        <span class="literal">'fill'</span>,
+        <span class="name">playingAreaWidth</span>,
+        <span class="literal">0</span>,
+        <span class="highlight"><span class="name">pipeWidth</span></span>,
+        <span class="highlight"><span class="name">pipeSpaceY</span></span>
+    )
+    <span class="call">love.graphics.rectangle</span>(
+        <span class="literal">'fill'</span>,
+        <span class="name">playingAreaWidth</span>,
+        <span class="highlight"><span class="name">pipeSpaceY</span> + <span class="name">pipeSpaceHeight</span></span>,
+        <span class="highlight"><span class="name">pipeWidth</span></span>,
+        <span class="name">playingAreaHeight</span> <span class="highlight">- <span class="name">pipeSpaceY</span> - <span class="name">pipeSpaceHeight</span></span>
+    )
+end
+</pre>
+<img src="14.png">
+<h3>Randomizing the space position</h3>
+<p>The pipe's space position is set to a random number between 0 (the top of the playing area) and the playing area height minus the space height (so that the bottom of the space would be touching the bottom of the playing area).</p>
+<p>The pipe's space position should be set only once, not every frame, so it is moved into <b>love.load</b>. Setting the pipe's space position requires the space's height, so this is also moved into <b>love.load</b>.</p>
+<p>To test this, pressing any key calls <b>love.load</b> to create a new random space position.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">pipeSpaceHeight</span> = <span class="literal">100</span>
+    <span class="name">pipeSpaceY</span> = <span class="call">love.math.random</span>(<span class="literal">0</span>, <span class="name">playingAreaHeight</span> - <span class="name">pipeSpaceHeight</span>)
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- Removed: local pipeSpaceY = 150
+</span>    <span class="comment">-- Removed: local pipeSpaceHeight = 100
+</span>end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    <span class="comment">-- etc.
+</span>
+    <span class="comment">-- Temporary
+</span>    <span class="call">love.load</span>()
+end
+</pre>
+<img src="15.png">
+<h3>Minimum distance from top/bottom for space</h3>
+<p>So that there is some distance between the top/bottom of the playing area and the space, a minimum number is added/subtracted from the random minimum/maximum values.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="highlight">local <span class="name">pipeSpaceYMin</span> = <span class="literal">54</span></span>
+    <span class="name">pipeSpaceY</span> = <span class="call">love.math.random</span>(
+        <span class="highlight"><span class="name">pipeSpaceYMin</span></span>,
+        <span class="name">playingAreaHeight</span> - <span class="name">pipeSpaceHeight</span> <span class="highlight">- <span class="name">pipeSpaceYMin</span></span>
+    )
+end
+</pre>
+<img src="16.png">
+<h3>Moving the pipe</h3>
+<p>The pipe's X position is made into a variable, and is moved left 60 pixels per second.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">pipeX</span> = <span class="name">playingAreaWidth</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="comment">-- etc.
+</span>
+    <span class="name">pipeX</span> = <span class="name">pipeX</span> - (<span class="literal">60</span> * <span class="name">dt</span>)
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="call">love.graphics.rectangle</span>(
+        <span class="literal">'fill'</span>,
+        <span class="highlight"><span class="name">pipeX</span></span>,
+        <span class="literal">0</span>,
+        <span class="name">pipeWidth</span>,
+        <span class="name">pipeSpaceY</span>
+    )
+    <span class="call">love.graphics.rectangle</span>(
+        <span class="literal">'fill'</span>,
+        <span class="highlight"><span class="name">pipeX</span></span>,
+        <span class="name">pipeSpaceY</span> + <span class="name">pipeSpaceHeight</span>,
+        <span class="name">pipeWidth</span>,
+        <span class="name">playingAreaHeight</span> - <span class="name">pipeSpaceY</span> - <span class="name">pipeSpaceHeight</span>
+    )
+end
+</pre>
+<img src="17.png">
+<h3>Resetting the pipe</h3>
+<p>When the pipe goes out of the playing area, its X position is reset and it gets a new random space position.</p>
+<p>Determining if the pipe has gone out of the playing area requires knowing the pipe's width, which is reused from drawing the pipe, so the pipe's width is moved into <b>love.load</b>.</p>
+<p>Setting the initial X position of the pipe and its random space position is reused from <b>love.load</b>, so a function is made.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="name">birdY</span> = <span class="literal">200</span>
+    <span class="name">birdYSpeed</span> = <span class="literal">0</span>
+
+    <span class="name">playingAreaWidth</span> = <span class="literal">300</span>
+    <span class="name">playingAreaHeight</span> = <span class="literal">388</span>
+
+    <span class="name">pipeSpaceHeight</span> = <span class="literal">100</span>
+    <span class="highlight"><span class="name">pipeWidth</span> = <span class="literal">54</span></span>
+
+    <span class="highlight">function <span class="name">resetPipe</span>()</span>
+        local <span class="name">pipeSpaceYMin</span> = <span class="literal">54</span>
+        <span class="name">pipeSpaceY</span> = <span class="call">love.math.random</span>(
+            <span class="name">pipeSpaceYMin</span>,
+            <span class="name">playingAreaHeight</span> - <span class="name">pipeSpaceHeight</span> - <span class="name">pipeSpaceYMin</span>
+        )
+
+        <span class="name">pipeX</span> = <span class="name">playingAreaWidth</span>
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="call">resetPipe</span>()</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="comment">-- etc.
+</span>
+    if (<span class="name">pipeX</span> + <span class="name">pipeWidth</span>) < <span class="literal">0</span> then
+        <span class="call">resetPipe</span>()
+    end
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- Removed: local pipeWidth = 54
+</span>end
+</pre>
+<h3>Colliding with the top pipe segment</h3>
+<p>The bird is colliding with the top pipe segment if...</p>
+<ul>
+<li>the left edge of the bird is to the left of the right edge of the pipe (i.e. the bird is not completely past the pipe on the right side), and...</li>
+<li>the right edge of the bird is to the left of the pipe (i.e. the bird is not completely to the left of the pipe), and...</li>
+<li>the top edge of the bird is above the bottom edge of the pipe segment (i.e. the bird is not completely below the pipe segment)</li>
+</ul>
+<p>For now, <b>love.load</b> is called when the bird and pipe collide.</p>
+<p>The bird's X position and width are reused from drawing the bird, so they are moved into <b>love.load</b>.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">birdX</span> = <span class="literal">62</span>
+    <span class="name">birdWidth</span> = <span class="literal">30</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="comment">-- etc.
+</span>
+    if
+    <span class="comment">-- Left edge of bird is to the left of the right edge of pipe
+</span>    <span class="name">birdX</span> < (<span class="name">pipeX</span> + <span class="name">pipeWidth</span>)
+    and
+     <span class="comment">-- Right edge of bird is to the right of the left edge of pipe
+</span>    (<span class="name">birdX</span> + <span class="name">birdWidth</span>) > <span class="name">pipeX</span>
+    and 
+    <span class="comment">-- Top edge of bird is above the bottom edge of first pipe segment
+</span>    <span class="name">birdY</span> < <span class="name">pipeSpaceY</span>
+    then
+        <span class="call">love.load</span>()
+    end
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">0</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">birdX</span></span>, <span class="name">birdY</span>, <span class="highlight"><span class="name">birdWidth</span></span>, <span class="literal">25</span>)
+
+    <span class="comment">-- etc.
+</span>end
+</pre>
+<h3>Colliding with the bottom pipe segment</h3>
+<p>The bird is colliding with the bottom pipe segment if...</p>
+<ul>
+<li>the bird is overlapping the pipe on the X axis (as checked for with the top pipe segment), and...</li>
+<li>the bottom edge of the bird is above the top edge of the pipe segment (i.e. the bird is not completely above the pipe segment)</li>
+</ul>
+<p>The bird's X height is reused from drawing the bird's rectangle, so it is made into a global variable.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">birdHeight</span> = <span class="literal">25</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="comment">-- etc.
+</span>
+    if
+    <span class="comment">-- Left edge of bird is to the left of the right edge of pipe
+</span>    <span class="name">birdX</span> < (<span class="name">pipeX</span> + <span class="name">pipeWidth</span>)
+    and
+     <span class="comment">-- Right edge of bird is to the right of the left edge of pipe
+</span>    (<span class="name">birdX</span> + <span class="name">birdWidth</span>) > <span class="name">pipeX</span>
+    and <span class="highlight">(</span>
+        <span class="comment">-- Top edge of bird is above the bottom edge of first pipe segment
+</span>        <span class="name">birdY</span> < <span class="name">pipeSpaceY</span>
+        <span class="highlight">or</span>
+        <span class="highlight"><span class="comment">-- Bottom edge of bird is below the top edge of second pipe segment</span>
+</span>        <span class="highlight">(<span class="name">birdY</span> + <span class="name">birdHeight</span>) > (<span class="name">pipeSpaceY</span> + <span class="name">pipeSpaceHeight</span>)</span>
+    <span class="highlight">)</span> then
+        <span class="call">love.load</span>()
+    end
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">0</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="name">birdX</span>, <span class="name">birdY</span>, <span class="name">birdWidth</span>, <span class="highlight"><span class="name">birdHeight</span></span>)
+
+    <span class="comment">-- etc.
+</span>end
+</pre>
+<h3>Drawing two pipes</h3>
+<p>Each pipe has its own X position and space position.</p>
+<p>For now, these are manually set for each pipe.</p>
+<p>The drawing code is turned into a function which takes a pipe's X position and space position.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">pipe1X</span> = <span class="literal">100</span>
+    <span class="name">pipe1SpaceY</span> = <span class="literal">100</span>
+
+    <span class="name">pipe2X</span> = <span class="literal">200</span>
+    <span class="name">pipe2SpaceY</span> = <span class="literal">200</span>
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="highlight">local function <span class="name">drawPipe</span>(<span class="name">pipeX</span>, <span class="name">pipeSpaceY</span>)</span>
+      <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">150</span>, <span class="literal">0</span>)
+      <span class="call">love.graphics.rectangle</span>(
+          <span class="literal">'fill'</span>,
+          <span class="name">pipeX</span>,
+          <span class="literal">0</span>,
+          <span class="name">pipeWidth</span>,
+          <span class="name">pipeSpaceY</span>
+      )
+      <span class="call">love.graphics.rectangle</span>(
+          <span class="literal">'fill'</span>,
+          <span class="name">pipeX</span>,
+          <span class="name">pipeSpaceY</span> + <span class="name">pipeSpaceHeight</span>,
+          <span class="name">pipeWidth</span>,
+          <span class="name">playingAreaHeight</span> - <span class="name">pipeSpaceY</span> - <span class="name">pipeSpaceHeight</span>
+      )
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="call">drawPipe</span>(<span class="name">pipe1X</span>, <span class="name">pipe1SpaceY</span>)</span>
+    <span class="highlight"><span class="call">drawPipe</span>(<span class="name">pipe2X</span>, <span class="name">pipe2SpaceY</span>)</span>
+end
+</pre>
+<img src="18.png">
+<h3>Randomizing space position for two pipes</h3>
+<p>Because each pipe has an individual X position, setting the X position is removed from the <b>resetPipe</b> function, leaving only the random space position. The function is renamed to reflect this.</p>
+<p>Instead of creating a global <b>pipeSpaceY</b> variable, the function returns a new space position.</p>
+<p>Because the variables <b>pipeX</b>, <b>pipeSpaceY</b> and <b>resetPipe</b> no longer exist, the parts of <b>love.update</b> which use them are commented out.</p>
+<p>To test the random space positions, the pipes get new space positions when a key is pressed.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    function <span class="highlight"><span class="name">newPipeSpaceY</span></span>()
+        local <span class="name">pipeSpaceYMin</span> = <span class="literal">54</span>
+        <span class="highlight">local</span> <span class="name">pipeSpaceY</span> = <span class="call">love.math.random</span>(
+            <span class="name">pipeSpaceYMin</span>,
+            <span class="name">playingAreaHeight</span> - <span class="name">pipeSpaceHeight</span> - <span class="name">pipeSpaceYMin</span>
+        )
+        <span class="highlight">return <span class="name">pipeSpaceY</span></span>
+    end
+
+    <span class="comment">-- Removed: resetPipe()
+</span>
+    <span class="name">pipe1X</span> = <span class="literal">100</span>
+    <span class="name">pipe1SpaceY</span> = <span class="highlight"><span class="call">newPipeSpaceY</span>()</span>
+
+    <span class="name">pipe2X</span> = <span class="literal">200</span>
+    <span class="name">pipe2SpaceY</span> = <span class="highlight"><span class="call">newPipeSpaceY</span>()</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">birdYSpeed</span> = <span class="name">birdYSpeed</span> + (<span class="literal">516</span> * <span class="name">dt</span>)
+    <span class="name">birdY</span> = <span class="name">birdY</span> + (<span class="name">birdYSpeed</span> * <span class="name">dt</span>)
+    
+    <span class="comment"><span class="comment">--[[
+    pipeX = pipeX - (60 * dt)
+    
+    if (pipeX + pipeWidth) < 0 then
+        resetPipe()
+    end
+
+    if
+    -- Left edge of bird is to the left of the right edge of pipe
+    birdX < (pipeX + pipeWidth)
+    and
+     -- Right edge of bird is to the right of the left edge of pipe
+    (birdX + birdWidth) > pipeX
+    and (
+        -- Top edge of bird is above the bottom edge of first pipe segment
+        birdY < pipeSpaceY
+        or
+        -- Bottom edge of bird is below the top edge of second pipe segment
+        (birdY + birdHeight) > (pipeSpaceY + pipeSpaceHeight)
+    ) then
+        love.load()
+    end
+    --]]</span>
+</span>end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    <span class="comment">-- etc.
+</span>
+    <span class="comment">-- Temporary
+</span>    <span class="name">pipe1SpaceY</span> = <span class="call">newPipeSpaceY</span>()
+    <span class="name">pipe2SpaceY</span> = <span class="call">newPipeSpaceY</span>()
+end
+</pre>
+<img src="19.png">
+<h3>Moving two pipes</h3>
+<p>The code which moves the pipe is uncommented and turned into a function which takes a pipe's X and space positions, and returns the updated positions.</p>
+<p>When a pipe goes off the playing area it is set to the right of the playing area.</p>
+<pre class="code">
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="comment">-- etc.
+</span>    
+    <span class="highlight">local function <span class="name">movePipe</span>(<span class="name">pipeX</span>, <span class="name">pipeSpaceY</span>)</span>
+        <span class="name">pipeX</span> = <span class="name">pipeX</span> - (<span class="literal">60</span> * <span class="name">dt</span>)
+        
+        if (<span class="name">pipeX</span> + <span class="name">pipeWidth</span>) < <span class="literal">0</span> then
+            <span class="highlight"><span class="name">pipeX</span> = <span class="name">playingAreaWidth</span></span>
+            <span class="highlight"><span class="name">pipeSpaceY</span> = <span class="call">newPipeSpaceY</span>()</span>
+        end
+
+        <span class="highlight">return <span class="name">pipeX</span>, <span class="name">pipeSpaceY</span></span>
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="name">pipe1X</span>, <span class="name">pipe1SpaceY</span> = <span class="call">movePipe</span>(<span class="name">pipe1X</span>, <span class="name">pipe1SpaceY</span>)</span>
+    <span class="highlight"><span class="name">pipe2X</span>, <span class="name">pipe2SpaceY</span> = <span class="call">movePipe</span>(<span class="name">pipe2X</span>, <span class="name">pipe2SpaceY</span>)</span>
+
+    <span class="comment"><span class="comment">--[[
+    if
+    -- Left edge of bird is to the left of the right edge of pipe
+    birdX < (pipeX + pipeWidth)
+    and
+     -- Right edge of bird is to the right of the left edge of pipe
+    (birdX + birdWidth) > pipeX
+    and (
+        -- Top edge of bird is above the bottom edge of first pipe segment
+        birdY < pipeSpaceY
+        or
+        -- Bottom edge of bird is below the top edge of second pipe segment
+        (birdY + birdHeight) > (pipeSpaceY + pipeSpaceHeight)
+    ) then
+        love.load()
+    end
+    --]]</span>
+</span>end
+</pre>
+<img src="20.png">
+<h3>Initial X position for pipes</h3>
+<p>The first pipe's initial X position is the width of the playing area (i.e. the pipe's left edge is touching the right edge of the playing area).</p>
+<p>The second pipe's initial X position is set so that there is an even space between it and the first pipe on either side.</p>
+<p>The distance the first pipe travels before it wraps around the playing area is the width of the playing area plus the width of the pipe, because it starts when its left edge is on the right edge of the playing area and ends when its right edge if on the left edge of the playing area. The second pipe's initial X position is set to half this distance.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">pipe1X</span> = <span class="highlight"><span class="name">playingAreaWidth</span></span>
+    <span class="name">pipe1SpaceY</span> = <span class="call">newPipeSpaceY</span>()
+
+    <span class="name">pipe2X</span> = <span class="highlight"><span class="name">playingAreaWidth</span> + ((<span class="name">playingAreaWidth</span> + <span class="name">pipeWidth</span>) / <span class="literal">2</span>)</span>
+    <span class="name">pipe2SpaceY</span> = <span class="call">newPipeSpaceY</span>()
+end
+</pre>
+<img src="21.png">
+<h3>Bird colliding with pipe</h3>
+<p>The code for the checking if the bird and pipe have collided is uncommented and turned into a function which takes a pipe's X and space positions and returns a boolean value.</p>
+<p>The function is called for both pipes.</p>
+<pre class="code">
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="comment">-- etc.
+</span>
+    <span class="highlight">function <span class="name">isBirdCollidingWithPipe</span>(<span class="name">pipeX</span>, <span class="name">pipeSpaceY</span>)</span>
+        <span class="highlight">return</span>
+        <span class="comment">-- Left edge of bird is to the left of the right edge of pipe
+</span>        <span class="name">birdX</span> < (<span class="name">pipeX</span> + <span class="name">pipeWidth</span>)
+        and
+         <span class="comment">-- Right edge of bird is to the right of the left edge of pipe
+</span>        (<span class="name">birdX</span> + <span class="name">birdWidth</span>) > <span class="name">pipeX</span>
+        and (
+            <span class="comment">-- Top edge of bird is above the bottom edge of first pipe segment
+</span>            <span class="name">birdY</span> < <span class="name">pipeSpaceY</span>
+            or
+            <span class="comment">-- Bottom edge of bird is below the top edge of second pipe segment
+</span>            (<span class="name">birdY</span> + <span class="name">birdHeight</span>) > (<span class="name">pipeSpaceY</span> + <span class="name">pipeSpaceHeight</span>)
+        )
+    <span class="highlight">end</span>
+
+    if <span class="highlight"><span class="call">isBirdCollidingWithPipe</span>(<span class="name">pipe1X</span>, <span class="name">pipe1SpaceY</span>)</span>
+    <span class="highlight">or <span class="call">isBirdCollidingWithPipe</span>(<span class="name">pipe2X</span>, <span class="name">pipe2SpaceY</span>)</span> then
+        <span class="call">love.load</span>()
+    end
+end
+</pre>
+<h3>Bird falling out of playing area</h3>
+<p>The game is also over if the bird has fallen out of the playing area (i.e. the bird's top edge is below the bottom edge of the playing area).</p>
+<pre class="code">
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="comment">-- etc.
+</span>
+    if <span class="call">birdPipeCollisionCheck</span>(<span class="name">pipe1X</span>, <span class="name">pipe1SpaceY</span>)
+    or <span class="call">birdPipeCollisionCheck</span>(<span class="name">pipe2X</span>, <span class="name">pipe2SpaceY</span>)
+    <span class="highlight">or <span class="name">birdY</span> > <span class="name">playingAreaHeight</span></span> then
+        <span class="call">love.load</span>()
+    end
+end
+</pre>
+<h3>Drawing score</h3>
+<p>The score is set to 0 initially and is drawn.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">score</span> = <span class="literal">0</span>
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="call">love.graphics.print</span>(<span class="name">score</span>, <span class="literal">15</span>, <span class="literal">15</span>)
+end
+</pre>
+<img src="22.png">
+<h3>Updating score after passing first pipe</h3>
+<p>If the bird's left edge if to the right of the pipe's right edge, then 1 is added to the score.</p>
+<p>Currently, this happens every frame instead of once, and only the first pipe is checked.</p>
+<pre class="code">
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="comment">-- etc.
+</span>
+     if (<span class="name">birdX</span> > (<span class="name">pipe1X</span> + <span class="name">pipe1Width</span>)) then
+        <span class="name">score</span> = <span class="name">score</span> + <span class="literal">1</span>
+    end
+end
+</pre>
+<img src="23.png">
+<h3>Updating score once for both pipes</h3>
+<p>So that the score is only increased once, a number representing which pipe is upcoming is stored in a variable and the bird is checked to see if it has passed a pipe only when that particular pipe is the upcoming pipe.</p>
+<p>When it has passed it, the upcoming pipe is set to the other pipe.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">upcomingPipe</span> = <span class="literal">1</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="comment">-- etc.
+</span>
+    if <span class="highlight"><span class="name">upcomingPipe</span> == <span class="literal">1</span></span>
+    <span class="highlight">and</span> (<span class="name">birdX</span> > (<span class="name">pipe1X</span> + <span class="name">pipeWidth</span>)) then
+        <span class="name">score</span> = <span class="name">score</span> + <span class="literal">1</span>
+        <span class="highlight"><span class="name">upcomingPipe</span> = <span class="literal">2</span></span>
+    end
+
+    if <span class="highlight"><span class="name">upcomingPipe</span> == <span class="literal">2</span></span>
+    <span class="highlight">and</span> (<span class="name">birdX</span> > (<span class="name">pipe2X</span> + <span class="name">pipeWidth</span>)) then
+        <span class="name">score</span> = <span class="name">score</span> + <span class="literal">1</span>
+        <span class="highlight"><span class="name">upcomingPipe</span> = <span class="literal">1</span></span>
+    end
+end
+</pre>
+<img src="24.png">
+<h3>Simplifying code</h3>
+<p>The only differences between updating the score for the first and second pipes are the currently upcoming pipe, the pipe's X position, and the next upcoming pipe.</p>
+<p>A function is made with these values as parameters.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">upcomingPipe</span> = <span class="literal">1</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="comment">-- etc.
+</span>
+    <span class="highlight">local function <span class="name">updateScoreAndClosestPipe</span>(<span class="name">thisPipe</span>, <span class="name">pipeX</span>, <span class="name">otherPipe</span>)</span>
+        if <span class="name">upcomingPipe</span> == <span class="highlight"><span class="name">thisPipe</span></span>
+        and (<span class="name">birdX</span> > (<span class="highlight"><span class="name">pipeX</span></span> + <span class="name">pipeWidth</span>)) then
+            <span class="name">score</span> = <span class="name">score</span> + <span class="literal">1</span>
+            <span class="name">upcomingPipe</span> = <span class="highlight"><span class="name">otherPipe</span></span>
+        end
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="call">updateScoreAndClosestPipe</span>(<span class="literal">1</span>, <span class="name">pipe1X</span>, <span class="literal">2</span>)</span>
+    <span class="highlight"><span class="call">updateScoreAndClosestPipe</span>(<span class="literal">2</span>, <span class="name">pipe2X</span>, <span class="literal">1</span>)</span>
+end
+</pre>
+<h3>Resetting on game over</h3>
+<p>When the game is over only some variables need to be reset, so a function is made.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="name">playingAreaWidth</span> = <span class="literal">300</span>
+    <span class="name">playingAreaHeight</span> = <span class="literal">388</span>
+
+    <span class="name">birdX</span> = <span class="literal">62</span>
+    <span class="name">birdWidth</span> = <span class="literal">30</span>
+    <span class="name">birdHeight</span> = <span class="literal">25</span>
+    
+    <span class="name">pipeSpaceHeight</span> = <span class="literal">100</span>
+    <span class="name">pipeWidth</span> = <span class="literal">54</span>
+
+    function <span class="name">newPipeSpaceY</span>()
+        local <span class="name">pipeSpaceYMin</span> = <span class="literal">54</span>
+        local <span class="name">pipeSpaceY</span> = <span class="call">love.math.random</span>(
+            <span class="name">pipeSpaceYMin</span>,
+            <span class="name">playingAreaHeight</span> - <span class="name">pipeSpaceHeight</span> - <span class="name">pipeSpaceYMin</span>
+        )
+        return <span class="name">pipeSpaceY</span>
+    end
+    
+    <span class="highlight">function <span class="name">reset</span>()</span>
+        <span class="name">birdY</span> = <span class="literal">200</span>
+        <span class="name">birdYSpeed</span> = <span class="literal">0</span>
+
+        <span class="name">pipe1X</span> = <span class="name">playingAreaWidth</span>
+        <span class="name">pipe1SpaceY</span> = <span class="call">newPipeSpaceY</span>()
+
+        <span class="name">pipe2X</span> = <span class="name">playingAreaWidth</span> + ((<span class="name">playingAreaWidth</span> + <span class="name">pipeWidth</span>) / <span class="literal">2</span>)
+        <span class="name">pipe2SpaceY</span> = <span class="call">newPipeSpaceY</span>()
+
+        <span class="name">score</span> = <span class="literal">0</span>
+
+        <span class="name">upcomingPipe</span> = <span class="literal">1</span>
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="call">reset</span>()</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="comment">-- etc.
+</span>
+    if <span class="call">birdPipeCollisionCheck</span>(<span class="name">pipe1X</span>, <span class="name">pipe1SpaceY</span>)
+    or <span class="call">birdPipeCollisionCheck</span>(<span class="name">pipe2X</span>, <span class="name">pipe2SpaceY</span>)
+    or <span class="name">birdY</span> > <span class="name">playingAreaHeight</span> then
+        <span class="highlight"><span class="call">reset</span>()</span>
+    end
+
+    <span class="comment">-- etc.
+</span>end
+</pre>
+<h2>Final code</h2>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="name">playingAreaWidth</span> = <span class="literal">300</span>
+    <span class="name">playingAreaHeight</span> = <span class="literal">388</span>
+
+    <span class="name">birdX</span> = <span class="literal">62</span>
+    <span class="name">birdWidth</span> = <span class="literal">30</span>
+    <span class="name">birdHeight</span> = <span class="literal">25</span>
+    
+    <span class="name">pipeSpaceHeight</span> = <span class="literal">100</span>
+    <span class="name">pipeWidth</span> = <span class="literal">54</span>
+
+    function <span class="name">newPipeSpaceY</span>()
+        local <span class="name">pipeSpaceYMin</span> = <span class="literal">54</span>
+        local <span class="name">pipeSpaceY</span> = <span class="call">love.math.random</span>(
+            <span class="name">pipeSpaceYMin</span>,
+            <span class="name">playingAreaHeight</span> - <span class="name">pipeSpaceHeight</span> - <span class="name">pipeSpaceYMin</span>
+        )
+        return <span class="name">pipeSpaceY</span>
+    end
+    
+    function <span class="name">reset</span>()
+        <span class="name">birdY</span> = <span class="literal">200</span>
+        <span class="name">birdYSpeed</span> = <span class="literal">0</span>
+
+        <span class="name">pipe1X</span> = <span class="name">playingAreaWidth</span>
+        <span class="name">pipe1SpaceY</span> = <span class="call">newPipeSpaceY</span>()
+
+        <span class="name">pipe2X</span> = <span class="name">playingAreaWidth</span> + ((<span class="name">playingAreaWidth</span> + <span class="name">pipeWidth</span>) / <span class="literal">2</span>)
+        <span class="name">pipe2SpaceY</span> = <span class="call">newPipeSpaceY</span>()
+
+        <span class="name">score</span> = <span class="literal">0</span>
+
+        <span class="name">upcomingPipe</span> = <span class="literal">1</span>
+    end
+
+    <span class="call">reset</span>()
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">birdYSpeed</span> = <span class="name">birdYSpeed</span> + (<span class="literal">516</span> * <span class="name">dt</span>)
+    <span class="name">birdY</span> = <span class="name">birdY</span> + (<span class="name">birdYSpeed</span> * <span class="name">dt</span>)
+    
+    local function <span class="name">movePipe</span>(<span class="name">pipeX</span>, <span class="name">pipeSpaceY</span>)
+        <span class="name">pipeX</span> = <span class="name">pipeX</span> - (<span class="literal">60</span> * <span class="name">dt</span>)
+
+        if (<span class="name">pipeX</span> + <span class="name">pipeWidth</span>) < <span class="literal">0</span> then
+            <span class="name">pipeX</span> = <span class="name">playingAreaWidth</span>
+            <span class="name">pipeSpaceY</span> = <span class="call">newPipeSpaceY</span>()
+        end
+        
+        return <span class="name">pipeX</span>, <span class="name">pipeSpaceY</span>
+    end
+
+    <span class="name">pipe1X</span>, <span class="name">pipe1SpaceY</span> = <span class="call">movePipe</span>(<span class="name">pipe1X</span>, <span class="name">pipe1SpaceY</span>)
+    <span class="name">pipe2X</span>, <span class="name">pipe2SpaceY</span> = <span class="call">movePipe</span>(<span class="name">pipe2X</span>, <span class="name">pipe2SpaceY</span>)
+
+    function <span class="name">isBirdCollidingWithPipe</span>(<span class="name">pipeX</span>, <span class="name">pipeSpaceY</span>)
+        return
+        <span class="comment">-- Left edge of bird is to the left of the right edge of pipe
+</span>        <span class="name">birdX</span> < (<span class="name">pipeX</span> + <span class="name">pipeWidth</span>)
+        and
+         <span class="comment">-- Right edge of bird is to the right of the left edge of pipe
+</span>        (<span class="name">birdX</span> + <span class="name">birdWidth</span>) > <span class="name">pipeX</span>
+        and (
+            <span class="comment">-- Top edge of bird is above the bottom edge of first pipe segment
+</span>            <span class="name">birdY</span> < <span class="name">pipeSpaceY</span>
+            or
+            <span class="comment">-- Bottom edge of bird is below the top edge of second pipe segment
+</span>            (<span class="name">birdY</span> + <span class="name">birdHeight</span>) > (<span class="name">pipeSpaceY</span> + <span class="name">pipeSpaceHeight</span>)
+        )
+    end
+
+    if <span class="call">isBirdCollidingWithPipe</span>(<span class="name">pipe1X</span>, <span class="name">pipe1SpaceY</span>)
+    or <span class="call">isBirdCollidingWithPipe</span>(<span class="name">pipe2X</span>, <span class="name">pipe2SpaceY</span>)
+    or <span class="name">birdY</span> > <span class="name">playingAreaHeight</span> then
+        <span class="call">reset</span>()
+    end
+
+    local function <span class="name">updateScoreAndClosestPipe</span>(<span class="name">thisPipe</span>, <span class="name">pipeX</span>, <span class="name">otherPipe</span>)
+        if <span class="name">upcomingPipe</span> == <span class="name">thisPipe</span>
+        and (<span class="name">birdX</span> > (<span class="name">pipeX</span> + <span class="name">pipeWidth</span>)) then
+            <span class="name">score</span> = <span class="name">score</span> + <span class="literal">1</span>
+            <span class="name">upcomingPipe</span> = <span class="name">otherPipe</span>
+        end
+    end
+
+    <span class="call">updateScoreAndClosestPipe</span>(<span class="literal">1</span>, <span class="name">pipe1X</span>, <span class="literal">2</span>)
+    <span class="call">updateScoreAndClosestPipe</span>(<span class="literal">2</span>, <span class="name">pipe2X</span>, <span class="literal">1</span>)
+end
+
+function <span class="name">love.draw</span>()
+    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">100</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="literal">0</span>, <span class="literal">0</span>, <span class="name">playingAreaWidth</span>, <span class="name">playingAreaHeight</span>)
+
+    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">0</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="name">birdX</span>, <span class="name">birdY</span>, <span class="name">birdWidth</span>, <span class="name">birdHeight</span>)
+    
+    local function <span class="name">drawPipe</span>(<span class="name">pipeX</span>, <span class="name">pipeSpaceY</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">150</span>, <span class="literal">0</span>)
+        <span class="call">love.graphics.rectangle</span>(
+            <span class="literal">'fill'</span>,
+            <span class="name">pipeX</span>,
+            <span class="literal">0</span>,
+            <span class="name">pipeWidth</span>,
+            <span class="name">pipeSpaceY</span>
+        )
+        <span class="call">love.graphics.rectangle</span>(
+            <span class="literal">'fill'</span>,
+            <span class="name">pipeX</span>,
+            <span class="name">pipeSpaceY</span> + <span class="name">pipeSpaceHeight</span>,
+            <span class="name">pipeWidth</span>,
+            <span class="name">playingAreaHeight</span> - <span class="name">pipeSpaceY</span> - <span class="name">pipeSpaceHeight</span>
+        )
+    end
+
+    <span class="call">drawPipe</span>(<span class="name">pipe1X</span>, <span class="name">pipe1SpaceY</span>)
+    <span class="call">drawPipe</span>(<span class="name">pipe2X</span>, <span class="name">pipe2SpaceY</span>)
+    
+    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="call">love.graphics.print</span>(<span class="name">score</span>, <span class="literal">15</span>, <span class="literal">15</span>)
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">birdY</span> > <span class="literal">0</span> then
+        <span class="name">birdYSpeed</span> = -<span class="literal">165</span>
+    end
+end
+</pre>
+</body></html
