@@ -811,7 +811,7 @@ function <span class="name">love.draw</span>()
 </pre>
 <img src="22.png">
 <h3>Drawing ace</h3>
-<p>If the card is an ace a pip drawn in the middle of the card.</p>
+<p>If the card is an ace a pip is drawn in the middle of the card.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.
@@ -1441,7 +1441,7 @@ function <span class="name">love.draw</span>()
 <ul>
 <li>the mouse's X position is to the right of the button's left edge</li>
 <li>the mouse's X position is to the left of the button's right edge (i.e less than the position of the button plus the width of the button)</li>
-<li>the mouse's X position is below the button's top edge</li>
+<li>the mouse's Y position is below the button's top edge</li>
 <li>the mouse's Y position is above the button's bottom edge (i.e. less than the position of the button plus the height of the button)</li>
 </ul>
 <p>The button height is reused from drawing the button, so a variable is made.</p>
@@ -1471,7 +1471,7 @@ function <span class="name">love.draw</span>()
 </pre>
 <img src="34.png">
 <h3>Clicking buttons</h3>
-<p>If a mouse button is released and the mouse is over the on-screen button then the button has been clicked, and for now the name of the button is printed.</p>
+<p>If a mouse button is released and the mouse is over the on-screen button then the button has been clicked, for now the name of the button is printed.</p>
 <p>Checking if the mouse is over a button is reused from drawing the button, so this is made into a function and is moved into <b>love.load</b>.</p>
 <p>The X and Y positions and width and height of buttons are also reused from drawing the buttons, so these are also moved into <b>love.load</b>.</p>
 <pre class="code">

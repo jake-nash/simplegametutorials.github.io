@@ -110,7 +110,7 @@ function <span class="name">love.draw</span>()
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.
 </span>
-    local <span class="name">angle</span> = <span class="name">math.atan2</span>(<span class="name">distanceX</span>, <span class="name">distanceY</span>)
+    local <span class="name">angle</span> = <span class="name">math.atan2</span>(<span class="name">distanceY</span>, <span class="name">distanceX</span>)
 
     <span class="comment">-- etc.
 </span>    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'angle: '</span>..<span class="name">angle</span>)
@@ -120,21 +120,21 @@ function <span class="name">love.draw</span>()
 </pre>
 <img src="5.png">
 <h3>Moving pupil</h3>
-<p>The sine/cosine of the X/Y positions give the ratio between the X/Y positions and the straight-line distance.</p>
-<p>For example, when the mouse is directly below the eye, all of the straight-line distance goes into the Y axis, so the cosine is 1 and the sine is 0.</p>
-<p>For another example, when the sine is 0.5, the X distance is 0.5 (i.e. half) of the straight-line distance, and the Y distance is around 0.86 of the straight-line distance.</p>
-<p>The pupil is moved by the sine/cosine of the angle multiplied by the distance, which brings the pupil to the mouse position.</p>
+<p>The cosine/sine of the X/Y positions give the ratio between the X/Y positions and the straight-line distance.</p>
+<p>For example, when the mouse is directly below the eye, all of the straight-line distance goes into the Y axis, so the cosine is 0 and the sine is 1.</p>
+<p>For another example, when the sine is 0.5, the Y distance is 0.5 (i.e. half) of the straight-line distance, and the X distance is around 0.86 of the straight-line distance.</p>
+<p>The pupil is moved by the cosine/sine of the angle multiplied by the distance, which brings the pupil to the mouse position.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.
 </span>
-    <span class="highlight">local <span class="name">pupilX</span> = <span class="name">eyeX</span> + (<span class="call">math.sin</span>(<span class="name">angle</span>) * <span class="name">distance</span>)</span>
-    <span class="highlight">local <span class="name">pupilY</span> = <span class="name">eyeY</span> + (<span class="call">math.cos</span>(<span class="name">angle</span>) * <span class="name">distance</span>)</span>
+    <span class="highlight">local <span class="name">pupilX</span> = <span class="name">eyeX</span> + (<span class="call">math.cos</span>(<span class="name">angle</span>) * <span class="name">distance</span>)</span>
+    <span class="highlight">local <span class="name">pupilY</span> = <span class="name">eyeY</span> + (<span class="call">math.sin</span>(<span class="name">angle</span>) * <span class="name">distance</span>)</span>
 
     <span class="comment">-- etc.
 </span>
-    <span class="highlight"><span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'sin(angle): '</span>..<span class="call">math.sin</span>(<span class="name">angle</span>))</span>
     <span class="highlight"><span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'cos(angle): '</span>..<span class="call">math.cos</span>(<span class="name">angle</span>))</span>
+    <span class="highlight"><span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'sin(angle): '</span>..<span class="call">math.sin</span>(<span class="name">angle</span>))</span>
 
     <span class="comment">-- etc.
 </span>
@@ -154,8 +154,8 @@ function <span class="name">love.draw</span>()
     <span class="highlight">    <span class="name">distance</span> = <span class="name">eyeMaxPupilDistance</span></span>
     <span class="highlight">end</span>
 
-    local <span class="name">pupilX</span> = <span class="name">eyeX</span> + (<span class="call">math.sin</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
-    local <span class="name">pupilY</span> = <span class="name">eyeY</span> + (<span class="call">math.cos</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
+    local <span class="name">pupilX</span> = <span class="name">eyeX</span> + (<span class="call">math.cos</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
+    local <span class="name">pupilY</span> = <span class="name">eyeY</span> + (<span class="call">math.sin</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
 
     <span class="comment">-- etc.
 </span>end
@@ -169,15 +169,15 @@ function <span class="name">love.draw</span>()
         local <span class="name">distanceX</span> = <span class="call">love.mouse.getX</span>() - <span class="name">eyeX</span>
         local <span class="name">distanceY</span> = <span class="call">love.mouse.getY</span>() - <span class="name">eyeY</span>
         local <span class="name">distance</span> = <span class="call">math.sqrt</span>(<span class="name">distanceX</span>^<span class="literal">2</span> + <span class="name">distanceY</span>^<span class="literal">2</span>)
-        local <span class="name">angle</span> = <span class="name">math.atan2</span>(<span class="name">distanceX</span>, <span class="name">distanceY</span>)
+        local <span class="name">angle</span> = <span class="name">math.atan2</span>(<span class="name">distanceY</span>, <span class="name">distanceX</span>)
 
         local <span class="name">eyeMaxPupilDistance</span> = <span class="literal">30</span>
         if <span class="name">distance</span> > <span class="name">eyeMaxPupilDistance</span> then
             <span class="name">distance</span> = <span class="name">eyeMaxPupilDistance</span>
         end
 
-        local <span class="name">pupilX</span> = <span class="name">eyeX</span> + (<span class="call">math.sin</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
-        local <span class="name">pupilY</span> = <span class="name">eyeY</span> + (<span class="call">math.cos</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
+        local <span class="name">pupilX</span> = <span class="name">eyeX</span> + (<span class="call">math.cos</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
+        local <span class="name">pupilY</span> = <span class="name">eyeY</span> + (<span class="call">math.sin</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
 
         <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
         <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">eyeX</span>, <span class="name">eyeY</span>, <span class="literal">50</span>)
