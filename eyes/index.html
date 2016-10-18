@@ -78,7 +78,7 @@ function <span class="name">love.draw</span>()
     <span class="highlight"><span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'distance y: '</span>..<span class="name">distanceY</span>)</span>
 
     <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)</span>
-    <span class="highlight"><span class="call">love.graphics.print</span>(<span class="name">output</span>, <span class="call">table.concat</span>(<span class="name">output</span>, <span class="literal">'\n'</span>))</span>
+    <span class="highlight"><span class="call">love.graphics.print</span>(<span class="call">table.concat</span>(<span class="name">output</span>, <span class="literal">'\n'</span>))</span>
 
     <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
     <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">eyeX</span></span>, <span class="highlight"><span class="name">eyeY</span></span>, <span class="literal">50</span>)
@@ -93,8 +93,7 @@ end
 <p>The square root of the distance on the X axis squared plus the distance on the Y axis squared is the distance in a straight line.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
-    local <span class="name">distanceX</span> = <span class="call">love.mouse.getX</span>() - <span class="name">eyeX</span>
-    local <span class="name">distanceY</span> = <span class="call">love.mouse.getY</span>() - <span class="name">eyeY</span>
+    local <span class="name">distance</span> = <span class="call">math.sqrt</span>(<span class="name">distanceX</span>^<span class="literal">2</span> + <span class="name">distanceY</span>^<span class="literal">2</span>)
     
     <span class="comment">-- etc.
 </span>
@@ -113,7 +112,8 @@ function <span class="name">love.draw</span>()
     local <span class="name">angle</span> = <span class="name">math.atan2</span>(<span class="name">distanceY</span>, <span class="name">distanceX</span>)
 
     <span class="comment">-- etc.
-</span>    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'angle: '</span>..<span class="name">angle</span>)
+</span>
+    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'angle: '</span>..<span class="name">angle</span>)
 
     <span class="comment">-- etc.
 </span>end
