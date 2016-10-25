@@ -8,40 +8,32 @@
         max-width: 600px;
         line-height: 1.4;
     }
-    td {padding-right:10px}
-
-    .name {color:#770099}
-    .name {color:#aa0066}
-    .call {color:#bb5500}
-    .literal {color:#006666}
-    .comment {color:#006666; background:#ffffaa}
-
-    .name {color:#B137A2}
-    .call {color:#b16918}
-    .literal {color:#2D9999}
-    .highlight {background:#fcf9db}
-
+    td {
+        padding-right:10px
+    }
+    .code {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        border-left: solid 5px #e7e7e7;
+        color: #444;
+        padding-left: 12px;
+    }
+    .inlinecode {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        color: #444;
+    }
+    .console {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        padding: 16px;
+        background: #444;
+        color: #eee;
+        width: 700px;
+    }
     .name {color:#d09}
     .call {color:#d60}
     .literal {color:#088}
     .comment {color:#444; background:#eee}
     .highlight {background:#ffc}
     .highlight .comment, .comment .highlight {background:#f0edd3}
-
-    td {padding-right:10px}
-    .code {
-        font-family: Consolas;
-        border-left: solid 5px #e7e7e7;
-        color: #444;
-        padding-left: 12px;
-    }
-    .console {
-        font-family: Consolas;
-        padding: 16px;
-        background: #444;
-        color: #eee;
-        width: 700px;
-    }
     </style>
     </head>
     <body>
@@ -110,7 +102,8 @@ end
 </pre>
 <img src="11.png">
 <h3>Moving the bird</h3>
-<p>The bird's Y position is made into a variable and every frame it increases by 30 multiplied by <b>dt</b>, making the bird move down 30 pixels per second.</p>
+<p>The bird's Y position is made into a variable and every frame it increases by 30 multiplied by <span class="inlinecode">
+<span class="name">dt</span></span>, making the bird move down 30 pixels per second.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="name">birdY</span> = <span class="literal">200</span>
@@ -130,7 +123,8 @@ end
 <img src="12.png">
 <h3>Gravity</h3>
 <p>Instead of moving at a constant speed, the number added to the bird's Y position also increases over time.</p>
-<p>The bird's speed is made into a variable which starts at 0, and every frame it increases by 516 multiplied by <b>dt</b>.</p>
+<p>The bird's speed is made into a variable which starts at 0, and every frame it increases by 516 multiplied by <span class="inlinecode">
+<span class="name">dt</span></span>.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="name">birdY</span> = <span class="literal">200</span>
@@ -214,8 +208,11 @@ end
 <img src="14.png">
 <h3>Randomizing the space position</h3>
 <p>The pipe's space position is set to a random number between 0 (the top of the playing area) and the playing area height minus the space height (so that the bottom of the space would be touching the bottom of the playing area).</p>
-<p>The pipe's space position should be set only once, not every frame, so it is moved into <b>love.load</b>. Setting the pipe's space position requires the space's height, so this is also moved into <b>love.load</b>.</p>
-<p>To test this, pressing any key calls <b>love.load</b> to create a new random space position.</p>
+<p>The pipe's space position should be set only once, not every frame, so it is moved into <span class="inlinecode">
+<span class="name">love.load</span></span>. Setting the pipe's space position requires the space's height, so this is also moved into <span class="inlinecode">
+<span class="name">love.load</span></span>.</p>
+<p>To test this, pressing any key calls <span class="inlinecode">
+<span class="name">love.load</span></span> to create a new random space position.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -288,8 +285,10 @@ end
 <img src="17.png">
 <h3>Resetting the pipe</h3>
 <p>When the pipe goes out of the playing area, its X position is reset and it gets a new random space position.</p>
-<p>Determining if the pipe has gone out of the playing area requires knowing the pipe's width, which is reused from drawing the pipe, so the pipe's width is moved into <b>love.load</b>.</p>
-<p>Setting the initial X position of the pipe and its random space position is reused from <b>love.load</b>, so a function is made.</p>
+<p>Determining if the pipe has gone out of the playing area requires knowing the pipe's width, which is reused from drawing the pipe, so the pipe's width is moved into <span class="inlinecode">
+<span class="name">love.load</span></span>.</p>
+<p>Setting the initial X position of the pipe and its random space position is reused from <span class="inlinecode">
+<span class="name">love.load</span></span>, so a function is made.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="name">birdY</span> = <span class="literal">200</span>
@@ -333,8 +332,10 @@ function <span class="name">love.draw</span>()
 <li>the right edge of the bird is to the left of the pipe (i.e. the bird is not completely to the left of the pipe), and...</li>
 <li>the top edge of the bird is above the bottom edge of the pipe segment (i.e. the bird is not completely below the pipe segment)</li>
 </ul>
-<p>For now, <b>love.load</b> is called when the bird and pipe collide.</p>
-<p>The bird's X position and width are reused from drawing the bird, so they are moved into <b>love.load</b>.</p>
+<p>For now, <span class="inlinecode">
+<span class="name">love.load</span></span> is called when the bird and pipe collide.</p>
+<p>The bird's X position and width are reused from drawing the bird, so they are moved into <span class="inlinecode">
+<span class="name">love.load</span></span>.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -454,9 +455,15 @@ end
 </pre>
 <img src="18.png">
 <h3>Randomizing space position for two pipes</h3>
-<p>Because each pipe has an individual X position, setting the X position is removed from the <b>resetPipe</b> function, leaving only the random space position. The function is renamed to reflect this.</p>
-<p>Instead of creating a global <b>pipeSpaceY</b> variable, the function returns a new space position.</p>
-<p>Because the variables <b>pipeX</b>, <b>pipeSpaceY</b> and <b>resetPipe</b> no longer exist, the parts of <b>love.update</b> which use them are commented out.</p>
+<p>Because each pipe has an individual X position, setting the X position is removed from the <span class="inlinecode">
+<span class="name">resetPipe</span></span> function, leaving only the random space position. The function is renamed to reflect this.</p>
+<p>Instead of creating a global <span class="inlinecode">
+<span class="name">pipeSpaceY</span></span> variable, the function returns a new space position.</p>
+<p>Because the variables <span class="inlinecode">
+<span class="name">pipeX</span></span>, <span class="inlinecode">
+<span class="name">pipeSpaceY</span></span> and <span class="inlinecode">
+<span class="name">resetPipe</span></span> no longer exist, the parts of <span class="inlinecode">
+<span class="name">love.update</span></span> which use them are commented out.</p>
 <p>To test the random space positions, the pipes get new space positions when a key is pressed.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
@@ -882,4 +889,4 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
     end
 end
 </pre>
-</body></html
+</body></html>

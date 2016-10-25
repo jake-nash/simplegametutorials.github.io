@@ -8,40 +8,32 @@
         max-width: 600px;
         line-height: 1.4;
     }
-    td {padding-right:10px}
-
-    .name {color:#770099}
-    .name {color:#aa0066}
-    .call {color:#bb5500}
-    .literal {color:#006666}
-    .comment {color:#006666; background:#ffffaa}
-
-    .name {color:#B137A2}
-    .call {color:#b16918}
-    .literal {color:#2D9999}
-    .highlight {background:#fcf9db}
-
+    td {
+        padding-right:10px
+    }
+    .code {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        border-left: solid 5px #e7e7e7;
+        color: #444;
+        padding-left: 12px;
+    }
+    .inlinecode {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        color: #444;
+    }
+    .console {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        padding: 16px;
+        background: #444;
+        color: #eee;
+        width: 700px;
+    }
     .name {color:#d09}
     .call {color:#d60}
     .literal {color:#088}
     .comment {color:#444; background:#eee}
     .highlight {background:#ffc}
     .highlight .comment, .comment .highlight {background:#f0edd3}
-
-    td {padding-right:10px}
-    .code {
-        font-family: Consolas;
-        border-left: solid 5px #e7e7e7;
-        color: #444;
-        padding-left: 12px;
-    }
-    .console {
-        font-family: Consolas;
-        padding: 16px;
-        background: #444;
-        color: #eee;
-        width: 700px;
-    }
     </style>
     </head>
     <body>
@@ -330,7 +322,12 @@ function <span class="name">love.load</span>()
 </pre>
 <img src="14.png">
 <h3>Moving player to empty location</h3>
-<p>If the player's current position is the cell type <b>player</b> (i.e. not <b>playerOnStorage</b>) and the adjacent cell type is <b>empty</b>, then the player's position becomes <b>empty</b> and the adjacent position becomes <b>player</b>.</p>
+<p>If the player's current position is the cell type <span class="inlinecode">
+<span class="name">player</span></span> (i.e. not <span class="inlinecode">
+<span class="name">playerOnStorage</span></span>) and the adjacent cell type is <span class="inlinecode">
+<span class="name">empty</span></span>, then the player's position becomes <span class="inlinecode">
+<span class="name">empty</span></span> and the adjacent position becomes <span class="inlinecode">
+<span class="name">player</span></span>.</p>
 <pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
         <span class="comment">-- etc.
@@ -344,7 +341,9 @@ end
 </pre>
 <img src="15.png">
 <h3>Moving player to storage</h3>
-<p>If the adjacent position is <b>storage</b> then the new adjacent position becomes <b>playerOnStorage</b>.</p>
+<p>If the adjacent position is <span class="inlinecode">
+<span class="name">storage</span></span> then the new adjacent position becomes <span class="inlinecode">
+<span class="name">playerOnStorage</span></span>.</p>
 <p>Currently the player can move on to storage, but not off storage.</p>
 <pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
@@ -365,8 +364,11 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 </pre>
 <img src="16.png">
 <h3>Simplifying code</h3>
-<p>The new adjacent position is changed based on what <b>adjacent</b> is, so a table is made which returns the next adjacent cell type when indexed by the current adjacent cell type.</p>
-<p>Indexing by anything other than the values <b>empty</b> or <b>storage</b> will be result in nil, so it can also be used to check if the player can move at all.</p>
+<p>The new adjacent position is changed based on what <span class="inlinecode">
+<span class="name">adjacent</span></span> is, so a table is made which returns the next adjacent cell type when indexed by the current adjacent cell type.</p>
+<p>Indexing by anything other than the values <span class="inlinecode">
+<span class="name">empty</span></span> or <span class="inlinecode">
+<span class="name">storage</span></span> will be result in nil, so it can also be used to check if the player can move at all.</p>
 <pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
         <span class="comment">-- etc.
@@ -385,7 +387,8 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 </span>end
 </pre>
 <h3>Moving player from storage</h3>
-<p>If the player is on storage, then the player's current position is set to <b>storage</b>.</p>
+<p>If the player is on storage, then the player's current position is set to <span class="inlinecode">
+<span class="name">storage</span></span>.</p>
 <pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
         <span class="comment">-- etc.
@@ -425,7 +428,9 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 </pre>
 <h3>Pushing box on to empty location</h3>
 <p>The cell beyond the adjacent cell is stored in a variable.</p>
-<p>If the adjacent cell is a box and the beyond cell is empty, the adjacent position is set to <b>player</b> and the beyond position is set to <b>box</b>.</p>
+<p>If the adjacent cell is a box and the beyond cell is empty, the adjacent position is set to <span class="inlinecode">
+<span class="name">player</span></span> and the beyond position is set to <span class="inlinecode">
+<span class="name">box</span></span>.</p>
 <pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
         <span class="comment">-- etc.
@@ -455,7 +460,9 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 </pre>
 <img src="18.png">
 <h3>Pushing box on to storage</h3>
-<p>If the beyond position is <b>storage</b> then the new beyond position becomes <b>boxOnStorage</b>.</p>
+<p>If the beyond position is <span class="inlinecode">
+<span class="name">storage</span></span> then the new beyond position becomes <span class="inlinecode">
+<span class="name">boxOnStorage</span></span>.</p>
 <pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
         <span class="comment">-- etc.
@@ -505,7 +512,8 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 </span>end
 </pre>
 <h3>Pushing box on storage</h3>
-<p>If the adjacent cell is a box on storage, then the adjacent position is set to <b>boxOnStorage</b>.</p>
+<p>If the adjacent cell is a box on storage, then the adjacent position is set to <span class="inlinecode">
+<span class="name">boxOnStorage</span></span>.</p>
 <pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
         <span class="comment">-- etc.
@@ -609,7 +617,8 @@ end
 <img src="21.png">
 <h3>Resetting level</h3>
 <p>When the <b>r</b> key is pressed the level is reset.</p>
-<p>The code for copying the current level to the level table is reused from <b>love.load</b>, so a function is made.</p>
+<p>The code for copying the current level to the level table is reused from <span class="inlinecode">
+<span class="name">love.load</span></span>, so a function is made.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -2247,4 +2256,4 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
     end
 end
 </pre>
-</body></html
+</body></html>

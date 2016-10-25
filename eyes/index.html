@@ -8,40 +8,32 @@
         max-width: 600px;
         line-height: 1.4;
     }
-    td {padding-right:10px}
-
-    .name {color:#770099}
-    .name {color:#aa0066}
-    .call {color:#bb5500}
-    .literal {color:#006666}
-    .comment {color:#006666; background:#ffffaa}
-
-    .name {color:#B137A2}
-    .call {color:#b16918}
-    .literal {color:#2D9999}
-    .highlight {background:#fcf9db}
-
+    td {
+        padding-right:10px
+    }
+    .code {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        border-left: solid 5px #e7e7e7;
+        color: #444;
+        padding-left: 12px;
+    }
+    .inlinecode {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        color: #444;
+    }
+    .console {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        padding: 16px;
+        background: #444;
+        color: #eee;
+        width: 700px;
+    }
     .name {color:#d09}
     .call {color:#d60}
     .literal {color:#088}
     .comment {color:#444; background:#eee}
     .highlight {background:#ffc}
     .highlight .comment, .comment .highlight {background:#f0edd3}
-
-    td {padding-right:10px}
-    .code {
-        font-family: Consolas;
-        border-left: solid 5px #e7e7e7;
-        color: #444;
-        padding-left: 12px;
-    }
-    .console {
-        font-family: Consolas;
-        padding: 16px;
-        background: #444;
-        color: #eee;
-        width: 700px;
-    }
     </style>
     </head>
     <body>
@@ -104,12 +96,13 @@ function <span class="name">love.draw</span>()
 </pre>
 <img src="4.png">
 <h3>Getting angle between cursor and eye</h3>
-<p>The angle in radians between the mouse cursor and the center of the eye is calculated using <b>math.atan2</b>.</p>
+<p>The angle in radians between the mouse cursor and the center of the eye is calculated using <span class="inlinecode">
+<span class="name">math.atan2</span></span>.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.
 </span>
-    local <span class="name">angle</span> = <span class="name">math.atan2</span>(<span class="name">distanceY</span>, <span class="name">distanceX</span>)
+    local <span class="name">angle</span> = <span class="call">math.atan2</span>(<span class="name">distanceY</span>, <span class="name">distanceX</span>)
 
     <span class="comment">-- etc.
 </span>
@@ -169,7 +162,7 @@ function <span class="name">love.draw</span>()
         local <span class="name">distanceX</span> = <span class="call">love.mouse.getX</span>() - <span class="name">eyeX</span>
         local <span class="name">distanceY</span> = <span class="call">love.mouse.getY</span>() - <span class="name">eyeY</span>
         local <span class="name">distance</span> = <span class="call">math.sqrt</span>(<span class="name">distanceX</span>^<span class="literal">2</span> + <span class="name">distanceY</span>^<span class="literal">2</span>)
-        local <span class="name">angle</span> = <span class="name">math.atan2</span>(<span class="name">distanceY</span>, <span class="name">distanceX</span>)
+        local <span class="name">angle</span> = <span class="call">math.atan2</span>(<span class="name">distanceY</span>, <span class="name">distanceX</span>)
 
         local <span class="name">eyeMaxPupilDistance</span> = <span class="literal">30</span>
         if <span class="name">distance</span> > <span class="name">eyeMaxPupilDistance</span> then
@@ -191,4 +184,4 @@ function <span class="name">love.draw</span>()
 end
 </pre>
 <img src="8.png">
-</body></html
+</body></html>

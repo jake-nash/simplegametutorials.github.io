@@ -1,0 +1,211 @@
+<html><head><title>Basic L&Ouml;VE Concepts</title>
+    <style>
+    body {
+        font-family: Calibri, sans-serif;
+        margin: 20px;
+    }
+    p {
+        max-width: 600px;
+        line-height: 1.4;
+    }
+    td {
+        padding-right:10px
+    }
+    .code {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        border-left: solid 5px #e7e7e7;
+        color: #444;
+        padding-left: 12px;
+    }
+    .inlinecode {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        color: #444;
+    }
+    .console {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        padding: 16px;
+        background: #444;
+        color: #eee;
+        width: 700px;
+    }
+    .name {color:#d09}
+    .call {color:#d60}
+    .literal {color:#088}
+    .comment {color:#444; background:#eee}
+    .highlight {background:#ffc}
+    .highlight .comment, .comment .highlight {background:#f0edd3}
+    </style>
+    </head>
+    <body>
+    <h1>Basic L&Ouml;VE concepts</h1>
+<p>L&Ouml;VE's homepage is: <a href="https://love2d.org/">https://love2d.org/</a></p>
+<p>The current L&Ouml;VE version at the time this document was last updated is 0.10.1.</p>
+<p>L&Ouml;VE uses <a href="http://luajit.org/extensions.html">LuaJIT 2.0</a>. You don't need to install this or any other Lua version to use L&Ouml;VE.</p>
+<h2>What L&Ouml;VE can run on</h2>
+<p>L&Ouml;VE projects can be run on Windows, Linux, Mac, Android, iOS and (unofficially) <a href="https://github.com/TannerRogalsky/love.js">web browsers</a>.</p>
+<h2>What L&Ouml;VE provides</h2>
+<p>L&Ouml;VE provides a way of displaying graphics, playing sound, and getting user input, among other things.</p>
+<p>L&Ouml;VE doesn't provide things which can be written in Lua code, unless it would be too slow.</p>
+<p>For example, L&Ouml;VE doesn't provide anything specifically for animations, because animations can be made with Lua code that uses what L&Ouml;VE provides.</p>
+<p>However, L&Ouml;VE does provide a particle system and a physics system, because they are significantly faster than if they were made with Lua code.</p>
+<h2>Running L&Ouml;VE projects</h2>
+<p>A L&Ouml;VE project is a directory or zip file containing a <b>main.lua</b> file and any other files used.</p>
+<p>A project can be run via the command line by <b>love.exe path_to_love_project</b> on Windows, <b>love path_to_love_project</b> on Linux, or <b>open -n -a love path_to_love_project</b> on Mac.</p>
+<p>Or, it can be run by dragging and dropping the L&Ouml;VE project on to <b>love.exe</b> on Windows or <b>love.app</b> on Mac.</p>
+<p>Zip files with the extension <b>.love</b> will be opened automatically by L&Ouml;VE. Files with the extension <b>.love</b> can be renamed to have the extension <b>.zip</b> and unzipped.</p>
+<p>For more information on running L&Ouml;VE projects, see this page: <a href="https://love2d.org/wiki/Getting_Started">https://love2d.org/wiki/Getting_Started</a></p>
+<h2>Distribution</h2>
+<p>L&Ouml;VE projects can be made into <b>.exe</b> files for Windows, <b>.app</b> files for Mac, and so on. For more information, see this page: <a href="https://love2d.org/wiki/Game_Distribution">https://love2d.org/wiki/Game_Distribution</a></p>
+<h2>Control flow</h2>
+<p>When a L&Ouml;VE project is run, L&Ouml;VE runs <b>conf.lua</b> and the function <span class="inlinecode">
+<span class="name">love.conf</span></span> (if they exist), then runs <b>main.lua</b>, then runs the function <span class="inlinecode">
+<span class="name">love.run</span></span>, then closes.</p>
+<p>A default <span class="inlinecode">
+<span class="name">love.run</span></span> function is used if it isn't overwritten by the project's code, and this default is what calls the rest of the callbacks mentioned below.</p>
+<p>For more information on <span class="inlinecode">
+<span class="name">love.run</span></span>, see this page: <a href="https://love2d.org/wiki/love.run">https://love2d.org/wiki/love.run</a></p>
+<p><b>main.lua</b> is intended for the main code.</p>
+<h2>Callbacks</h2>
+<p>Control flow in L&Ouml;VE uses callbacks.</p>
+<p>L&Ouml;VE's callbacks are functions which you create and L&Ouml;VE runs at specific times.</p>
+<p>For example, <span class="inlinecode">
+<span class="name">love.load</span></span> is run once L&Ouml;VE has loaded.</p>
+<p>Every frame, <span class="inlinecode">
+<span class="name">love.update</span></span> is run, which is intended for updating the state of the program, then <span class="inlinecode">
+<span class="name">love.draw</span></span> is run, which is intended for drawing to the screen.</p>
+<p><span class="inlinecode">
+<span class="name">love.update</span></span> is given the time since it was last run in seconds as a parameter.</p>
+<p><span class="inlinecode">
+<span class="name">love.keypressed</span></span> is run when a key on the keyboard is pressed, and is given which key it was as a parameter.</p>
+<p>For example:</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="name">randomNumber</span> = <span class="call">love.math.random</span>()
+    <span class="name">totalTime</span> = <span class="literal">0</span>
+    <span class="name">x</span> = <span class="literal">15</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">totalTime</span> = <span class="name">totalTime</span> + <span class="name">dt</span>
+    <span class="name">x</span> = <span class="name">x</span> + (<span class="literal">10</span> * <span class="name">dt</span>)
+end
+
+function <span class="name">love.draw</span>()
+    <span class="call">love.graphics.print</span>(<span class="literal">'The random number is '</span>..<span class="name">randomNumber</span>, <span class="literal">15</span>, <span class="literal">15</span>)
+    <span class="call">love.graphics.print</span>(<span class="literal">'The program has been running for '</span>..<span class="name">totalTime</span>..<span class="literal">' seconds'</span>, <span class="literal">15</span>, <span class="literal">30</span>)
+    <span class="call">love.graphics.print</span>(<span class="literal">'This text is moving right at 10 pixels per second'</span>, <span class="name">x</span>, <span class="literal">45</span>)
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">key</span> == <span class="literal">'r'</span> then
+        <span class="name">randomNumber</span> = <span class="call">love.math.random</span>()
+    elseif <span class="name">key</span> == <span class="literal">'x'</span> then
+        <span class="name">x</span> = <span class="literal">15</span>
+    end
+end
+</pre>
+<p>L&Ouml;VE has around 35 callbacks.</p>
+<p>For information on all of the callbacks, see this page: <a href="https://love2d.org/wiki/love#Callbacks">https://love2d.org/wiki/love#Callbacks</a></p>
+<h2>Configuration</h2>
+<p><span class="inlinecode">
+<span class="name">love.conf</span></span> is a callback defined in <b>conf.lua</b> which is called before modules are loaded and before <b>main.lua</b> is run.</p>
+<p>It can set the initial window properties and disable modules among other things.</p>
+<p>For more information on configuration, see this page: <a href="https://love2d.org/wiki/Config_Files">https://love2d.org/wiki/Config_Files</a></p>
+<h2>Functions</h2>
+<p>L&Ouml;VE provides functions which you can call to do things.</p>
+<p><span class="inlinecode">
+<span class="name">love.graphics.print</span></span> is an example of a function, so is <span class="inlinecode">
+<span class="name">love.math.random</span></span>.</p>
+<p>L&Ouml;VE has around 255 functions.</p>
+<p>For information on all of the functions, see each module's page: <a href="https://love2d.org/wiki/love#Modules">https://love2d.org/wiki/love#Modules</a></p>
+<h2>Convenience functions</h2>
+<p>Some functions provide a quicker way of doing something which could be done in another way.</p>
+<p>For example, this code creates a new Font with <span class="inlinecode">
+<span class="name">love.graphics.newFont</span></span> and sets the internal state to use this font with <span class="inlinecode">
+<span class="name">love.graphics.setFont</span></span>.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="call">love.graphics.setFont</span>(<span class="call">love.graphics.newFont</span>(<span class="literal">'font.ttf'</span>, <span class="literal">20</span>))
+end
+</pre>
+<p><span class="inlinecode">
+<span class="name">love.graphics.setNewFont</span></span> is a convenience function which does the same thing.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="call">love.graphics.setNewFont</span>(<span class="literal">'font.ttf'</span>, <span class="literal">20</span>)
+end
+</pre>
+<h2>Internal state</h2>
+<p>L&Ouml;VE has state in a running program which affects the behavior of the program and can be changed/retrieved by functions. Functions for changing state often start with <b>set</b> and functions for retrieving state often start with <b>get</b>.</p>
+<p>For example, <span class="inlinecode">
+<span class="name">love.graphics.setColor</span></span> changes the state of the drawing color, and <span class="inlinecode">
+<span class="name">love.graphics.getColor</span></span> retrieves it.</p>
+<pre class="code">
+function <span class="name">love.draw</span>()
+    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="name">red</span>, <span class="name">green</span>, <span class="name">blue</span> = <span class="call">love.graphics.getColor</span>()
+    <span class="call">love.graphics.print</span>(
+        <span class="literal">'The color state currently has a red value of '</span>..<span class="name">red</span>..
+        <span class="literal">' and a green value of '</span>..<span class="name">green</span>..
+        <span class="literal">' and a blue value of '</span>..<span class="name">blue</span>,
+        <span class="literal">15</span>, <span class="literal">15</span>
+    )
+
+    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">51</span>, <span class="literal">133</span>)
+    <span class="name">red</span>, <span class="name">green</span>, <span class="name">blue</span> = <span class="call">love.graphics.getColor</span>()
+    <span class="call">love.graphics.print</span>(
+        <span class="literal">'The color state currently has a red value of '</span>..<span class="name">red</span>..
+        <span class="literal">' and a green value of '</span>..<span class="name">green</span>..
+        <span class="literal">' and a blue value of '</span>..<span class="name">blue</span>,
+        <span class="literal">15</span>, <span class="literal">30</span>
+    )
+end
+</pre>
+<h2>Objects</h2>
+<p>Objects are returned by "constructor" functions, and can be used by other functions to do things. Constructor functions generally start with <b>new</b>.</p>
+<p>For example, <b>Image</b> objects are returned by <span class="inlinecode">
+<span class="name">love.graphics.newImage</span></span>. They can be drawn to the screen with <span class="inlinecode">
+<span class="name">love.graphics.draw</span></span>.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="name">image1</span> = <span class="call">love.graphics.newImage</span>(<span class="literal">'image1.png'</span>)
+    <span class="name">image2</span> = <span class="call">love.graphics.newImage</span>(<span class="literal">'image2.png'</span>)
+end
+
+function <span class="name">love.draw</span>()
+    <span class="call">love.graphics.draw</span>(<span class="name">image1</span>, <span class="literal">15</span>, <span class="literal">15</span>)
+    <span class="call">love.graphics.draw</span>(<span class="name">image2</span>, <span class="literal">15</span>, <span class="literal">100</span>)
+end
+</pre>
+<p>L&Ouml;VE has around 47 object types, 22 of which are in the <b>physics</b> module.</p>
+<p>For information on all of the objects, see each module's page: <a href="https://love2d.org/wiki/love#Modules">https://love2d.org/wiki/love#Modules</a></p>
+<h2>Object state and functions</h2>
+<p>Objects have their own individual state.</p>
+<p>Objects have functions which change or retrieve the object's state, or have external effects based on the object's state.</p>
+<p>For example, <span class="inlinecode">
+<span class="name">Image:setFilter</span></span> changes the way an <b>Image</b> looks when it is drawn scaled, and <span class="inlinecode">
+<span class="name">Image:getFilter</span></span> retrieves it.</p>
+<pre class="code">
+function <span class="name">love.load</span>()
+    <span class="name">image1</span> = <span class="call">love.graphics.newImage</span>(<span class="literal">'image1.png'</span>)
+end
+
+function <span class="name">love.draw</span>()
+    <span class="call">image1:setFilter</span>(<span class="literal">'linear'</span>)
+    <span class="call">love.graphics.print</span>(<span class="literal">'The image filter is '</span>..<span class="call">image1:getFilter</span>(), <span class="literal">15</span>, <span class="literal">15</span>)
+    <span class="call">love.graphics.draw</span>(<span class="name">image1</span>, <span class="literal">15</span>, <span class="literal">35</span>, <span class="literal">0</span>, <span class="literal">2</span>)
+
+    <span class="call">image1:setFilter</span>(<span class="literal">'nearest'</span>)
+    <span class="call">love.graphics.print</span>(<span class="literal">'The image filter is '</span>..<span class="call">image1:getFilter</span>(), <span class="literal">15</span>, <span class="literal">115</span>)
+    <span class="call">love.graphics.draw</span>(<span class="name">image1</span>, <span class="literal">15</span>, <span class="literal">135</span>, <span class="literal">0</span>, <span class="literal">2</span>)
+end
+</pre>
+<p>L&Ouml;VE has around 518 object functions, 232 of which are in the <b>physics</b> module.</p>
+<h2>Modules</h2>
+<p>L&Ouml;VE's internal code is divided into modules.</p>
+<p>Modules can be disabled in <span class="inlinecode">
+<span class="name">love.conf</span></span>.</p>
+<p>L&Ouml;VE's functions are within tables named after the module they are in. For example, <span class="inlinecode">
+<span class="name">love.graphics.newImage</span></span> is in the <b>graphics</b> module.</p>
+<p>L&Ouml;VE has around 17 modules.</p>
+</body></html>

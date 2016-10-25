@@ -8,40 +8,32 @@
         max-width: 600px;
         line-height: 1.4;
     }
-    td {padding-right:10px}
-
-    .name {color:#770099}
-    .name {color:#aa0066}
-    .call {color:#bb5500}
-    .literal {color:#006666}
-    .comment {color:#006666; background:#ffffaa}
-
-    .name {color:#B137A2}
-    .call {color:#b16918}
-    .literal {color:#2D9999}
-    .highlight {background:#fcf9db}
-
+    td {
+        padding-right:10px
+    }
+    .code {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        border-left: solid 5px #e7e7e7;
+        color: #444;
+        padding-left: 12px;
+    }
+    .inlinecode {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        color: #444;
+    }
+    .console {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        padding: 16px;
+        background: #444;
+        color: #eee;
+        width: 700px;
+    }
     .name {color:#d09}
     .call {color:#d60}
     .literal {color:#088}
     .comment {color:#444; background:#eee}
     .highlight {background:#ffc}
     .highlight .comment, .comment .highlight {background:#f0edd3}
-
-    td {padding-right:10px}
-    .code {
-        font-family: Consolas;
-        border-left: solid 5px #e7e7e7;
-        color: #444;
-        padding-left: 12px;
-    }
-    .console {
-        font-family: Consolas;
-        padding: 16px;
-        background: #444;
-        color: #eee;
-        width: 700px;
-    }
     </style>
     </head>
     <body>
@@ -64,8 +56,8 @@
 <p>While there is anything left on the uncover stack...</p>
 <ul>
 <li>A position is removed from the end of the stack.</li>
-<li>This position is set to *uncovered*.</li>
-<li>If there are no flowers surrounding this position, the surrounding *covered* and *question marked* positions are added to the uncover stack.</li>
+<li>This position is set to <b>uncovered</b>.</li>
+<li>If there are no flowers surrounding this position, the surrounding <b>covered</b> and <b>question marked</b> positions are added to the uncover stack.</li>
 </ul>
 <p>The cells are assembled from the following images.</p>
 <img src="2.png">
@@ -98,7 +90,9 @@ end
 <img src="3.png">
 <h3>Selecting cells</h3>
 <p>The cell under the mouse is updated every frame.</p>
-<p>This needs the cell size, so this is moved from <b>love.draw</b> to <b>love.load</b>.</p>
+<p>This needs the cell size, so this is moved from <span class="inlinecode">
+<span class="name">love.draw</span></span> to <span class="inlinecode">
+<span class="name">love.load</span></span>.</p>
 <p>For now, this position is drawn as text.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
@@ -201,7 +195,8 @@ end
 <img src="7.png">
 <h3>Drawing flowers</h3>
 <p>A grid is created to store the state of the cells. Since each cell will have two values which need to be stored (whether it has a flower, and whether it is uncovered, has a flag, a question mark, or nothing) each cell is represented by a table.</p>
-<p>If a cell's <b>'flower'</b> key is true, the flower image is drawn over the cell image.</p>
+<p>If a cell's <span class="inlinecode">
+<span class="literal">'flower'</span></span> key is true, the flower image is drawn over the cell image.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -317,7 +312,8 @@ end
 <h3>Random flower placement</h3>
 <p>A table is created with very X and Y position in the grid.</p>
 <p>Random positions are repeatedly removed from this table and the cell at this position is set to have a flower.</p>
-<p>To test this, any key calls <b>love.load</b>.</p>
+<p>To test this, any key calls <span class="inlinecode">
+<span class="name">love.load</span></span>.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -343,8 +339,10 @@ end
 <img src="10.png">
 <h3>Uncovering cells</h3>
 <p>The cell tables are given a new key for the state of the cell as a string. For now, this is whether the cell is covered or uncovered.</p>
-<p>For now, when a cell is left clicked its state is set to <b>'uncovered'</b>.</p>
-<p>If a cell's state is <b>'uncovered'</b> the uncovered image is drawn instead of the covered images.</p>
+<p>For now, when a cell is left clicked its state is set to <span class="inlinecode">
+<span class="literal">'uncovered'</span></span>.</p>
+<p>If a cell's state is <span class="inlinecode">
+<span class="literal">'uncovered'</span></span> the uncovered image is drawn instead of the covered images.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -710,7 +708,8 @@ end
 </pre>
 <h3>New game on next click</h3>
 <p>When the mouse is clicked when the game is over, the game is reset.</p>
-<p>For now, <b>love.load</b> is called to reset the game.</p>
+<p>For now, <span class="inlinecode">
+<span class="name">love.load</span></span> is called to reset the game.</p>
 <pre class="code">
 function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
     if not <span class="name">gameOver</span> then
@@ -1031,4 +1030,4 @@ function <span class="name">love.mousereleased</span>(<span class="name">mouseX<
     end
 end
 </pre>
-</body></html
+</body></html>

@@ -8,40 +8,32 @@
         max-width: 600px;
         line-height: 1.4;
     }
-    td {padding-right:10px}
-
-    .name {color:#770099}
-    .name {color:#aa0066}
-    .call {color:#bb5500}
-    .literal {color:#006666}
-    .comment {color:#006666; background:#ffffaa}
-
-    .name {color:#B137A2}
-    .call {color:#b16918}
-    .literal {color:#2D9999}
-    .highlight {background:#fcf9db}
-
+    td {
+        padding-right:10px
+    }
+    .code {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        border-left: solid 5px #e7e7e7;
+        color: #444;
+        padding-left: 12px;
+    }
+    .inlinecode {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        color: #444;
+    }
+    .console {
+        font-family: Consolas, Monaco, Inconsolata, monospace;
+        padding: 16px;
+        background: #444;
+        color: #eee;
+        width: 700px;
+    }
     .name {color:#d09}
     .call {color:#d60}
     .literal {color:#088}
     .comment {color:#444; background:#eee}
     .highlight {background:#ffc}
     .highlight .comment, .comment .highlight {background:#f0edd3}
-
-    td {padding-right:10px}
-    .code {
-        font-family: Consolas;
-        border-left: solid 5px #e7e7e7;
-        color: #444;
-        padding-left: 12px;
-    }
-    .console {
-        font-family: Consolas;
-        padding: 16px;
-        background: #444;
-        color: #eee;
-        width: 700px;
-    }
     </style>
     </head>
     <body>
@@ -153,7 +145,8 @@ end
 <p>The cell position that the mouse cursor is over is stored.</p>
 <p>This is calculated by taking the mouse position and dividing it by the cell size, flooring this number, then adding 1 to it.</p>
 <p>For example, if the mouse is at position 17 on the X axis and the cell size is 5, dividing 17 by 5 gives 3.4, flooring 3.4 gives 3, and adding 1 gives 4, meaning that the mouse is in cell 4 on the X axis.</p>
-<p>The cell size is needed to calculate this, so it moved into <b>love.load</b>.</p>
+<p>The cell size is needed to calculate this, so it moved into <span class="inlinecode">
+<span class="name">love.load</span></span>.</p>
 <p>The square at this position is set to the selected color.</p>
 <p>For now, this position is drawn to the screen as text.</p>
 <pre class="code">
@@ -286,7 +279,13 @@ end
 <h3>Getting number of neighbors</h3>
 <p>Changing the grid after a step of time requires knowing how many alive neighbors each cell has.</p>
 <p>For now, right clicking a cell will print out how many alive neighbors it has.</p>
-<p><b>grid[selectedY + dy]</b> is checked to see if it exists before <b>grid[selectedY + dy][selectedX + dx]</b>, because if <b>selectedY + dy</b> is not on the grid, then <b>grid[selectedY + dy]</b> will return nil, and <b>grid[selectedY + dy][selectedX + dx]</b> will error because the <b>[selectedX + dx]</b> part is trying to index nil.</p>
+<p><span class="inlinecode">
+<span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>]</span> is checked to see if it exists before <span class="inlinecode">
+<span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>][<span class="name">selectedX</span> + <span class="name">dx</span>]</span>, because if <span class="inlinecode">
+<span class="name">selectedY</span> + <span class="name">dy</span></span> is not on the grid, then <span class="inlinecode">
+<span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>]</span> will return nil, and <span class="inlinecode">
+<span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>][<span class="name">selectedX</span> + <span class="name">dx</span>]</span> will error because the <span class="inlinecode">
+[<span class="name">selectedX</span> + <span class="name">dx</span>]</span> part is trying to index nil.</p>
 <pre class="code">
 function <span class="name">love.mousepressed</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
     <span class="comment">-- Temporary.
@@ -388,7 +387,8 @@ function <span class="name">love.update</span>()
 end
 </pre>
 <h3>Turning key repeat on</h3>
-<p>Key repeat is turned on so holding a key down will call <b>love.keypressed</b> repeatedly.</p>
+<p>Key repeat is turned on so holding a key down will call <span class="inlinecode">
+<span class="name">love.keypressed</span></span> repeatedly.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -478,4 +478,4 @@ function <span class="name">love.keypressed</span>()
     <span class="name">grid</span> = <span class="name">nextGrid</span>
 end
 </pre>
-</body></html
+</body></html>
