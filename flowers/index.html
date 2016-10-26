@@ -52,14 +52,14 @@
 <h2>Overview</h2>
 <p>The cells are represented by tables containing a boolean value indicating whether or not there is a flower under it, and a string value representing which of four states the cell is in: covered, covered with a flag, covered with a question mark, or uncovered.</p>
 <p>The cells which have flowers are chosen randomly. The first cell clicked is excluded from the possible options.</p>
-<p>When a cell is clicked, its position added to the "uncover stack".</p>
+<p>When a cell is clicked, its position is added to the "uncover stack".</p>
 <p>While there is anything left on the uncover stack...</p>
 <ul>
 <li>A position is removed from the end of the stack.</li>
 <li>This position is set to <b>uncovered</b>.</li>
 <li>If there are no flowers surrounding this position, the surrounding <b>covered</b> and <b>question marked</b> positions are added to the uncover stack.</li>
 </ul>
-<p>The cells are assembled from the following images.</p>
+<p>The cells are drawn by assembling from the following images.</p>
 <img src="2.png">
 <h2>Coding</h2>
 <h3>Loading images</h3>
