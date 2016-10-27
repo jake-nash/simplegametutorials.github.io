@@ -43,7 +43,8 @@
 <h2>Rules</h2>
 <p>The dealer and player are both dealt two cards. The dealer's first card is hidden from the player.</p>
 <p>The player can hit (i.e. take another card) or stand (i.e. stop taking cards).</p>
-<p>If total of the player's hand goes over 21 they have gone bust and can't take more cards.</p>
+<p>If the total value of the player's hand goes over 21 they have gone bust and can't take more cards.</p>
+<p>Face cards (king, queen and jack) have a value of 10, and aces have a value of 11 unless this would make the total value of the hand go above 21, in which case they have a value of 1.</p>
 <p>After the player has stood or gone bust, the dealer takes cards until the total of their hand is 17 or over.</p>
 <p>The round is then over, and the hand with the highest total (if the total is 21 or under) wins the round.</p>
 <h3>Controls</h3>
@@ -54,8 +55,8 @@
 <p>Each card is represented by a table containing a string representing its suit, and a number representing its rank. Jacks, queens and kings are represented by the numbers 11, 12 and 13.</p>
 <p>The deck initially contains one of every card.</p>
 <img src="2.png">
-<p>The player's and the dealer's hands are tables, and cards are removed from the deck at random positions and inserted into their hands when they take cards.</p>
-<p>The cards are assembled from the following images, sometimes with the images colored or flipped horizontally or vertically.</p>
+<p>The player's and dealer's hands are tables, and cards are removed from the deck at random positions and inserted into their hands when they take cards.</p>
+<p>The cards are assembled from the following images, with the images colored or flipped horizontally or vertically as necessary:</p>
 <img src="3.png">
 <h2>Coding</h2>
 <h3>The deck of cards</h3>
@@ -156,7 +157,7 @@ Total number of cards in deck: 50
 </pre>
 <h3>Displaying state</h3>
 <p>For now, information about the state of the game will be displayed as text.</p>
-<p>A table is created for the output strings, and is concatenated is drawn to the screen.</p>
+<p>A table is created for the output strings, and is concatenated then drawn to the screen.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
     local <span class="name">output</span> = {}
@@ -170,7 +171,7 @@ function <span class="name">love.draw</span>()
 end
 </pre>
 <img src="4.png">
-<h3>Dealing dealer's hand</h3>
+<h3>Dealing the dealer's hand</h3>
 <p>A table is created for the dealer's hand and two random cards from the deck are inserted into it.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
@@ -226,7 +227,9 @@ end
 <h3>Hitting</h3>
 <p>For now, the keyboard is used for input instead of on-screen buttons.</p>
 <p>When the <b>h</b> key is pressed the player takes a card from the deck.</p>
-<p>Since <b>takeCard</b> is used in <b>love.keypressed</b> it is made global.</p>
+<p>Since <span class="inlinecode">
+<span class="name">takeCard</span></span> is used in <span class="inlinecode">
+<span class="name">love.keypressed</span></span> it is made global.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -243,9 +246,9 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 end
 </pre>
 <img src="6.png">
-<h3>Total</h3>
+<h3>Getting total value of hand</h3>
 <p>For each hand, the rank of each card is added together to get the total value of the hand.</p>
-<p>Currently this does not account for face cards or the value of aces sometimes being 11.</p>
+<p>Currently this does not account for face cards having a value of 10 or the value of aces sometimes being 11.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.
@@ -325,10 +328,8 @@ function <span class="name">love.draw</span>()
 </span>end
 </pre>
 <img src="9.png">
-<h3>Standing and displaying winner</h3>
+<h3>Standing</h3>
 <p>When the <b>s</b> key is pressed the player stands and, for now, the round is over.</p>
-<p>The total of the player's hand is compared to the total of the dealer's hand and the winner is displayed.</p>
-<p>Currently this does not account for busts (i.e. hands with a value of over 21).</p>
 <p>The player can hit only when the round is not over.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
@@ -337,6 +338,18 @@ function <span class="name">love.load</span>()
     <span class="name">roundOver</span> = <span class="literal">false</span>
 end
 
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">key</span> == <span class="literal">'h'</span> <span class="highlight">and not <span class="name">roundOver</span></span> then
+        <span class="call">takeCard</span>(<span class="name">playerHand</span>)
+    <span class="highlight">elseif <span class="name">key</span> == <span class="literal">'s'</span> then</span>
+    <span class="highlight">    <span class="name">roundOver</span> = <span class="literal">true</span></span>
+    end
+end
+</pre>
+<h3>Displaying winner</h3>
+<p>When the round is over, the total of the player's hand is compared to the total of the dealer's hand and the winner is displayed.</p>
+<p>Currently this does not account for busts (i.e. hands with a value of over 21).</p>
+<pre class="code">
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.
 </span>
@@ -354,21 +367,13 @@ function <span class="name">love.draw</span>()
 
     <span class="comment">-- etc.
 </span>end
-
-function <span class="name">love.keypressed</span>(<span class="name">key</span>)
-    if <span class="name">key</span> == <span class="literal">'h'</span> <span class="highlight">and not <span class="name">roundOver</span></span> then
-        <span class="call">takeCard</span>(<span class="name">playerHand</span>)
-    <span class="highlight">elseif <span class="name">key</span> == <span class="literal">'s'</span> then</span>
-    <span class="highlight">    <span class="name">roundOver</span> = <span class="literal">true</span></span>
-    end
-end
 </pre>
 <img src="10.png">
 <h3>Winner accounting for bust</h3>
 <p>The player or dealer wins if they haven't gone bust, and...</p>
 <ul>
-<li>their hand has a greater total than that of their opponent, or...</li>
-<li>their opponent has gone bust.</li>
+<li>their opponent has gone bust, or...</li>
+<li>their hand has a greater total than that of their opponent.</li>
 </ul>
 <pre class="code">
 function <span class="name">love.load</span>()
@@ -434,7 +439,8 @@ function <span class="name">love.draw</span>()
 </span>end
 </pre>
 <h3>Play again</h3>
-<p>When a key is pressed when the round over, <b>love.load</b> is called to start another game.</p>
+<p>When a key is pressed and the round is over, for now <span class="inlinecode">
+<span class="name">love.load</span></span> is called to start another game.</p>
 <pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
     <span class="highlight">if not <span class="name">roundOver</span> then</span>
@@ -448,9 +454,11 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
     <span class="highlight">end</span>
 end
 </pre>
-<h3>End round on bust or blackjack</h3>
+<h3>End round on bust or 21</h3>
 <p>If the player has gone bust or the value of their hand is already 21, the round is automatically over.</p>
-<p>Since this requires getting the total value of a hand, <b>getTotal</b> is moved into <b>love.load</b>.</p>
+<p>Since this requires getting the total value of a hand, <span class="inlinecode">
+<span class="name">getTotal</span></span> is moved into <span class="inlinecode">
+<span class="name">love.load</span></span>.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -652,8 +660,9 @@ end
 </pre>
 <img src="18.png">
 <h3>Drawing bottom number</h3>
-<p>The card's rank is drawn at the bottom right corner minus the same offset used when drawing the rank at the top of the card. The image is flipped both horizontally and vertically, which results in its bottom right corner (after flipping) being at the bottom right of the card.</p>
-<p>To calculate this position, the card's width and height are needed (and they will also be used when drawing the suit and pips), and the offset from the corner is reused from drawing the top number, so variables are made for these.</p>
+<p>The card's rank is drawn at the bottom right corner minus the same offset added to the rank drawn at the top.</p>
+<p>The image is flipped both horizontally and vertically.</p>
+<p>To calculate the image's X and Y positions, the card's width and height are needed (and they will also be used when drawing the suit and pips), and the offset from the corner is reused from drawing the top number, so variables are made for these.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.
@@ -1090,8 +1099,8 @@ function <span class="name">love.draw</span>()
 </pre>
 <img src="26.png">
 <h3>Simplifying code</h3>
-<p>Pips have an individual offset, and can be "mirrored" on the X and Y axis.</p>
-<p>A function is made with the offset and whether to mirror on the X or Y axis as parameters.</p>
+<p>Pips have an individual offsets, and can be "mirrored" on the X and Y axis.</p>
+<p>A function is made with the offsets and whether to mirror on the X or Y axis as parameters.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.
@@ -1159,7 +1168,7 @@ function <span class="name">love.draw</span>()
 </span>end
 </pre>
 <h3>Drawing the rest of the ranks</h3>
-<p>The rest of the ranks are drawn, with two new variables made for repeated Y positions.</p>
+<p>The rest of the ranks are drawn, with two new variables made for repeated Y offsets.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.
@@ -1262,7 +1271,7 @@ end
 <img src="28.png">
 <h3>Hiding dealer's first card</h3>
 <p>Until the round is over, the dealer's first card is hidden. Instead of drawing the card, another image is drawn for a face down card.</p>
-<p>The Y position of the face down is reused from drawing the dealer's other cards, so it is made into a variable.</p>
+<p>The Y position of the face down card is reused from drawing the dealer's other cards, so it is made into a variable.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.
@@ -1354,7 +1363,6 @@ end
 <img src="32.png">
 <h3>Drawing play again button</h3>
 <p>The "play again" button is drawn occupying the same position as the other buttons, since it will only be visible when the round is over.</p>
-<p>The Y position and height of all three buttons are reused, so these are made into variables.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.
@@ -1380,7 +1388,8 @@ end
 <img src="33.png">
 <h3>Basing text position on button position</h3>
 <p>The X and Y position of the text is based on the X and Y position of the buttons plus some offset.</p>
-<p>Each button's X position is used twice, so these are made into variables. The same Y position is used by all buttons.</p>
+<p>Each button's X position is used twice, so these are made into variables.</p>
+<p>The same Y position is used by all buttons, so this is made into a variable.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.
@@ -1409,7 +1418,7 @@ function <span class="name">love.draw</span>()
 </span>end
 </pre>
 <h3>Simplifying code</h3>
-<p>The only difference between the code for drawing each button is the button's text, X position, width and text offset on the X axis. A function is made with these as parameters.</p>
+<p>The only difference between the code for drawing each button is the button's text, X position, width, and text offset on the X axis. A function is made with these as parameters.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.
@@ -1463,9 +1472,11 @@ function <span class="name">love.draw</span>()
 </pre>
 <img src="34.png">
 <h3>Clicking buttons</h3>
-<p>If a mouse button is released and the mouse is over the on-screen button then the button has been clicked, for now the name of the button is printed.</p>
-<p>Checking if the mouse is over a button is reused from drawing the button, so this is made into a function and is moved into <b>love.load</b>.</p>
-<p>The X and Y positions and width and height of buttons are also reused from drawing the buttons, so these are also moved into <b>love.load</b>.</p>
+<p>If a mouse button is released and the mouse is over a button then the button has been clicked, and for now the name of the button is printed.</p>
+<p>Checking if the mouse is over a button is reused from drawing the button, so it is made into a function and is moved into <span class="inlinecode">
+<span class="name">love.load</span></span>.</p>
+<p>The X and Y positions and width and height of buttons are also reused from drawing the buttons, so they are also moved into <span class="inlinecode">
+<span class="name">love.load</span></span>.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -1529,7 +1540,9 @@ function <span class="name">love.draw</span>()
 end
 </pre>
 <h3>Using buttons</h3>
-<p>The code from <b>love.keypressed</b> is moved to <b>love.mousepressed</b>, and instead of using the keys it uses the on-screen buttons.</p>
+<p>The code from <span class="inlinecode">
+<span class="name">love.keypressed</span></span> is moved to <span class="inlinecode">
+<span class="name">love.mousepressed</span></span>, and instead of using the keys it uses the on-screen buttons.</p>
 <pre class="code">
 function <span class="name">love.</span><span class="highlight"><span class="name">mousereleased</span></span>()
     if not <span class="name">roundOver</span> then

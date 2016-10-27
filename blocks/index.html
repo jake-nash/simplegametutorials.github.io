@@ -47,7 +47,7 @@
 <p>The type of the next piece that will fall is shown above the playing area.</p>
 <img src="3.png">
 <p>When an unbroken row of blocks is formed the row disappears and all the blocks above it move down one row.</p>
-<p>The game ends when the stack of blocks reaches the top of the playing area and the next piece would overlap a block already on the stack.</p>
+<p>The game ends when a piece has fallen and the next piece would immediately overlap a previously fallen block.</p>
 <h2>Controls</h2>
 <table>
 <tr><td><b>Left arrow</b></td><td>Move left</td></tr>
@@ -71,14 +71,14 @@
 <img src="4.png">
 <p>All the different types of pieces are stored with their rotated variations.</p>
 <img src="5.png">
-<p>The currently falling piece is stored as a number representing which type of piece it is, a number representing which rotation variation it is at, and number representing its X and Y position on the playing area.</p>
+<p>The currently falling piece is stored as a number representing which type of piece it is, a number representing which rotation variation it is at, and a number representing its X and Y position on the playing area.</p>
 <h3>Basic logic</h3>
 <p>A new piece is created at the top of the screen, unless it would overlap an inert block, in which case the game is over.</p>
 <p>The player can move the piece left and right, unless this new position would overlap an inert block or be outside the playing area.</p>
 <p>After an amount of time has passed, the piece moves down, unless this new position would overlap an inert block or be outside the playing area, in which case it has come to rest.</p>
 <p>When a rotate button is pressed, the piece changes to its next rotation variation, unless this variation would overlap an inert block or be outside the playing area.</p>
 <p>When the drop button is pressed, the piece moves down until the next position would overlap an inert block or be outside the playing area, at which point it has come to rest.</p>
-<p>When the piece comes to rest, meaning that if it moved down it would overlap an inert piece outside the playing area, the blocks of the pieces are added to the inert pieces, and the next piece is created.</p>
+<p>When the piece comes to rest, the blocks of the piece are added to the inert blocks, and the next piece is created.</p>
 <p>A sequence of one of each of the seven pieces in a random order is created, and the next piece is taken from this sequence. Once all of the pieces have been taken, a new random sequence is created.</p>
 <h2>Coding</h2>
 <h3>Drawing the grid of blocks</h3>
@@ -101,7 +101,7 @@ function <span class="name">love.draw</span>()
 end
 </pre>
 <img src="6.png">
-<h3>Colors</h3>
+<h3>Setting colors</h3>
 <p>The background color and block color are set.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
@@ -126,8 +126,9 @@ function <span class="name">love.draw</span>()
 end
 </pre>
 <img src="7.png">
-<h3>Inert blocks</h3>
-<p>The grid for the inert blocks is created and every cell is set to ' ' (a string containing the space character), representing an empty cell.</p>
+<h3>Storing inert blocks</h3>
+<p>The grid for the inert blocks is created and every cell is set to <span class="inlinecode">
+<span class="literal">' '</span></span> (a string containing the space character), representing an empty cell.</p>
 <p>The width and height of the grid in blocks is reused from drawing the blocks, so they are made into variables.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
@@ -155,7 +156,7 @@ end
 </pre>
 <h3>Setting block color</h3>
 <p>When the blocks of the grid are drawn, the color is set based on what is stored in the inert grid.</p>
-<p>To test the inert blocks, some cells are set to values representing blocks of varying colors.</p>
+<p>To test, some cells are set to values representing blocks of different colors.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -202,7 +203,7 @@ end
 </pre>
 <img src="8.png">
 <h3>Storing the piece structures</h3>
-<p>Each rotation of a piece structure is stored as a 4 by 4 grid.</p>
+<p>Each rotation of a piece structure is stored as a 4 by 4 grid of strings.</p>
 <pre class="code">
 {
     {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
@@ -366,7 +367,7 @@ function <span class="name">love.load</span>()
 end
 </pre>
 <h3>Storing the current piece</h3>
-<p>The currently falling piece is represented by a number indicating which type it is, and a number indicating which rotation it is at.</p>
+<p>The currently falling piece is represented by a number indicating which type it is (which will be used to index the table of piece structures), and a number indicating which rotation it is at (which will be used to index the table of rotations).</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -414,7 +415,7 @@ end
 </pre>
 <img src="9.png">
 <h3>Simplifying code</h3>
-<p>The code for drawing the inert blocks and drawing the falling piece's blocks is the same, so a function is made.</p>
+<p>The code for drawing an inert block and drawing a falling piece's block is the same, so a function is made.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
     <span class="highlight">local function <span class="name">drawBlock</span>(<span class="name">block</span>, <span class="name">x</span>, <span class="name">y</span>)</span>
@@ -459,10 +460,10 @@ function <span class="name">love.draw</span>()
 end
 </pre>
 <h3>Rotation</h3>
-<p>When the <b>x</b> key is pressed, the piece rotation number is increased by 1, rotating the piece clockwise.</p>
-<p>If the rotation number is greater than the number of rotation positions (i.e. greater than the last position), the rotation number is set to 1 (i.e. the first position).</p>
+<p>When the <b>x</b> key is pressed, the piece's rotation number is increased by 1, rotating the piece clockwise.</p>
+<p>If the rotation number is greater than the number of rotation positions (i.e. greater than the last rotation position), the rotation number is set to 1 (i.e. the first rotation position).</p>
 <p>Likewise, when the <b>z</b> key is pressed, the piece rotation number is decreased by 1, rotating the piece counter-clockwise.</p>
-<p>If the rotation number is less than 1 (i.e. less than the first position), the rotation number is set to the the number of rotation positions (i.e. the last position).</p>
+<p>If the rotation number is less than 1 (i.e. less than the first rotation position), the rotation number is set to the number of rotation positions (i.e. the last rotation position).</p>
 <pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
     if <span class="name">key</span> == <span class="literal">'x'</span> then
@@ -551,11 +552,11 @@ function <span class="name">love.load</span>()
     <span class="comment">-- etc.
 </span>
     <span class="name">timer</span> = <span class="literal">0</span>
-    <span class="name">timerLimit</span> = <span class="literal">0.5</span>
 end
 
 function <span class="name">love.update</span>(<span class="name">dt</span>)
     <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    local <span class="name">timerLimit</span> = <span class="literal">0.5</span>
     if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
         <span class="name">timer</span> = <span class="name">timer</span> - <span class="name">timerLimit</span>
 
@@ -565,10 +566,10 @@ end
 </pre>
 <img src="14.png">
 <h3>Confining movement</h3>
-<p>To prevent the piece from moving off the left or right of the screen when it is moved or rotated, each of its blocks is checked to see if they are within the playing area before it is moved/rotated.</p>
+<p>To prevent the piece from moving off the left or right of the screen when it is moved or rotated, each of its blocks are checked to see if they are within the playing area before the piece is moved or rotated.</p>
 <p>Because this checking will be done in multiple places, it will be written as a function. This function is given the position and rotation to check, and returns true or false depending on whether the piece can move or rotate.</p>
 <p>To begin with, this function will always return true, so moving and rotating is still always possible.</p>
-<p>The code is changed from immediately setting positions/rotations, to creating variables for the changed values, and if the checking function returns true, the actual position/rotation is set.</p>
+<p>The code is changed from immediately setting positions/rotations, to creating variables for the changed values, and if the checking function returns true, the actual position/rotation is set to the changed values.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -580,6 +581,7 @@ end
 
 function <span class="name">love.update</span>(<span class="name">dt</span>)
     <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    local <span class="name">timerLimit</span> = <span class="literal">0.5</span>
     if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
         <span class="name">timer</span> = <span class="name">timer</span> - <span class="name">timerLimit</span>
 
@@ -602,7 +604,7 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
         <span class="highlight">end</span>
 
     elseif <span class="name">key</span> == <span class="literal">'z'</span> then
-        <span class="highlight">local <span class="name">testRotation</span></span> = <span class="highlight"><span class="name">pieceRotation</span></span> - <span class="literal">1</span>
+        <span class="highlight">local <span class="name">testRotation</span></span> = <span class="name">pieceRotation</span> - <span class="literal">1</span>
         if <span class="highlight"><span class="name">testRotation</span></span> < <span class="literal">1</span> then
             <span class="highlight"><span class="name">testRotation</span></span> = #<span class="name">pieceStructures</span>[<span class="name">pieceType</span>]
         end
@@ -736,8 +738,8 @@ end
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
 </span>
-    <span class="comment">-- Temporary
-</span>    <span class="name">inert</span>[<span class="literal">8</span>][<span class="literal">5</span>] = <span class="literal">'z'</span>
+    <span class="highlight"><span class="comment">-- Temporary</span>
+</span>    <span class="highlight"><span class="name">inert</span>[<span class="literal">8</span>][<span class="literal">5</span>] = <span class="literal">'z'</span></span>
 
     function <span class="name">canPieceMove</span>(<span class="name">testX</span>, <span class="name">testY</span>, <span class="name">testRotation</span>)
         for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">pieceYCount</span> do
@@ -760,7 +762,7 @@ end
 </pre>
 <img src="15.png">
 <h3>Simplifying code</h3>
-<p>The calculated block positions to test are reused, so these can be stored in variables.</p>
+<p>The calculated block positions to test are reused, so these are stored in variables.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -804,6 +806,7 @@ end
 <pre class="code">
 function <span class="name">love.update</span>(<span class="name">dt</span>)
     <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    local <span class="name">timerLimit</span> = <span class="literal">0.5</span>
     if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
         <span class="name">timer</span> = <span class="name">timer</span> - <span class="name">timerLimit</span>
 
@@ -837,6 +840,7 @@ end
 
 function <span class="name">love.update</span>(<span class="name">dt</span>)
     <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    local <span class="name">timerLimit</span> = <span class="literal">0.5</span>
     if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
         <span class="name">timer</span> = <span class="name">timer</span> - <span class="name">timerLimit</span>
 
@@ -929,6 +933,7 @@ end
 <pre class="code">
 function <span class="name">love.update</span>(<span class="name">dt</span>)
     <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    local <span class="name">timerLimit</span> = <span class="literal">0.5</span>
     if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
         <span class="name">timer</span> = <span class="name">timer</span> - <span class="name">timerLimit</span>
 
@@ -953,7 +958,20 @@ end
 </pre>
 <h3>New piece immediately after drop</h3>
 <p>When the piece is dropped the timer is set immediately to the limit so that adding the piece to the inert pieces and creating the new piece happen immediately.</p>
+<p>The timer limit is reused from <span class="inlinecode">
+<span class="name">love.update</span></span>, so it is moved into <span class="inlinecode">
+<span class="name">love.load</span></span>.</p>
 <pre class="code">
+function <span class="name">love.load</span>()
+    <span class="comment">-- etc.
+</span>
+    <span class="name">timerLimit</span> = <span class="literal">0.5</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="comment">-- Removed: local timerLimit = 0.5
+</span>end
+
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
     <span class="comment">-- etc.
 </span>
@@ -967,7 +985,7 @@ end
 </pre>
 <h3>Finding complete rows</h3>
 <p>Each row of the inert blocks is looped through, and if none of the columns of the row contain an empty block the row is complete.</p>
-<p>For now, the complete row is printed out.</p>
+<p>For now, the complete row numbers are printed out.</p>
 <pre class="code">
 function <span class="name">love.update</span>(<span class="name">dt</span>)
     <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
@@ -1028,7 +1046,6 @@ function <span class="name">love.update</span>(<span class="name">dt</span>)
                     <span class="highlight">    for <span class="name">removeX</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do</span>
                     <span class="highlight">        <span class="name">inert</span>[<span class="name">removeY</span>][<span class="name">removeX</span>] = <span class="name">inert</span>[<span class="name">removeY</span> - <span class="literal">1</span>][<span class="name">removeX</span>]</span>
                     <span class="highlight">    end</span>
-                    <span class="highlight">    </span>
                     <span class="highlight">end</span>
                 
                     <span class="highlight">for <span class="name">removeX</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do</span>

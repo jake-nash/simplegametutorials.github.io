@@ -41,11 +41,11 @@
 <h2><a href="life.love">Download life.love</a></h2>
 <img src="1.png">
 <h2>Rules</h2>
-<p>There is a grid of cells, which are either alive of dead.</p>
+<p>There is a grid of cells, which are either alive or dead.</p>
 <p>After a step of time:</p>
 <ul>
-<li>Alive cells with exactly two or three alive neighbors live on</li>
-<li>Dead cells with exactly three alive neighbors become alive</li>
+<li>Alive cells with exactly two or three alive neighbors live on.</li>
+<li>Dead cells with exactly three alive neighbors become alive.</li>
 </ul>
 <p>All other cells die.</p>
 <p>Create an initial configuration of cells, hold a key to step forward in time, and observe.</p>
@@ -56,10 +56,12 @@
 <tr><td><b>Any key</b></td><td>Step forward in time</td></tr>
 </table>
 <h2>Overview</h2>
-<p>The cells are stored as a grid of boolean values, true for alive and false for dead.</p>
+<p>The cells are stored as a grid of boolean values, <span class="inlinecode">
+<span class="literal">true</span></span> for alive and <span class="inlinecode">
+<span class="literal">false</span></span> for dead.</p>
 <img src="2.png">
 <p>When time steps forward, a new grid is created, and whether the cells of this new grid are alive or dead is based on the current grid.</p>
-<p>After the new grid has been created, the current grid is replaced with the new grid.</p>
+<p>After the new grid is complete, the current grid is replaced with the new grid.</p>
 <h2>Coding</h2>
 <h3>Drawing a cell</h3>
 <p>A cell is drawn as a square.</p>
@@ -144,10 +146,9 @@ end
 <h3>Selecting cells</h3>
 <p>The cell position that the mouse cursor is over is stored.</p>
 <p>This is calculated by taking the mouse position and dividing it by the cell size, flooring this number, then adding 1 to it.</p>
-<p>For example, if the mouse is at position 17 on the X axis and the cell size is 5, dividing 17 by 5 gives 3.4, flooring 3.4 gives 3, and adding 1 gives 4, meaning that the mouse is in cell 4 on the X axis.</p>
-<p>The cell size is needed to calculate this, so it moved into <span class="inlinecode">
+<p>For example, if the mouse is at position 17 on the X axis and the cell size is 5, dividing 17 by 5 gives 3.4, flooring 3.4 gives 3, and adding 1 gives 4, meaning that the mouse is over cell 4 on the X axis.</p>
+<p>The cell size is needed to calculate this, so it is moved into <span class="inlinecode">
 <span class="name">love.load</span></span>.</p>
-<p>The square at this position is set to the selected color.</p>
 <p>For now, this position is drawn to the screen as text.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
@@ -173,7 +174,7 @@ end
 </pre>
 <img src="7.png">
 <h3>Highlighting cells</h3>
-<p>The square under the mouse cursor is set to the selected color.</p>
+<p>The square under the mouse cursor is set to the highlighted color.</p>
 <pre class="code">
 function <span class="name">love.draw</span>()
     for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">50</span> do
@@ -201,7 +202,9 @@ end
 <img src="8.png">
 <h3>Creating the grid</h3>
 <p>A grid is created to store the cells.</p>
-<p>Each cell is represented by a boolean value: true for alive, false for dead.</p>
+<p>Each cell is represented by a boolean value: <span class="inlinecode">
+<span class="literal">true</span></span> for alive, <span class="inlinecode">
+<span class="literal">false</span></span> for dead.</p>
 <p>If the cell is alive, the alive color is used to draw the cell.</p>
 <p>To test this, some cells are manually set to alive.</p>
 <p>The grid's width/height in cells is reused from drawing the cells, so variables are made for these.</p>
@@ -250,7 +253,7 @@ function <span class="name">love.draw</span>()
 end
 </pre>
 <img src="9.png">
-<h3>Set cells alive with left mouse button</h3>
+<h3>Set cells to alive with left mouse button</h3>
 <p>If the left mouse button is down, the selected cell is set to alive.</p>
 <pre class="code">
 function <span class="name">love.update</span>()
@@ -262,7 +265,7 @@ function <span class="name">love.update</span>()
 end
 </pre>
 <img src="10.png">
-<h3>Only set cell alive when mouse is within grid</h3>
+<h3>Only set cell to alive when mouse is within grid</h3>
 <p>Setting the cell to alive is only possible if the selected X/Y position is within the grid.</p>
 <pre class="code">
 function <span class="name">love.update</span>()
@@ -277,15 +280,17 @@ function <span class="name">love.update</span>()
 end
 </pre>
 <h3>Getting number of neighbors</h3>
-<p>Changing the grid after a step of time requires knowing how many alive neighbors each cell has.</p>
+<p>Updating the grid after a step of time requires knowing how many alive neighbors each cell has.</p>
 <p>For now, right clicking a cell will print out how many alive neighbors it has.</p>
 <p><span class="inlinecode">
 <span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>]</span> is checked to see if it exists before <span class="inlinecode">
 <span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>][<span class="name">selectedX</span> + <span class="name">dx</span>]</span>, because if <span class="inlinecode">
 <span class="name">selectedY</span> + <span class="name">dy</span></span> is not on the grid, then <span class="inlinecode">
-<span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>]</span> will return nil, and <span class="inlinecode">
+<span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>]</span> will return <span class="inlinecode">
+<span class="literal">nil</span></span>, and <span class="inlinecode">
 <span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>][<span class="name">selectedX</span> + <span class="name">dx</span>]</span> will error because the <span class="inlinecode">
-[<span class="name">selectedX</span> + <span class="name">dx</span>]</span> part is trying to index nil.</p>
+[<span class="name">selectedX</span> + <span class="name">dx</span>]</span> part is trying to index <span class="inlinecode">
+<span class="literal">nil</span></span>.</p>
 <pre class="code">
 function <span class="name">love.mousepressed</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
     <span class="comment">-- Temporary.

@@ -64,12 +64,18 @@
 <h3>Representing data</h3>
 <p>The different states a cell can be in are represented by the following strings:</p>
 <table>
-<tr><td><b>'@'</b></td><td>Player</td></tr>
-<tr><td><b>'+'</b></td><td>Player on storage</td></tr>
-<tr><td><b>'$'</b></td><td>Box</td></tr>
-<tr><td><b>'&#42;'</b></td><td>Box on storage</td></tr>
-<tr><td><b>'.'</b></td><td>Storage</td></tr>
-<tr><td><b>'#'</b></td><td>Wall</td></tr>
+<tr><td><span class="inlinecode">
+<span class="literal">'@'</span></span></td><td>Player</td></tr>
+<tr><td><span class="inlinecode">
+<span class="literal">'+'</span></span></td><td>Player on storage</td></tr>
+<tr><td><span class="inlinecode">
+<span class="literal">'$'</span></span></td><td>Box</td></tr>
+<tr><td><span class="inlinecode">
+<span class="literal">'&#42;'</span></span></td><td>Box on storage</td></tr>
+<tr><td><span class="inlinecode">
+<span class="literal">'.'</span></span></td><td>Storage</td></tr>
+<tr><td><span class="inlinecode">
+<span class="literal">'#'</span></span></td><td>Wall</td></tr>
 </table>
 <p>The level is stored as a grid of these strings.</p>
 <img src="8.png">
@@ -190,7 +196,7 @@ end
 </pre>
 <img src="13.png">
 <h3>Naming cell types</h3>
-<p>So we don't have to remember what string means what cell type, the cell type strings are stored in variables.</p>
+<p>So we don't have to remember which string refers to which cell type, the cell type strings are stored in variables.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -368,7 +374,8 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 <span class="name">adjacent</span></span> is, so a table is made which returns the next adjacent cell type when indexed by the current adjacent cell type.</p>
 <p>Indexing by anything other than the values <span class="inlinecode">
 <span class="name">empty</span></span> or <span class="inlinecode">
-<span class="name">storage</span></span> will be result in nil, so it can also be used to check if the player can move at all.</p>
+<span class="name">storage</span></span> will be result in <span class="inlinecode">
+<span class="literal">nil</span></span>, so it can also be used to check if the player can move to the adjacent position.</p>
 <pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
         <span class="comment">-- etc.
@@ -408,7 +415,7 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 </pre>
 <img src="17.png">
 <h3>Simplifying code</h3>
-<p>A table is made which returns the next cell for the player's previous position type when indexed by the current player cell type.</p>
+<p>A table is made which returns the next cell type for the player's previous position when indexed by the current player cell type.</p>
 <pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
         <span class="comment">-- etc.
@@ -428,6 +435,12 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 </pre>
 <h3>Pushing box on to empty location</h3>
 <p>The cell beyond the adjacent cell is stored in a variable.</p>
+<p><span class="inlinecode">
+<span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span> + <span class="name">dy</span>]</span> is checked to see if it is not <span class="inlinecode">
+<span class="literal">nil</span></span> before it is indexed by <span class="inlinecode">
+[<span class="name">playerX</span> + <span class="name">dx</span> + <span class="name">dx</span>]</span>. The adjacent position isn't checked in the same way because there is always a border of walls around each level, so <span class="inlinecode">
+<span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>]</span> can never be <span class="inlinecode">
+<span class="literal">nil</span></span>.</p>
 <p>If the adjacent cell is a box and the beyond cell is empty, the adjacent position is set to <span class="inlinecode">
 <span class="name">player</span></span> and the beyond position is set to <span class="inlinecode">
 <span class="name">box</span></span>.</p>

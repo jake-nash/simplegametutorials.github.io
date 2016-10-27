@@ -52,7 +52,7 @@
 <p>The bird is drawn by a yellow rectangle, and each pipe is drawn by two green rectangles.</p>
 <p>The bird's Y position moves down by a certain speed each frame. Each frame this speed is increased to simulate gravity.</p>
 <p>When a key is pressed the bird's speed is set to a high number in the up direction.</p>
-<p>The pipes have the same width and the same height of the space between the segments.</p>
+<p>The pipes share the same width and the same height of the space between the segments.</p>
 <img src="2.png">
 <p>Each pipe has its own X position within the playing area and Y position of where the space starts.</p>
 <img src="3.png">
@@ -153,7 +153,7 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 end
 </pre>
 <h3>Drawing a pipe</h3>
-<p>For now, a solid rectangle is drawn for the pipe, with its left edge next to the playing area's right edge.</p>
+<p>For now, a solid rectangle is drawn for the pipe, with its left edge touching the playing area's right edge.</p>
 <p>The width and height of the playing area are reused from drawing the background, so these are made into variables.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
@@ -177,7 +177,7 @@ end
 <h3>Drawing two pipe segments</h3>
 <p>Instead of drawing one rectangle, two rectangles are drawn for the upper and lower segments.</p>
 <p>The top rectangle's height is set to where the "space" between the two segments starts. For now, this is 150.</p>
-<p>The bottom rectangle starts at the Y position of the top rectangle's height plus amount of space between them (which is 100).</p>
+<p>The bottom rectangle starts at the Y position of the top rectangle's height plus the amount of space between them (which is 100).</p>
 <p>The bottom rectangle's height is the playing area's height, minus the height of what is "already there" (the top rectangle and the space).</p>
 <p>The pipe width is the same for both segments, so this is made into a variable.</p>
 <pre class="code">
@@ -333,7 +333,7 @@ function <span class="name">love.draw</span>()
 <li>the top edge of the bird is above the bottom edge of the pipe segment (i.e. the bird is not completely below the pipe segment)</li>
 </ul>
 <p>For now, <span class="inlinecode">
-<span class="name">love.load</span></span> is called when the bird and pipe collide.</p>
+<span class="name">love.load</span></span> is called to reset the game when the bird and pipe collide.</p>
 <p>The bird's X position and width are reused from drawing the bird, so they are moved into <span class="inlinecode">
 <span class="name">love.load</span></span>.</p>
 <pre class="code">
@@ -376,7 +376,8 @@ function <span class="name">love.draw</span>()
 <li>the bird is overlapping the pipe on the X axis (as checked for with the top pipe segment), and...</li>
 <li>the bottom edge of the bird is above the top edge of the pipe segment (i.e. the bird is not completely above the pipe segment)</li>
 </ul>
-<p>The bird's X height is reused from drawing the bird's rectangle, so it is made into a global variable.</p>
+<p>The bird's X height is reused from drawing the bird, so it is moved into <span class="inlinecode">
+<span class="name">love.load</span></span>.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.
@@ -456,7 +457,8 @@ end
 <img src="18.png">
 <h3>Randomizing space position for two pipes</h3>
 <p>Because each pipe has an individual X position, setting the X position is removed from the <span class="inlinecode">
-<span class="name">resetPipe</span></span> function, leaving only the random space position. The function is renamed to reflect this.</p>
+<span class="name">resetPipe</span></span> function, leaving only the random space position. The function is renamed to <span class="inlinecode">
+<span class="name">newPipeSpaceY</span></span> to reflect this.</p>
 <p>Instead of creating a global <span class="inlinecode">
 <span class="name">pipeSpaceY</span></span> variable, the function returns a new space position.</p>
 <p>Because the variables <span class="inlinecode">
@@ -526,7 +528,7 @@ end
 </pre>
 <img src="19.png">
 <h3>Moving two pipes</h3>
-<p>The code which moves the pipe is uncommented and turned into a function which takes a pipe's X and space positions, and returns the updated positions.</p>
+<p>The code which moves the pipe is uncommented and turned into a function which takes a pipe's X position and space position, and returns the updated positions.</p>
 <p>When a pipe goes off the playing area it is set to the right of the playing area.</p>
 <pre class="code">
 function <span class="name">love.update</span>(<span class="name">dt</span>)
@@ -583,7 +585,7 @@ end
 </pre>
 <img src="21.png">
 <h3>Bird colliding with pipe</h3>
-<p>The code for the checking if the bird and pipe have collided is uncommented and turned into a function which takes a pipe's X and space positions and returns a boolean value.</p>
+<p>The code for the checking if the bird and pipe have collided is uncommented and turned into a function which takes a pipe's X position and space position and returns a boolean value.</p>
 <p>The function is called for both pipes.</p>
 <pre class="code">
 function <span class="name">love.update</span>(<span class="name">dt</span>)
@@ -642,7 +644,7 @@ end
 </pre>
 <img src="22.png">
 <h3>Updating score after passing first pipe</h3>
-<p>If the bird's left edge if to the right of the pipe's right edge, then 1 is added to the score.</p>
+<p>If the bird's left edge is to the right of the pipe's right edge, then 1 is added to the score.</p>
 <p>Currently, this happens every frame instead of once, and only the first pipe is checked.</p>
 <pre class="code">
 function <span class="name">love.update</span>(<span class="name">dt</span>)
