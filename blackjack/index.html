@@ -1547,7 +1547,7 @@ function <span class="name">love.</span><span class="highlight"><span class="nam
                 <span class="call">takeCard</span>(<span class="name">dealerHand</span>)
             end
         end
-    elseif <span class="highlight"><span class="call">isMouseInButton</span>(<span class="name">buttonPlayAgainX</span>, <span class="name">buttonY</span>, <span class="name">buttonPlayAgainWidth</span>, <span class="name">buttonHeight</span>)</span> then
+    elseif <span class="highlight"><span class="call">isMouseInButton</span>(<span class="name">buttonPlayAgainX</span>, <span class="name">buttonPlayAgainWidth</span>)</span> then
         <span class="call">love.load</span>()
     end
 end
@@ -1585,7 +1585,7 @@ function <span class="name">love.load</span>()
     <span class="name">buttonPlayAgainX</span> = <span class="literal">10</span>
     <span class="name">buttonPlayAgainWidth</span> = <span class="literal">113</span>
 
-    function <span class="name">isMouseInButton</span>(<span class="name">x</span>, <span class="name">y</span>, <span class="name">width</span>, <span class="name">height</span>)
+    function <span class="name">isMouseInButton</span>(<span class="name">buttonX</span>, <span class="name">buttonWidth</span>)
         <span class="comment">-- etc.
 </span>    end
 
@@ -1614,7 +1614,7 @@ end
 function <span class="name">love.mousereleased</span>()
     <span class="comment">-- etc.
 </span>
-    elseif <span class="call">isMouseInButton</span>(<span class="name">buttonPlayAgainX</span>, <span class="name">buttonY</span>, <span class="name">buttonPlayAgainWidth</span>, <span class="name">buttonHeight</span>) then
+    elseif <span class="call">isMouseInButton</span>(<span class="name">buttonPlayAgainX</span>, <span class="name">buttonPlayAgainWidth</span>) then
         <span class="highlight"><span class="call">reset</span>()</span>
     end
 end
@@ -1942,7 +1942,7 @@ function <span class="name">love.mousereleased</span>()
                 <span class="call">takeCard</span>(<span class="name">dealerHand</span>)
             end
         end
-    elseif <span class="call">isMouseInButton</span>(<span class="name">buttonPlayAgainX</span>, <span class="name">buttonY</span>, <span class="name">buttonPlayAgainWidth</span>, <span class="name">buttonHeight</span>) then
+    elseif <span class="call">isMouseInButton</span>(<span class="name">buttonPlayAgainX</span>, <span class="name">buttonPlayAgainWidth</span>) then
         <span class="call">reset</span>()
     end
 end

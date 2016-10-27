@@ -126,7 +126,10 @@ end
 </pre>
 <h3>Moving the snake right</h3>
 <p>The next position of the snake's head is calculated by adding 1 to the current X position of the snake's head (i.e. the first element of the segments table). This new segment is added to the start of the segments table.</p>
-<p>The last element of the segments table is removed.</p>
+<p>The last element of the segments table (the snake's tail) is removed.</p>
+<p>The segments table is changed in <span class="inlinecode">
+<span class="name">love.update</span></span>, so it is moved into <span class="inlinecode">
+<span class="name">love.load</span></span>.</p>
 <pre class="code">
 function <span class="name">love.load</span>()
     <span class="name">snakeSegments</span> = {
