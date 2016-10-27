@@ -42,7 +42,7 @@
 <p>The current L&Ouml;VE version at the time this document was last updated is 0.10.1.</p>
 <p>L&Ouml;VE uses <a href="http://luajit.org/extensions.html">LuaJIT 2.0</a>. You don't need to install this or any other Lua version to use L&Ouml;VE.</p>
 <h2>What L&Ouml;VE can run on</h2>
-<p>L&Ouml;VE projects can be run on Windows, Linux, Mac OS X, Android, iOS and (unofficially) <a href="https://github.com/TannerRogalsky/love.js">web browsers</a>.</p>
+<p>L&Ouml;VE projects can be run on Windows, Linux, Mac OS, Android, iOS and (unofficially) <a href="https://github.com/TannerRogalsky/love.js">web browsers</a>.</p>
 <h2>What L&Ouml;VE provides</h2>
 <p>L&Ouml;VE provides a way of displaying graphics, playing sound, and getting user input, among other things.</p>
 <p>L&Ouml;VE doesn't provide things which can be written in Lua code, unless it would be too slow.</p>
@@ -50,12 +50,12 @@
 <p>However, L&Ouml;VE does provide a particle system and a physics system, because they are significantly faster than if they were made with Lua code.</p>
 <h2>Running L&Ouml;VE projects</h2>
 <p>A L&Ouml;VE project is a directory or zip file containing a <b>main.lua</b> file and any other files used.</p>
-<p>A project can be run via the command line by <b>love.exe path_to_love_project</b> on Windows, <b>love path_to_love_project</b> on Linux, or <b>open -n -a love path_to_love_project</b> on Mac OS X.</p>
-<p>Or, it can be run by dragging and dropping the L&Ouml;VE project on to <b>love.exe</b> on Windows or <b>love.app</b> on Mac OS X.</p>
+<p>A project can be run via the command line by <b>love.exe path_to_love_project</b> on Windows, <b>love path_to_love_project</b> on Linux, or <b>open -n -a love path_to_love_project</b> on Mac OS.</p>
+<p>Or, it can be run by dragging and dropping the L&Ouml;VE project on to <b>love.exe</b> on Windows or <b>love.app</b> on Mac OS.</p>
 <p>Zip files with the extension <b>.love</b> will be opened automatically by L&Ouml;VE. Files with the extension <b>.love</b> can be renamed to have the extension <b>.zip</b> and unzipped.</p>
 <p>For more information on running L&Ouml;VE projects, see this page: <a href="https://love2d.org/wiki/Getting_Started">https://love2d.org/wiki/Getting_Started</a></p>
 <h2>Distribution</h2>
-<p>L&Ouml;VE projects can be made into <b>.exe</b> files for Windows, <b>.app</b> files for Mac OS X, and so on. For more information, see this page: <a href="https://love2d.org/wiki/Game_Distribution">https://love2d.org/wiki/Game_Distribution</a></p>
+<p>L&Ouml;VE projects can be made into <b>.exe</b> files for Windows, <b>.app</b> files for Mac OS, and so on. For more information, see this page: <a href="https://love2d.org/wiki/Game_Distribution">https://love2d.org/wiki/Game_Distribution</a></p>
 <h2>Control flow</h2>
 <p>When a L&Ouml;VE project is run, L&Ouml;VE runs <b>conf.lua</b> and the function <span class="inlinecode">
 <span class="name">love.conf</span></span> (if they exist), then runs <b>main.lua</b>, then runs the function <span class="inlinecode">
