@@ -1,68 +1,68 @@
 <html>
 <head>
 <title>Simple Game Tutorials</title>
+<link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet">
 <style>
 body {
-    font-family: Calibri, sans-serif;
+    font-family: 'Calibri', sans-serif;
     margin: 20px;
+    background: #efefef;
 }
 div {
     max-width: 600px;
     line-height: 1.4;
 }
-hr {
-    color: #e7e7e7;
-    background-color: #e7e7e7;
-    border: none;
-    height: 5px;
+p, li, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+h1, h2, h3, h4 {
+    font-weight: 700;
+}
+p, li {
+    font-weight: 500;
+    font-size: 11pt;
+}
+a {
+    color: #059dc5;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
 }
 </style>
 </head>
 <body>
-<h1>Tutorials for making simple games with L&Ouml;VE</h1>
+<h1 style="margin: 0">Let's make some games</h1>
+<h2 style="margin: 0">with <a href="https://love2d.org/">L&Ouml;VE</a> 0.10.2</h1>
 <div>
-<p>These tutorials show you how some games can be programmed.</p>
-<p>The intended audience is people who know some programming basics, but don't know how to go about making something game-like.</p>
-<p>The aim of these tutorials is that, by being guided through the process multiple times, you will somehow gain an intuition about how to turn a simple game idea into code.</p>
-<p>There aren't any explanations about things related specifically to Lua or L&Ouml;VE in these tutorials. The focus is only on game logic and the programming process.</p>
-<p>If you are familiar with Lua but unfamiliar with L&Ouml;VE, there is an introduction to L&Ouml;VE's basic concepts here: <a href="https://simplegametutorials.github.io/basic_love_concepts">https://simplegametutorials.github.io/basic_love_concepts</a>
-<hr>
-<p>You can download each game and play it to get an understanding of what's going on with it. You can also unzip it to access its images, if it uses any.</p>
-<p>The tutorials generally start with an overview of how the data for the game is stored, and how it changes based on input and/or time.</p>
-<p>Then the code of the game is built up step by step. You can follow along by typing/copying in the code and running it after every step.</p>
-<p>I suggest focusing on understanding the code and not worrying about understanding the written descriptions of what the code is doing. The writing might be confusing, and some things aren't explained at all. If you're unsure why something works (or doesn't work), you can step through the code line by line in a debugger and see how the program flows and how the the variables change, or you can write some code to test things out and give yourself a better understanding of what's going on.</p>
-<hr>
-<p>The code in these tutorials follows a certain style.</p>
-<p>When a value is used more than once, it is generally made into a variable, and when code is used more than once, it is generally made into a function</p>
-<p>Variables and functions are generally created as close to the other code which uses them as possible, and if possible are local to the scope which uses them.
-<hr>
-<p>Note that the window size is never changed from L&Ouml;VE's default window size. You can set the window size using <a href="https://love2d.org/wiki/Config_Files">love.conf</a>.
-<hr>
-<p>I recommend using a debugger, such as <a href="https://studio.zerobrane.com/">ZeroBrane Studio</a>. With it, you can see how your program runs line by line, and see the values that variables have at different times. Even if you use another text editor to edit your programs, you can still use ZeroBrane Studio when it's time to debug (it will automatically reload changed files).</p>
-<hr>
-<p>The code for generating these tutorials, if you want to make your own, is at <a href="https://github.com/simplegametutorials/simplegametutorials">https://github.com/simplegametutorials/simplegametutorials</a></p>
-<p>All of these tutorials are public domain, so if you would like to use some of the code in your game, or port them to a different framework, or do anything you please, you can.</p>
-<hr>
-<p>The current version of L&Ouml;VE at the time these tutorials were last updated was 0.10.2.</p>
-<hr>
+<p>If you know some programming basics but don't quite know how to go about making something game-like, these tutorials are intended for you.</p>
+<p>The idea behind these tutorials is that by being guided step by step through the process of making some games you will pick up some ideas that will help you turn a simple game idea of your own into code.</p>
+<h3>How to follow these tutorials</h3>
+<ul>
+<li>Download the .love file and play it to understand what happens in the game.</li>
+<li>Read the overview of how the game's data is stored and how it changes based on input and time.</li>
+<li>Create a LÖVE project of your own and follow along with the coding by typing/copying in the code and running it after every step. If the tutorial uses images, unzip the .love file and copy the images from there.</li>
+</ul>
+<h3>The coding style</h3>
+<ul>
+<li>When a value is used more than once it is generally made into a variable, and when code is used more than once it is generally made into a function.</li>
+<li>Variables and functions are generally declared as close to the other code that uses them as possible, and if possible are local to the scope that uses them.</li>
+<li>The window size is never changed from L&Ouml;VE's default window size in the tutorials, but you can set the window size yourself using <a href="https://love2d.org/wiki/Config_Files">love.conf</a>.</li>
+</ul>
+<h3>Tip</h3>
+<ul>
+<li>Use a debugger, like <a href="https://studio.zerobrane.com/">ZeroBrane Studio</a>. It will allow you to see how your code runs line by line and what the values of variables are.</li>
+</ul>
 </div>
-<h2><a href="bird">Bird</a></h2>
-<img src="bird/1.png" />
-<h2><a href="blackjack">Blackjack</a></h2>
-<img src="blackjack/1.png" />
-<h2><a href="blocks">Blocks</a></h2>
-<img src="blocks/1.png" />
-<h2><a href="eyes">Eyes</a></h2>
-<img src="eyes/1.png" />
-<h2><a href="fifteen">Fifteen</a></h2>
-<img src="fifteen/1.png" />
-<h2><a href="flowers">Flowers</a></h2>
-<img src="flowers/1.png" />
-<h2><a href="life">Life</a></h2>
-<img src="life/1.png" />
-<h2><a href="snake">Snake</a></h2>
-<img src="snake/1.png" />
-<h2><a href="sokoban">Sokoban</a></h2>
-<img src="sokoban/1.png" />
+<h2><a href="bird">Bird</a></h2><a href="bird"><img src="bird/1.png"></a>
+<h2><a href="blackjack">Blackjack</a></h2><a href="blackjack"><img src="blackjack/1.png"></a>
+<h2><a href="blocks">Blocks</a></h2><a href="blocks"><img src="blocks/1.png"></a>
+<h2><a href="eyes">Eyes</a></h2><a href="eyes"><img src="eyes/1.png"></a>
+<h2><a href="fifteen">Fifteen</a></h2><a href="fifteen"><img src="fifteen/1.png"></a>
+<h2><a href="flowers">Flowers</a></h2><a href="flowers"><img src="flowers/1.png"></a>
+<h2><a href="life">Life</a></h2><a href="life"><img src="life/1.png"></a>
+<h2><a href="snake">Snake</a></h2><a href="snake"><img src="snake/1.png"></a>
+<h2><a href="sokoban">Sokoban</a></h2><a href="sokoban"><img src="sokoban/1.png"></a>
 </body>
 </html>
