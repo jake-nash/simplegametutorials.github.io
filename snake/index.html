@@ -1,43 +1,73 @@
 <html><head><title>Snake Tutorial</title>
-    <style>
-    body {
-        font-family: Calibri, sans-serif;
-        margin: 20px;
-    }
-    p {
-        max-width: 600px;
-        line-height: 1.4;
-    }
-    td {
-        padding-right:10px
-    }
-    .code {
-        font-family: Consolas, Monaco, Inconsolata, monospace;
-        border-left: solid 5px #e7e7e7;
-        color: #444;
-        padding-left: 12px;
-    }
-    .inlinecode {
-        font-family: Consolas, Monaco, Inconsolata, monospace;
-        color: #444;
-    }
-    .console {
-        font-family: Consolas, Monaco, Inconsolata, monospace;
-        padding: 16px;
-        background: #444;
-        color: #eee;
-        width: 700px;
-    }
-    .name {color:#d09}
-    .call {color:#d60}
-    .literal {color:#088}
-    .comment {color:#444; background:#eee}
-    .highlight {background:#ffc}
-    .highlight .comment, .comment .highlight {background:#f0edd3}
-    </style>
-    </head>
-    <body>
-    <h1>Snake</h1>
+<link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet">
+<style>
+body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+    background: #efefef;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 11pt;
+}
+a {
+    color: #059dc5;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+p {
+    max-width: 600px;
+    line-height: 1.4;
+}
+td {
+    padding-right:10px
+}
+pre {
+    margin-top: 0;
+    min-width: 600px;
+}
+.pre {
+    display: table;
+    margin: 20px 0;
+}
+img {
+    display: block;
+    margin: 14px 0;
+}
+.code {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    border-radius: 8px;
+    background: #fff;
+    color: #555;
+    padding: 12px;
+}
+.inlinecode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    color: #555;
+}
+.console {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 16px;
+    background: #555;
+    border-radius: 8px;
+    color: #eee;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5; color:#ea9b4c;}
+.comment {color:#555; background:#eee; border-radius: 4px;}
+.highlight {background:#fcffc4; border-radius: 4px;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+</style>
+</head>
+<body>
+<h1>Snake</h1>
 <h2><a href="snake.love">Download snake.love</a></h2>
 <img src="1.png">
 <h2>Rules</h2>
@@ -62,7 +92,7 @@
 <h3>Drawing the background</h3>
 <p>The playing area is 20 cells wide and 15 cells high, and each cell has a side length of 15 pixels.</p>
 <p>A rectangle is drawn for the background.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
     local <span class="name">gridXCount</span> = <span class="literal">20</span>
     local <span class="name">gridYCount</span> = <span class="literal">15</span>
@@ -77,14 +107,14 @@ function <span class="name">love.draw</span>()
         <span class="name">gridYCount</span> * <span class="name">cellSize</span>
     )
 end
-</pre>
+</pre></div>
 <img src="5.png">
 <h3>Drawing the snake</h3>
 <p>The snake's segments are stored as X and Y positions and drawn as squares.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
-    <span class="comment">-- etc.
-</span>
+    <span class="comment">-- etc.</span>
+
     local <span class="name">snakeSegments</span> = {
         {<span class="name">x</span> = <span class="literal">3</span>, <span class="name">y</span> = <span class="literal">1</span>},
         {<span class="name">x</span> = <span class="literal">2</span>, <span class="name">y</span> = <span class="literal">1</span>},
@@ -102,14 +132,14 @@ function <span class="name">love.draw</span>()
         )
     end
 end
-</pre>
+</pre></div>
 <img src="6.png">
 <h3>Timer</h3>
 <p>The snake moves once every 0.15 seconds.</p>
 <p>A timer variable starts at 0 and increases by <span class="inlinecode">
 <span class="name">dt</span></span> each frame.</p>
 <p>When it is at or above 0.15, it is reset by taking 0.15 from it (leaving any residual time in the timer variable if the timer has gone slightly above 0.15, so the timing is more accurate than setting the timer to 0), and this is when the snake will move.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
     <span class="name">timer</span> = <span class="literal">0</span>
 end
@@ -123,14 +153,14 @@ function <span class="name">love.update</span>(<span class="name">dt</span>)
         <span class="call">print</span>(<span class="literal">'Tick'</span>)
     end
 end
-</pre>
+</pre></div>
 <h3>Moving the snake right</h3>
 <p>The next position of the snake's head is calculated by adding 1 to the current X position of the snake's head (i.e. the first element of the segments table). This new segment is added to the start of the segments table.</p>
 <p>The last element of the segments table (the snake's tail) is removed.</p>
 <p>The segments table is changed in <span class="inlinecode">
 <span class="name">love.update</span></span>, so it is moved into <span class="inlinecode">
 <span class="name">love.load</span></span>.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
     <span class="name">snakeSegments</span> = {
         {<span class="name">x</span> = <span class="literal">3</span>, <span class="name">y</span> = <span class="literal">1</span>},
@@ -156,21 +186,21 @@ function <span class="name">love.update</span>(<span class="name">dt</span>)
 end
 
 function <span class="name">love.draw</span>()
-    <span class="comment">-- etc.
-</span>
-    <span class="comment">-- Removed: local snakeSegments
-</span>
-    <span class="comment">-- etc.
-</span>end
-</pre>
+    <span class="comment">-- etc.</span>
+
+    <span class="comment">-- Removed: local snakeSegments</span>
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
 <img src="7.png">
 <h3>Moving the snake in different directions</h3>
 <p>The snake's current direction is stored in a variable, and is changed using the arrow keys.</p>
 <p>The snake's next head position is based on this direction.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
-    <span class="comment">-- etc.
-</span>
+    <span class="comment">-- etc.</span>
+
     <span class="name">direction</span> = <span class="literal">'right'</span>
 end
 
@@ -209,11 +239,11 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
         <span class="name">direction</span> = <span class="literal">'up'</span>
     end
 end
-</pre>
+</pre></div>
 <img src="8.png">
 <h3>Preventing going backwards</h3>
 <p>The snake shouldn't be able to move in the opposite direction it's currently going in (e.g. when it is going right, it shouldn't immediately go left), so this is checked before setting the direction.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
     if <span class="name">key</span> == <span class="literal">'right'</span>
     <span class="highlight">and <span class="name">direction</span> ~= <span class="literal">'left'</span></span> then
@@ -232,7 +262,7 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
         <span class="name">direction</span> = <span class="literal">'up'</span>
     end
 end
-</pre>
+</pre></div>
 <h3>Using direction queue</h3>
 <p>Currently, the snake can still go backwards if another direction and then the opposite direction is pressed within a single tick. For example, if the snake moved right on the last tick, and then the player presses down then left before the next tick, the snake will move left on the next tick.</p>
 <p>Also, the player may want to give multiple directions within a single tick. In the above example, the player may have wanted the snake to move down for the next tick, and then left on the tick after.</p>
@@ -240,10 +270,10 @@ end
 <p>If the direction queue has more than one item, the first item is removed from it on every tick.</p>
 <p>When a key is pressed, the direction is added to the end of the direction queue.</p>
 <p>The last item of the direction queue (i.e. the last direction pressed) is checked to see if it's not in the opposite direction of the new direction before adding the new direction to the direction queue.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
-    <span class="comment">-- etc.
-</span>
+    <span class="comment">-- etc.</span>
+
     <span class="name">directionQueue</span> = {<span class="literal">'right'</span>}
 end
 
@@ -295,19 +325,19 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 end
 
 function <span class="name">love.draw</span>()
-    <span class="comment">-- etc.
-</span>
-    <span class="comment">-- Temporary.
-</span>    for <span class="name">directionIndex</span>, <span class="name">direction</span> in <span class="call">ipairs</span>(<span class="name">directionQueue</span>) do
+    <span class="comment">-- etc.</span>
+
+    <span class="comment">-- Temporary.</span>
+    for <span class="name">directionIndex</span>, <span class="name">direction</span> in <span class="call">ipairs</span>(<span class="name">directionQueue</span>) do
         <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
         <span class="call">love.graphics.print</span>(<span class="literal">'directionQueue['</span>..<span class="name">directionIndex</span>..<span class="literal">']: '</span>..<span class="name">direction</span>, <span class="literal">15</span>, <span class="literal">15</span> * <span class="name">directionIndex</span>)
     end
 end
-</pre>
+</pre></div>
 <img src="9.png">
 <h3>Preventing adding direction to the direction queue twice</h3>
 <p>If the last direction is the same direction as the new direction, the new direction is not added to the direction queue.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
     if <span class="name">key</span> == <span class="literal">'right'</span>
     <span class="highlight">and <span class="name">directionQueue</span>[#<span class="name">directionQueue</span>] ~= <span class="literal">'right'</span></span>
@@ -330,22 +360,22 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
         <span class="call">table.insert</span>(<span class="name">directionQueue</span>, <span class="literal">'down'</span>)
     end
 end
-</pre>
+</pre></div>
 <h3>Wrapping around</h3>
 <p>If the next position would be off the grid, it is wrapped around to the position on the other side.</p>
 <p>The grid X/Y count is reused from drawing the background, so they are moved to <span class="inlinecode">
 <span class="name">love.load</span></span>.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
-    <span class="comment">-- etc.
-</span>
+    <span class="comment">-- etc.</span>
+
     <span class="name">gridXCount</span> = <span class="literal">20</span>
     <span class="name">gridYCount</span> = <span class="literal">15</span>
 end
 
 function <span class="name">love.update</span>(<span class="name">dt</span>)
-        <span class="comment">-- etc.
-</span>
+        <span class="comment">-- etc.</span>
+
         if <span class="name">directionQueue</span>[<span class="literal">1</span>] == <span class="literal">'right'</span> then
             <span class="name">nextXPosition</span> = <span class="name">nextXPosition</span> + <span class="literal">1</span>
             <span class="highlight">if <span class="name">nextXPosition</span> > <span class="name">gridXCount</span> then</span>
@@ -368,21 +398,21 @@ function <span class="name">love.update</span>(<span class="name">dt</span>)
             <span class="highlight">end</span>
         end
 
-        <span class="comment">-- etc.
-</span>end
+        <span class="comment">-- etc.</span>
+end
 
 function <span class="name">love.draw</span>()
-    <span class="comment">-- Removed: local gridXCount = 20
-</span>    <span class="comment">-- Removed: local gridYCount = 15
-</span>end
-</pre>
+    <span class="comment">-- Removed: local gridXCount = 20</span>
+    <span class="comment">-- Removed: local gridYCount = 15</span>
+end
+</pre></div>
 <img src="10.png">
 <h3>Drawing food</h3>
 <p>The food is stored as a pair of X and Y values and is drawn as a square.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
-    <span class="comment">-- etc.
-</span>
+    <span class="comment">-- etc.</span>
+
     <span class="name">foodPosition</span> = {
         <span class="name">x</span> = <span class="call">love.math.random</span>(<span class="literal">1</span>, <span class="name">gridXCount</span>),
         <span class="name">y</span> = <span class="call">love.math.random</span>(<span class="literal">1</span>, <span class="name">gridYCount</span>)
@@ -390,8 +420,8 @@ function <span class="name">love.load</span>()
 end
 
 function <span class="name">love.draw</span>()
-    -<span class="comment">-- etc.
-</span>
+    -<span class="comment">-- etc.</span>
+
     <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">76</span>, <span class="literal">76</span>)
     <span class="call">love.graphics.rectangle</span>(
         <span class="literal">'fill'</span>,
@@ -401,14 +431,14 @@ function <span class="name">love.draw</span>()
         <span class="name">cellSize</span> - <span class="literal">1</span>
     )
 end
-</pre>
+</pre></div>
 <img src="11.png">
 <h3>Simplifying code</h3>
 <p>The code for drawing a snake's segment and drawing the food is the same, so a function is made.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
-    <span class="comment">-- etc.
-</span>
+    <span class="comment">-- etc.</span>
+
     <span class="highlight">local function <span class="name">drawCell</span>(<span class="name">x</span>, <span class="name">y</span>)</span>
         <span class="call">love.graphics.rectangle</span>(
             <span class="literal">'fill'</span>,
@@ -427,13 +457,13 @@ function <span class="name">love.draw</span>()
     <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">76</span>, <span class="literal">76</span>)
     <span class="highlight"><span class="call">drawCell</span>(<span class="name">foodPosition.x</span>, <span class="name">foodPosition.y</span>)</span>
 end
-</pre>
+</pre></div>
 <h3>Eating food</h3>
 <p>If the snake's new head position is the same as the food's position, the snake's tail isn't removed, and the food gets a new random position.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.update</span>(<span class="name">dt</span>)
-        <span class="comment">-- etc.
-</span>
+        <span class="comment">-- etc.</span>
+
         <span class="call">table.insert</span>(<span class="name">snakeSegments</span>, <span class="literal">1</span>, {<span class="name">x</span> = <span class="name">nextXPosition</span>, <span class="name">y</span> = <span class="name">nextYPosition</span>})
 
         <span class="highlight">if <span class="name">snakeSegments</span>[<span class="literal">1</span>].<span class="name">x</span> == <span class="name">foodPosition.x</span></span>
@@ -447,13 +477,13 @@ function <span class="name">love.update</span>(<span class="name">dt</span>)
         <span class="highlight">end</span>
     end
 end
-</pre>
+</pre></div>
 <h3>Simplifying code</h3>
 <p>The code for setting the food to a random position is reused, so a function is made.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
-    <span class="comment">-- etc.
-</span>
+    <span class="comment">-- etc.</span>
+
     <span class="highlight">function <span class="name">moveFood</span>()</span>
         <span class="name">foodPosition</span> = {
             <span class="name">x</span> = <span class="call">love.math.random</span>(<span class="literal">1</span>, <span class="name">gridXCount</span>),
@@ -465,8 +495,8 @@ function <span class="name">love.load</span>()
 end
 
 function <span class="name">love.update</span>(<span class="name">dt</span>)
-        <span class="comment">-- etc.
-</span>
+        <span class="comment">-- etc.</span>
+
         if <span class="name">snakeSegments</span>[<span class="literal">1</span>].<span class="name">x</span> == <span class="name">foodPosition.x</span>
         and <span class="name">snakeSegments</span>[<span class="literal">1</span>].<span class="name">y</span> == <span class="name">foodPosition.y</span> then
             <span class="highlight"><span class="call">moveFood</span>()</span>
@@ -475,14 +505,14 @@ function <span class="name">love.update</span>(<span class="name">dt</span>)
         end
     end
 end
-</pre>
+</pre></div>
 <h3>Moving food to free positions</h3>
 <p>Instead of being set to any random position, the food is set to be in a position not occupied by the snake.</p>
 <p>All of the positions of the grid are looped through, and for each position all of the segments of the snake are looped through, and if no segments of the snake are at the same position as the grid position, the grid position is added to a table of possible food positions. The next food position is selected randomly from this table.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
-    <span class="comment">-- etc.
-</span>
+    <span class="comment">-- etc.</span>
+
     function <span class="name">moveFood</span>()
         local <span class="name">possibleFoodPositions</span> = {}
 
@@ -507,18 +537,18 @@ function <span class="name">love.load</span>()
 
     <span class="call">moveFood</span>()
 end
-</pre>
+</pre></div>
 <h3>Game over</h3>
 <p>The snake is looped through, and if any of its segments except for the last one is at the same position as the snake's new head position then the snake has crashed into itself.</p>
 <p>The last segment isn't checked because it will be removed within the same tick.</p>
 <p>For now, <span class="inlinecode">
 <span class="name">love.load</span></span> is called to reset the game when the snake crashes into itself.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.update</span>(<span class="name">dt</span>)
     local <span class="name">timerLimit</span> = <span class="literal">0.15</span>
     if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
-        <span class="comment">-- etc.
-</span>
+        <span class="comment">-- etc.</span>
+
         <span class="highlight">local <span class="name">canMove</span> = <span class="literal">true</span></span>
 
         <span class="highlight">for <span class="name">segmentIndex</span>, <span class="name">segment</span> in <span class="call">ipairs</span>(<span class="name">snakeSegments</span>) do</span>
@@ -541,16 +571,16 @@ function <span class="name">love.update</span>(<span class="name">dt</span>)
         <span class="highlight">end</span>
     end
 end
-</pre>
+</pre></div>
 <h3>Pausing after the snake has crashed</h3>
 <p>A variable is used to store whether or not the snake is alive, and is set to <span class="inlinecode">
 <span class="literal">false</span></span> when the snake has crashed.</p>
 <p>If the snake is dead, the timer waits for 2 seconds before calling <span class="inlinecode">
 <span class="name">love.load</span></span>.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
-    <span class="comment">-- etc.
-</span>
+    <span class="comment">-- etc.</span>
+
     <span class="name">snakeAlive</span> = <span class="literal">true</span>
 end
 
@@ -560,11 +590,11 @@ function <span class="name">love.update</span>(<span class="name">dt</span>)
     <span class="highlight">if <span class="name">snakeAlive</span> then</span>
         local <span class="name">timerLimit</span> = <span class="literal">0.15</span>
         if <span class="name">timer</span> >= <span class="name">timerLimit</span> then
-            <span class="comment">-- etc.
-</span>
+            <span class="comment">-- etc.</span>
+
             if <span class="name">canMove</span> then
-                <span class="comment">-- etc.
-</span>            else
+                <span class="comment">-- etc.</span>
+            else
                 <span class="highlight"><span class="name">snakeAlive</span> = <span class="literal">false</span></span>
             end
         end
@@ -572,13 +602,13 @@ function <span class="name">love.update</span>(<span class="name">dt</span>)
         <span class="call">love.load</span>()
     <span class="highlight">end</span>
 end
-</pre>
+</pre></div>
 <h3>Changing color when snake is dead</h3>
 <p>The snake's color is changed based on if it's alive or not.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
-    <span class="comment">-- etc.
-</span>
+    <span class="comment">-- etc.</span>
+
     for <span class="name">segmentIndex</span>, <span class="name">segment</span> in <span class="call">ipairs</span>(<span class="name">snakeSegments</span>) do
         <span class="highlight">if <span class="name">snakeAlive</span> then</span>
             <span class="call">love.graphics.setColor</span>(<span class="literal">153</span>, <span class="literal">255</span>, <span class="literal">81</span>)
@@ -588,13 +618,13 @@ function <span class="name">love.draw</span>()
         <span class="call">drawCell</span>(<span class="name">segment.x</span>, <span class="name">segment.y</span>)
     end
 
-    <span class="comment">-- etc.
-</span>end
-</pre>
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
 <img src="12.png">
 <h3>Resetting</h3>
 <p>When the game is over only some variables need to be reset, so a function is made.</p>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
     <span class="name">gridXCount</span> = <span class="literal">20</span>
     <span class="name">gridYCount</span> = <span class="literal">15</span>
@@ -638,15 +668,15 @@ function <span class="name">love.load</span>()
 end
 
 function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="comment">-- etc.
-</span>
+    <span class="comment">-- etc.</span>
+
     elseif <span class="name">timer</span> >= <span class="literal">2</span> then
         <span class="highlight"><span class="call">reset</span>()</span>
     end
 end
-</pre>
+</pre></div>
 <h2>Final code</h2>
-<pre class="code">
+<div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
     <span class="name">gridXCount</span> = <span class="literal">20</span>
     <span class="name">gridYCount</span> = <span class="literal">15</span>
@@ -811,5 +841,5 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
         <span class="call">table.insert</span>(<span class="name">directionQueue</span>, <span class="literal">'down'</span>)
     end
 end
-</pre>
+</pre></div>
 </body></html>
