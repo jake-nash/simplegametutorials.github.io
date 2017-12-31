@@ -30,11 +30,9 @@ td {
 }
 pre {
     margin-top: 0;
-    min-width: 600px;
 }
 .pre {
     display: table;
-    margin: 20px 0;
 }
 img {
     display: block;
@@ -327,7 +325,7 @@ end
 <h3>Total accounting for ace</h3>
 <p>Aces have a value of 11 instead of 1 if it would increase the value of the hand without it going over 21.</p>
 <p>First, the values of all of the cards in that hand are added together, counting aces as 1 instead of 11.</p>
-<p>Then, if the hand has an ace and the total value of the hand is 11 or less, 10 is added to the total (10 is added instead of 11 because the total has already had 1 added to it for that ace). If the total of the value hand was 12 (or more) then an ace counting as 11 would make the value of the hand 22 (or more).</p>
+<p>Then, if the hand has an ace and the total value of the hand is 11 or less, 10 is added to the total (10 is added instead of 11 because the total has already had 1 added to it for that ace). If the total of the value hand was 12 (or more) then an ace counting as 11 would make the value of the hand.2 (or more).</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.</span>
@@ -599,7 +597,7 @@ end
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.</span>
 
-    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
 end
 
 function <span class="name">love.draw</span>()
@@ -620,7 +618,7 @@ function <span class="name">love.draw</span>()
     <span class="comment">-- etc.</span>
 
     for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">playerHand</span>) do
-        <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)</span>
+        <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
         <span class="call">love.graphics.draw</span>(<span class="name">images.card</span>, (<span class="name">cardIndex</span> - <span class="literal">1</span>) * <span class="literal">60</span>, <span class="literal">0</span>)
 
         <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)</span>
@@ -637,7 +635,7 @@ function <span class="name">love.draw</span>()
     <span class="comment">-- etc.</span>
 
     <span class="highlight">local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)</span>
-        <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
         <span class="call">love.graphics.draw</span>(<span class="name">images.card</span>, <span class="highlight"><span class="name">x</span></span>, <span class="highlight"><span class="name">y</span></span>)
 
         <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)
@@ -681,7 +679,7 @@ function <span class="name">love.draw</span>()
     <span class="comment">-- etc.</span>
 
     local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
-        <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
         <span class="call">love.graphics.draw</span>(<span class="name">images.card</span>, <span class="name">x</span>, <span class="name">y</span>)
 
         <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)
@@ -699,7 +697,7 @@ function <span class="name">love.draw</span>()
     <span class="comment">-- etc.</span>
 
     local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
-        <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
         <span class="call">love.graphics.draw</span>(<span class="name">images.card</span>, <span class="name">x</span>, <span class="name">y</span>)
 
         <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)
@@ -799,15 +797,15 @@ function <span class="name">love.draw</span>()
     <span class="comment">-- etc.</span>
 
     local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
-        <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
         <span class="call">love.graphics.draw</span>(<span class="name">images.card</span>, <span class="name">x</span>, <span class="name">y</span>)
 
         <span class="comment">-- Removed: love.graphics.setColor(0, 0, 0)</span>
 
         <span class="highlight">if <span class="name">card.suit</span> == <span class="literal">'heart'</span> or <span class="name">card.suit</span> == <span class="literal">'diamond'</span> then</span>
-        <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">228</span>, <span class="literal">15</span>, <span class="literal">100</span>)</span>
+        <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">.89</span>, <span class="literal">.06</span>, <span class="literal">.39</span>)</span>
         <span class="highlight">else</span>
-        <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">50</span>, <span class="literal">50</span>, <span class="literal">50</span>)</span>
+        <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">.2</span>, <span class="literal">.2</span>, <span class="literal">.2</span>)</span>
         <span class="highlight">end</span>
 
         <span class="comment">-- etc.</span>
@@ -833,7 +831,7 @@ function <span class="name">love.draw</span>()
             elseif <span class="name">card.rank</span> == <span class="literal">13</span> then
                 <span class="name">faceImage</span> = <span class="name">images.face_king</span>
             end
-            <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+            <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
             <span class="call">love.graphics.draw</span>(<span class="name">faceImage</span>, <span class="name">x</span> + <span class="literal">12</span>, <span class="name">y</span> + <span class="literal">11</span>)
         end
     end
@@ -1380,14 +1378,14 @@ end
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.</span>
 
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
     <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="literal">10</span>, <span class="literal">230</span>, <span class="literal">53</span>, <span class="literal">25</span>)
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
     <span class="call">love.graphics.print</span>(<span class="literal">'Hit!'</span>, <span class="literal">16</span>, <span class="literal">236</span>)
 
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
     <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="literal">70</span>, <span class="literal">230</span>, <span class="literal">53</span>, <span class="literal">25</span>)
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
     <span class="call">love.graphics.print</span>(<span class="literal">'Stand'</span>, <span class="literal">78</span>, <span class="literal">236</span>)
 end
 </pre></div>
@@ -1399,20 +1397,20 @@ function <span class="name">love.draw</span>()
     <span class="comment">-- etc.</span>
 
     <span class="comment">--[[
-    love.graphics.setColor(255, 127, 57)
+    love.graphics.setColor(1, .5, .2)
     love.graphics.rectangle('fill', 10, 230, 53, 25)
-    love.graphics.setColor(255, 255, 255)
+    love.graphics.setColor(1, 1, 1)
     love.graphics.print('Hit!', 16, 236)
 
-    love.graphics.setColor(255, 127, 57)
+    love.graphics.setColor(1, .5, .2)
     love.graphics.rectangle('fill', 70, 230, 53, 25)
-    love.graphics.setColor(255, 255, 255)
+    love.graphics.setColor(1, 1, 1)
     love.graphics.print('Stand', 78, 236)
     --]]</span>
 
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
     <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="literal">10</span>, <span class="literal">230</span>, <span class="literal">113</span>, <span class="literal">25</span>)
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
     <span class="call">love.graphics.print</span>(<span class="literal">'Play again'</span>, <span class="literal">34</span>, <span class="literal">236</span>)
 end
 </pre></div>
@@ -1428,22 +1426,22 @@ function <span class="name">love.draw</span>()
     <span class="highlight">local <span class="name">buttonY</span> = <span class="literal">230</span></span>
 
     <span class="highlight">local <span class="name">buttonHitX</span> = <span class="literal">10</span></span>
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
     <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">buttonHitX</span></span>, <span class="highlight"><span class="name">buttonY</span></span>, <span class="literal">53</span>, <span class="literal">25</span>)
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
     <span class="call">love.graphics.print</span>(<span class="literal">'Hit!'</span>, <span class="highlight"><span class="name">buttonHitX</span> + <span class="literal">6</span></span>, <span class="highlight"><span class="name">buttonY</span> + <span class="literal">6</span></span>)
 
     <span class="highlight">local <span class="name">buttonStandX</span> = <span class="literal">70</span></span>
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
     <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">buttonStandX</span></span>, <span class="highlight"><span class="name">buttonY</span></span>, <span class="literal">53</span>, <span class="literal">25</span>)
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
     <span class="call">love.graphics.print</span>(<span class="literal">'Stand'</span>, <span class="highlight"><span class="name">buttonStandX</span> + <span class="literal">8</span></span>, <span class="highlight"><span class="name">buttonY</span> + <span class="literal">6</span></span>)
 
     <span class="comment">--[[
     <span class="highlight">local buttonPlayAgainX = 10</span>
-    love.graphics.setColor(255, 127, 57)
+    love.graphics.setColor(1, .5, .2)
     love.graphics.rectangle('fill', <span class="highlight">buttonPlayAgainX</span>, <span class="highlight">buttonY</span>, 113, 25)
-    love.graphics.setColor(255, 255, 255)
+    love.graphics.setColor(1, 1, 1)
     love.graphics.print('Play again', <span class="highlight">buttonPlayAgainX + 24</span>, <span class="highlight">buttonY + 6</span>)
     --]]</span>
 end
@@ -1456,9 +1454,9 @@ function <span class="name">love.draw</span>()
 
     <span class="highlight">local function <span class="name">drawButton</span>(<span class="name">text</span>, <span class="name">buttonX</span>, <span class="name">buttonWidth</span>, <span class="name">textOffsetX</span>)</span>
         local <span class="name">buttonY</span> = <span class="literal">230</span>
-        <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
         <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">buttonX</span></span>, <span class="name">buttonY</span>, <span class="highlight"><span class="name">buttonWidth</span></span>, <span class="literal">25</span>)
-        <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
         <span class="call">love.graphics.print</span>(<span class="highlight"><span class="name">text</span></span>, <span class="highlight"><span class="name">buttonX</span> + <span class="name">textOffsetX</span></span>, <span class="name">buttonY</span> + <span class="literal">6</span>)
     <span class="highlight">end</span>
 
@@ -1489,12 +1487,12 @@ function <span class="name">love.draw</span>()
         <span class="highlight">and <span class="call">love.mouse.getX</span>() < <span class="name">buttonX</span> + <span class="name">buttonWidth</span></span>
         <span class="highlight">and <span class="call">love.mouse.getY</span>() >= <span class="name">buttonY</span></span>
         <span class="highlight">and <span class="call">love.mouse.getY</span>() < <span class="name">buttonY</span> + <span class="name">buttonHeight</span> then</span>
-        <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">202</span>, <span class="literal">75</span>)</span>
+        <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.8</span>, <span class="literal">.3</span>)</span>
         <span class="highlight">else</span>
-            <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>)
+            <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
         <span class="highlight">end</span>
         <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="name">buttonX</span>, <span class="name">buttonY</span>, <span class="name">buttonWidth</span>, <span class="highlight"><span class="name">buttonHeight</span></span>)
-        <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
         <span class="call">love.graphics.print</span>(<span class="name">text</span>, <span class="name">buttonX</span> + <span class="name">textOffsetX</span>, <span class="name">buttonY</span> + <span class="literal">6</span>)
     end
 
@@ -1600,7 +1598,7 @@ end
 <p>Only some variables need to be reset when the play again button is clicked, so a function is made.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
-    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
 
     <span class="name">images</span> = {}
     for <span class="name">nameIndex</span>, <span class="name">name</span> in <span class="call">ipairs</span>({
@@ -1666,7 +1664,7 @@ end
 <h2>Final code</h2>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
-    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
 
     <span class="name">images</span> = {}
     for <span class="name">nameIndex</span>, <span class="name">name</span> in <span class="call">ipairs</span>({
@@ -1778,13 +1776,13 @@ function <span class="name">love.draw</span>()
     end
 
     local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
-        <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
         <span class="call">love.graphics.draw</span>(<span class="name">images.card</span>, <span class="name">x</span>, <span class="name">y</span>)
 
         if <span class="name">card.suit</span> == <span class="literal">'heart'</span> or <span class="name">card.suit</span> == <span class="literal">'diamond'</span> then
-            <span class="call">love.graphics.setColor</span>(<span class="literal">228</span>, <span class="literal">15</span>, <span class="literal">100</span>)
+            <span class="call">love.graphics.setColor</span>(<span class="literal">.89</span>, <span class="literal">.06</span>, <span class="literal">.39</span>)
         else
-            <span class="call">love.graphics.setColor</span>(<span class="literal">50</span>, <span class="literal">50</span>, <span class="literal">50</span>)
+            <span class="call">love.graphics.setColor</span>(<span class="literal">.2</span>, <span class="literal">.2</span>, <span class="literal">.2</span>)
         end
         
         local <span class="name">cardWidth</span> = <span class="literal">53</span>
@@ -1817,7 +1815,7 @@ function <span class="name">love.draw</span>()
             elseif <span class="name">card.rank</span> == <span class="literal">13</span> then
                 <span class="name">faceImage</span> = <span class="name">images.face_king</span>
             end
-            <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+            <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
             <span class="call">love.graphics.draw</span>(<span class="name">faceImage</span>, <span class="name">x</span> + <span class="literal">12</span>, <span class="name">y</span> + <span class="literal">11</span>)
         else
             local function <span class="name">drawPip</span>(<span class="name">offsetX</span>, <span class="name">offsetY</span>, <span class="name">mirrorX</span>, <span class="name">mirrorY</span>)
@@ -1953,12 +1951,12 @@ function <span class="name">love.draw</span>()
         and <span class="call">love.mouse.getX</span>() < <span class="name">buttonX</span> + <span class="name">buttonWidth</span>
         and <span class="call">love.mouse.getY</span>() >= <span class="name">buttonY</span>
         and <span class="call">love.mouse.getY</span>() < <span class="name">buttonY</span> + <span class="name">buttonHeight</span> then
-            <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">202</span>, <span class="literal">75</span>)
+            <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.8</span>, <span class="literal">.3</span>)
         else
-            <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>)
+            <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
         end
         <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="name">buttonX</span>, <span class="name">buttonY</span>, <span class="name">buttonWidth</span>, <span class="name">buttonHeight</span>)
-        <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
         <span class="call">love.graphics.print</span>(<span class="name">text</span>, <span class="name">buttonX</span> + <span class="name">textOffsetX</span>, <span class="name">buttonY</span> + <span class="literal">6</span>)
     end
 

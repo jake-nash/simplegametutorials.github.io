@@ -30,11 +30,9 @@ td {
 }
 pre {
     margin-top: 0;
-    min-width: 600px;
 }
 .pre {
     display: table;
-    margin: 20px 0;
 }
 img {
     display: block;
@@ -99,7 +97,7 @@ function <span class="name">love.draw</span>()
     local <span class="name">gridYCount</span> = <span class="literal">15</span>
     local <span class="name">cellSize</span> = <span class="literal">15</span>
 
-    <span class="call">love.graphics.setColor</span>(<span class="literal">71</span>, <span class="literal">71</span>, <span class="literal">71</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">.28</span>, <span class="literal">.28</span>, <span class="literal">.28</span>)
     <span class="call">love.graphics.rectangle</span>(
         <span class="literal">'fill'</span>,
         <span class="literal">0</span>,
@@ -123,7 +121,7 @@ function <span class="name">love.draw</span>()
     }
 
     for <span class="name">segmentIndex</span>, <span class="name">segment</span> in <span class="call">ipairs</span>(<span class="name">snakeSegments</span>) do
-        <span class="call">love.graphics.setColor</span>(<span class="literal">153</span>, <span class="literal">255</span>, <span class="literal">81</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">.6</span>, <span class="literal">1</span>, <span class="literal">.32</span>)
         <span class="call">love.graphics.rectangle</span>(
             <span class="literal">'fill'</span>,
             (<span class="name">segment.x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
@@ -330,7 +328,7 @@ function <span class="name">love.draw</span>()
 
     <span class="comment">-- Temporary.</span>
     for <span class="name">directionIndex</span>, <span class="name">direction</span> in <span class="call">ipairs</span>(<span class="name">directionQueue</span>) do
-        <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
         <span class="call">love.graphics.print</span>(<span class="literal">'directionQueue['</span>..<span class="name">directionIndex</span>..<span class="literal">']: '</span>..<span class="name">direction</span>, <span class="literal">15</span>, <span class="literal">15</span> * <span class="name">directionIndex</span>)
     end
 end
@@ -423,7 +421,7 @@ end
 function <span class="name">love.draw</span>()
     -<span class="comment">-- etc.</span>
 
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">76</span>, <span class="literal">76</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.3</span>, <span class="literal">.3</span>)
     <span class="call">love.graphics.rectangle</span>(
         <span class="literal">'fill'</span>,
         (<span class="name">foodPosition.x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
@@ -451,11 +449,11 @@ function <span class="name">love.draw</span>()
     <span class="highlight">end</span>
 
     for <span class="name">segmentIndex</span>, <span class="name">segment</span> in <span class="call">ipairs</span>(<span class="name">snakeSegments</span>) do
-        <span class="call">love.graphics.setColor</span>(<span class="literal">153</span>, <span class="literal">255</span>, <span class="literal">81</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">.6</span>, <span class="literal">1</span>, <span class="literal">.32</span>)
         <span class="highlight"><span class="call">drawCell</span>(<span class="name">segment.x</span>, <span class="name">segment.y</span>)</span>
     end
 
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">76</span>, <span class="literal">76</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.3</span>, <span class="literal">.3</span>)
     <span class="highlight"><span class="call">drawCell</span>(<span class="name">foodPosition.x</span>, <span class="name">foodPosition.y</span>)</span>
 end
 </pre></div>
@@ -612,9 +610,9 @@ function <span class="name">love.draw</span>()
 
     for <span class="name">segmentIndex</span>, <span class="name">segment</span> in <span class="call">ipairs</span>(<span class="name">snakeSegments</span>) do
         <span class="highlight">if <span class="name">snakeAlive</span> then</span>
-            <span class="call">love.graphics.setColor</span>(<span class="literal">153</span>, <span class="literal">255</span>, <span class="literal">81</span>)
+            <span class="call">love.graphics.setColor</span>(<span class="literal">.6</span>, <span class="literal">1</span>, <span class="literal">.32</span>)
         <span class="highlight">else</span>
-        <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">126</span>, <span class="literal">126</span>, <span class="literal">126</span>)</span>
+        <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">.5</span>, <span class="literal">.5</span>, <span class="literal">.5</span>)</span>
         <span class="highlight">end</span>
         <span class="call">drawCell</span>(<span class="name">segment.x</span>, <span class="name">segment.y</span>)
     end
@@ -788,7 +786,7 @@ end
 function <span class="name">love.draw</span>()
     local <span class="name">cellSize</span> = <span class="literal">15</span>
 
-    <span class="call">love.graphics.setColor</span>(<span class="literal">71</span>, <span class="literal">71</span>, <span class="literal">71</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">.28</span>, <span class="literal">.28</span>, <span class="literal">.28</span>)
     <span class="call">love.graphics.rectangle</span>(
         <span class="literal">'fill'</span>,
         <span class="literal">0</span>,
@@ -809,14 +807,14 @@ function <span class="name">love.draw</span>()
 
     for <span class="name">segmentIndex</span>, <span class="name">segment</span> in <span class="call">ipairs</span>(<span class="name">snakeSegments</span>) do
         if <span class="name">snakeAlive</span> then
-            <span class="call">love.graphics.setColor</span>(<span class="literal">153</span>, <span class="literal">255</span>, <span class="literal">81</span>)
+            <span class="call">love.graphics.setColor</span>(<span class="literal">.6</span>, <span class="literal">1</span>, <span class="literal">.32</span>)
         else
-            <span class="call">love.graphics.setColor</span>(<span class="literal">126</span>, <span class="literal">126</span>, <span class="literal">126</span>)
+            <span class="call">love.graphics.setColor</span>(<span class="literal">.5</span>, <span class="literal">.5</span>, <span class="literal">.5</span>)
         end
         <span class="call">drawCell</span>(<span class="name">segment.x</span>, <span class="name">segment.y</span>)
     end
 
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">76</span>, <span class="literal">76</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.3</span>, <span class="literal">.3</span>)
     <span class="call">drawCell</span>(<span class="name">foodPosition.x</span>, <span class="name">foodPosition.y</span>)
 end
 

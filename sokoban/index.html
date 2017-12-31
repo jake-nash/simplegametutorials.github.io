@@ -30,11 +30,9 @@ td {
 }
 pre {
     margin-top: 0;
-    min-width: 600px;
 }
 .pre {
     display: table;
-    margin: 20px 0;
 }
 img {
     display: block;
@@ -162,7 +160,7 @@ function <span class="name">love.draw</span>()
             if <span class="name">cell</span> ~= <span class="literal">' '</span> then
                 local <span class="name">cellSize</span> = <span class="literal">23</span>
 
-                <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)</span>
+                <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
                 <span class="call">love.graphics.rectangle</span>(
                     <span class="literal">'fill'</span>,
                     (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
@@ -188,7 +186,7 @@ end
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.</span>
 
-    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">190</span>)
+    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">.75</span>)
 end
 
 function <span class="name">love.draw</span>()
@@ -198,12 +196,12 @@ function <span class="name">love.draw</span>()
                 local <span class="name">cellSize</span> = <span class="literal">23</span>
 
                 <span class="highlight">local <span class="name">colors</span> = {</span>
-                <span class="highlight">    [<span class="literal">'@'</span>] = {<span class="literal">167</span>, <span class="literal">135</span>, <span class="literal">255</span>},</span>
-                <span class="highlight">    [<span class="literal">'+'</span>] = {<span class="literal">158</span>, <span class="literal">119</span>, <span class="literal">255</span>},</span>
-                <span class="highlight">    [<span class="literal">'$'</span>] = {<span class="literal">255</span>, <span class="literal">201</span>, <span class="literal">126</span>},</span>
-                <span class="highlight">    [<span class="literal">'*'</span>] = {<span class="literal">150</span>, <span class="literal">255</span>, <span class="literal">127</span>},</span>
-                <span class="highlight">    [<span class="literal">'.'</span>] = {<span class="literal">156</span>, <span class="literal">229</span>, <span class="literal">255</span>},</span>
-                <span class="highlight">    [<span class="literal">'#'</span>] = {<span class="literal">255</span>, <span class="literal">147</span>, <span class="literal">209</span>},</span>
+                <span class="highlight">    [<span class="literal">'@'</span>] = {<span class="literal">.64</span>, <span class="literal">.53</span>, <span class="literal">1</span>},</span>
+                <span class="highlight">    [<span class="literal">'+'</span>] = {<span class="literal">.62</span>, <span class="literal">.47</span>, <span class="literal">1</span>},</span>
+                <span class="highlight">    [<span class="literal">'$'</span>] = {<span class="literal">1</span>, <span class="literal">.79</span>, <span class="literal">.49</span>},</span>
+                <span class="highlight">    [<span class="literal">'*'</span>] = {<span class="literal">.59</span>, <span class="literal">1</span>, <span class="literal">.5</span>},</span>
+                <span class="highlight">    [<span class="literal">'.'</span>] = {<span class="literal">.61</span>, <span class="literal">.9</span>, <span class="literal">1</span>},</span>
+                <span class="highlight">    [<span class="literal">'#'</span>] = {<span class="literal">1</span>, <span class="literal">.58</span>, <span class="literal">.82</span>},</span>
                 <span class="highlight">}</span>
 
                 <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="name">colors</span>[<span class="name">cell</span>])</span>
@@ -214,7 +212,7 @@ function <span class="name">love.draw</span>()
                     <span class="name">cellSize</span>,
                     <span class="name">cellSize</span>
                 )
-                <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)</span>
+                <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
                 <span class="call">love.graphics.print</span>(
                     <span class="name">level</span>[<span class="name">y</span>][<span class="name">x</span>],
                     (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
@@ -248,12 +246,12 @@ function <span class="name">love.draw</span>()
                 local <span class="name">cellSize</span> = <span class="literal">23</span>
 
                 local <span class="name">colors</span> = {
-                    [<span class="highlight"><span class="name">player</span></span>] = {<span class="literal">167</span>, <span class="literal">135</span>, <span class="literal">255</span>},
-                    [<span class="highlight"><span class="name">playerOnStorage</span></span>] = {<span class="literal">158</span>, <span class="literal">119</span>, <span class="literal">255</span>},
-                    [<span class="highlight"><span class="name">box</span></span>] = {<span class="literal">255</span>, <span class="literal">201</span>, <span class="literal">126</span>},
-                    [<span class="highlight"><span class="name">boxOnStorage</span></span>] = {<span class="literal">150</span>, <span class="literal">255</span>, <span class="literal">127</span>},
-                    [<span class="highlight"><span class="name">storage</span></span>] = {<span class="literal">156</span>, <span class="literal">229</span>, <span class="literal">255</span>},
-                    [<span class="highlight"><span class="name">wall</span></span>] = {<span class="literal">255</span>, <span class="literal">147</span>, <span class="literal">209</span>},
+                    [<span class="highlight"><span class="name">player</span></span>] = {<span class="literal">.64</span>, <span class="literal">.53</span>, <span class="literal">1</span>},
+                    [<span class="highlight"><span class="name">playerOnStorage</span></span>] = {<span class="literal">.62</span>, <span class="literal">.47</span>, <span class="literal">1</span>},
+                    [<span class="highlight"><span class="name">box</span></span>] = {<span class="literal">1</span>, <span class="literal">.79</span>, <span class="literal">.49</span>},
+                    [<span class="highlight"><span class="name">boxOnStorage</span></span>] = {<span class="literal">.59</span>, <span class="literal">1</span>, <span class="literal">.5</span>},
+                    [<span class="highlight"><span class="name">storage</span></span>] = {<span class="literal">.61</span>, <span class="literal">.9</span>, <span class="literal">1</span>},
+                    [<span class="highlight"><span class="name">wall</span></span>] = {<span class="literal">1</span>, <span class="literal">.58</span>, <span class="literal">.82</span>},
                 }
                 
                 <span class="comment">-- etc.</span>
@@ -760,7 +758,7 @@ end
 <h2>Final code</h2>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
-    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">190</span>)
+    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">.75</span>)
 
     <span class="name">player</span> = <span class="literal">'@'</span>
     <span class="name">playerOnStorage</span> = <span class="literal">'+'</span>
@@ -2174,12 +2172,12 @@ function <span class="name">love.draw</span>()
                 local <span class="name">cellSize</span> = <span class="literal">23</span>
 
                 local <span class="name">colors</span> = {
-                    [<span class="name">player</span>] = {<span class="literal">167</span>, <span class="literal">135</span>, <span class="literal">255</span>},
-                    [<span class="name">playerOnStorage</span>] = {<span class="literal">158</span>, <span class="literal">119</span>, <span class="literal">255</span>},
-                    [<span class="name">box</span>] = {<span class="literal">255</span>, <span class="literal">201</span>, <span class="literal">126</span>},
-                    [<span class="name">boxOnStorage</span>] = {<span class="literal">150</span>, <span class="literal">255</span>, <span class="literal">127</span>},
-                    [<span class="name">storage</span>] = {<span class="literal">156</span>, <span class="literal">229</span>, <span class="literal">255</span>},
-                    [<span class="name">wall</span>] = {<span class="literal">255</span>, <span class="literal">147</span>, <span class="literal">209</span>},
+                    [<span class="name">player</span>] = {<span class="literal">.64</span>, <span class="literal">.53</span>, <span class="literal">1</span>},
+                    [<span class="name">playerOnStorage</span>] = {<span class="literal">.62</span>, <span class="literal">.47</span>, <span class="literal">1</span>},
+                    [<span class="name">box</span>] = {<span class="literal">1</span>, <span class="literal">.79</span>, <span class="literal">.49</span>},
+                    [<span class="name">boxOnStorage</span>] = {<span class="literal">.59</span>, <span class="literal">1</span>, <span class="literal">.5</span>},
+                    [<span class="name">storage</span>] = {<span class="literal">.61</span>, <span class="literal">.9</span>, <span class="literal">1</span>},
+                    [<span class="name">wall</span>] = {<span class="literal">1</span>, <span class="literal">.58</span>, <span class="literal">.82</span>},
                 }
 
                 <span class="call">love.graphics.setColor</span>(<span class="name">colors</span>[<span class="name">cell</span>])
@@ -2190,7 +2188,7 @@ function <span class="name">love.draw</span>()
                     <span class="name">cellSize</span>,
                     <span class="name">cellSize</span>
                 )
-                <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+                <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
                 <span class="call">love.graphics.print</span>(
                     <span class="name">level</span>[<span class="name">y</span>][<span class="name">x</span>],
                     (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,

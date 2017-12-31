@@ -30,11 +30,9 @@ td {
 }
 pre {
     margin-top: 0;
-    min-width: 600px;
 }
 .pre {
     display: table;
-    margin: 20px 0;
 }
 img {
     display: block;
@@ -76,10 +74,10 @@ img {
 <p>The eye is drawn with a white circle and a smaller dark blue circle for the pupil.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
     <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="literal">200</span>, <span class="literal">200</span>, <span class="literal">50</span>)
 
-    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">100</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.4</span>)
     <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="literal">200</span>, <span class="literal">200</span>, <span class="literal">15</span>)
 end
 </pre></div>
@@ -100,13 +98,13 @@ function <span class="name">love.draw</span>()
     <span class="highlight"><span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'distance x: '</span>..<span class="name">distanceX</span>)</span>
     <span class="highlight"><span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'distance y: '</span>..<span class="name">distanceY</span>)</span>
 
-    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
     <span class="highlight"><span class="call">love.graphics.print</span>(<span class="call">table.concat</span>(<span class="name">output</span>, <span class="literal">'\n'</span>))</span>
 
-    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
     <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">eyeX</span></span>, <span class="highlight"><span class="name">eyeY</span></span>, <span class="literal">50</span>)
 
-    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">100</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.4</span>)
     <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="literal">200</span>, <span class="literal">200</span>, <span class="literal">15</span>)
 end
 </pre></div>
@@ -162,7 +160,7 @@ function <span class="name">love.draw</span>()
 
     <span class="comment">-- etc.</span>
 
-    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">100</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.4</span>)
     <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">pupilX</span></span>, <span class="highlight"><span class="name">pupilY</span></span>)
 end
 </pre></div>
@@ -203,10 +201,10 @@ function <span class="name">love.draw</span>()
         local <span class="name">pupilX</span> = <span class="name">eyeX</span> + (<span class="call">math.cos</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
         local <span class="name">pupilY</span> = <span class="name">eyeY</span> + (<span class="call">math.sin</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
 
-        <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
         <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">eyeX</span>, <span class="name">eyeY</span>, <span class="literal">50</span>)
 
-        <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">100</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.4</span>)
         <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">pupilX</span>, <span class="name">pupilY</span>, <span class="literal">15</span>)
     <span class="highlight">end</span>
 

@@ -30,11 +30,9 @@ td {
 }
 pre {
     margin-top: 0;
-    min-width: 600px;
 }
 .pre {
     display: table;
-    margin: 20px 0;
 }
 img {
     display: block;
@@ -94,7 +92,7 @@ function <span class="name">love.draw</span>()
         for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">4</span> do
             local <span class="name">pieceSize</span> = <span class="literal">100</span>
             local <span class="name">pieceDrawSize</span> = <span class="name">pieceSize</span> - <span class="literal">1</span>
-            <span class="call">love.graphics.setColor</span>(<span class="literal">100</span>, <span class="literal">20</span>, <span class="literal">150</span>)
+            <span class="call">love.graphics.setColor</span>(<span class="literal">.4</span>, <span class="literal">.1</span>, <span class="literal">.6</span>)
             <span class="call">love.graphics.rectangle</span>(
                 <span class="literal">'fill'</span>,
                 (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">pieceSize</span>,
@@ -117,7 +115,7 @@ function <span class="name">love.draw</span>()
         for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">4</span> do
             local <span class="name">pieceSize</span> = <span class="literal">100</span>
             local <span class="name">pieceDrawSize</span> = <span class="name">pieceSize</span> - <span class="literal">1</span>
-            <span class="call">love.graphics.setColor</span>(<span class="literal">100</span>, <span class="literal">20</span>, <span class="literal">150</span>)
+            <span class="call">love.graphics.setColor</span>(<span class="literal">.4</span>, <span class="literal">.1</span>, <span class="literal">.6</span>)
             <span class="call">love.graphics.rectangle</span>(
                 <span class="literal">'fill'</span>,
                 (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">pieceSize</span>,
@@ -125,7 +123,7 @@ function <span class="name">love.draw</span>()
                 <span class="name">pieceDrawSize</span>,
                 <span class="name">pieceDrawSize</span>
             )
-            <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)</span>
+            <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
             <span class="highlight"><span class="call">love.graphics.print</span>(</span>
             <span class="highlight">    <span class="name">x</span> + ((<span class="name">y</span> - <span class="literal">1</span>) * <span class="literal">4</span>),</span>
             <span class="highlight">    (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">pieceSize</span>,</span>
@@ -186,7 +184,7 @@ function <span class="name">love.draw</span>()
             <span class="highlight">if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] ~= <span class="name">gridXCount</span> * <span class="name">gridYCount</span> then</span>
                 local <span class="name">pieceSize</span> = <span class="literal">100</span>
                 local <span class="name">pieceDrawSize</span> = <span class="name">pieceSize</span> - <span class="literal">1</span>
-                <span class="call">love.graphics.setColor</span>(<span class="literal">100</span>, <span class="literal">20</span>, <span class="literal">150</span>)
+                <span class="call">love.graphics.setColor</span>(<span class="literal">.4</span>, <span class="literal">.1</span>, <span class="literal">.6</span>)
                 <span class="call">love.graphics.rectangle</span>(
                     <span class="literal">'fill'</span>,
                     (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">pieceSize</span>,
@@ -194,7 +192,7 @@ function <span class="name">love.draw</span>()
                     <span class="name">pieceDrawSize</span>,
                     <span class="name">pieceDrawSize</span>
                 )
-                <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+                <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
                 <span class="call">love.graphics.print</span>(
                     <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>],
                     (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">pieceSize</span>,
@@ -724,7 +722,7 @@ function <span class="name">love.draw</span>()
             if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] ~= <span class="name">gridXCount</span> * <span class="name">gridYCount</span> then
                 local <span class="name">pieceSize</span> = <span class="literal">100</span>
                 local <span class="name">pieceDrawSize</span> = <span class="name">pieceSize</span> - <span class="literal">1</span>
-                <span class="call">love.graphics.setColor</span>(<span class="literal">100</span>, <span class="literal">20</span>, <span class="literal">150</span>)
+                <span class="call">love.graphics.setColor</span>(<span class="literal">.4</span>, <span class="literal">.1</span>, <span class="literal">.6</span>)
                 <span class="call">love.graphics.rectangle</span>(
                     <span class="literal">'fill'</span>,
                     (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">pieceSize</span>,
@@ -732,7 +730,7 @@ function <span class="name">love.draw</span>()
                     <span class="name">pieceDrawSize</span>,
                     <span class="name">pieceDrawSize</span>
                 )
-                <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+                <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
                 <span class="call">love.graphics.print</span>(
                     <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>],
                     (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">pieceSize</span>,

@@ -30,11 +30,9 @@ td {
 }
 pre {
     margin-top: 0;
-    min-width: 600px;
 }
 .pre {
     display: table;
-    margin: 20px 0;
 }
 img {
     display: block;
@@ -152,7 +150,7 @@ end
 <p>The background and dead cell colors are set.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
-    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
 end
 
 function <span class="name">love.draw</span>()
@@ -161,7 +159,7 @@ function <span class="name">love.draw</span>()
             local <span class="name">cellSize</span> = <span class="literal">5</span>
             local <span class="name">cellDrawSize</span> = <span class="name">cellSize</span> - <span class="literal">1</span>
 
-            <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">220</span>, <span class="literal">220</span>, <span class="literal">220</span>)</span>
+            <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">.86</span>, <span class="literal">.86</span>, <span class="literal">.86</span>)</span>
             <span class="call">love.graphics.rectangle</span>(
                 <span class="literal">'fill'</span>,
                 (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
@@ -214,9 +212,9 @@ function <span class="name">love.draw</span>()
             local <span class="name">cellDrawSize</span> = <span class="name">cellSize</span> - <span class="literal">1</span>
 
             <span class="highlight">if <span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span> then</span>
-            <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">255</span>)</span>
+            <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
             <span class="highlight">else</span>
-                <span class="call">love.graphics.setColor</span>(<span class="literal">220</span>, <span class="literal">220</span>, <span class="literal">220</span>)
+                <span class="call">love.graphics.setColor</span>(<span class="literal">.86</span>, <span class="literal">.86</span>, <span class="literal">.86</span>)
             <span class="highlight">end</span>
 
             <span class="call">love.graphics.rectangle</span>(
@@ -265,11 +263,11 @@ function <span class="name">love.draw</span>()
             local <span class="name">cellDrawSize</span> = <span class="name">cellSize</span> - <span class="literal">1</span>
 
             if <span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span> then
-                <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+                <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">1</span>, <span class="literal">1</span>)
             <span class="highlight">elseif <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] then</span>
-            <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">0</span>, <span class="literal">255</span>)</span>
+            <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">0</span>, <span class="literal">1</span>)</span>
             else
-                <span class="call">love.graphics.setColor</span>(<span class="literal">220</span>, <span class="literal">220</span>, <span class="literal">220</span>)
+                <span class="call">love.graphics.setColor</span>(<span class="literal">.86</span>, <span class="literal">.86</span>, <span class="literal">.86</span>)
             end
 
             <span class="call">love.graphics.rectangle</span>(
@@ -351,13 +349,13 @@ end
 </pre></div>
 <div class="pre"><pre class="console">
 Finding neighbors of grid[10][10]
-Checking grid[9][9]
-Checking grid[9][10]
-Checking grid[9][11]
+Checking grid.86].86]
+Checking grid.86][10]
+Checking grid.86][11]
 Neighbour found
-Checking grid[10][9]
+Checking grid[10].86]
 Checking grid[10][11]
-Checking grid[11][9]
+Checking grid[11].86]
 Checking grid[11][10]
 Neighbour found
 Checking grid[11][11]
@@ -435,7 +433,7 @@ end
 <h2>Final code</h2>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
-    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
 
     <span class="name">cellSize</span> = <span class="literal">5</span>
     
@@ -472,11 +470,11 @@ function <span class="name">love.draw</span>()
             local <span class="name">cellDrawSize</span> = <span class="name">cellSize</span> - <span class="literal">1</span>
 
             if <span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span> then
-                <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+                <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">1</span>, <span class="literal">1</span>)
             elseif <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] then
-                <span class="call">love.graphics.setColor</span>(<span class="literal">255</span>, <span class="literal">0</span>, <span class="literal">255</span>)
+                <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">0</span>, <span class="literal">1</span>)
             else
-                <span class="call">love.graphics.setColor</span>(<span class="literal">220</span>, <span class="literal">220</span>, <span class="literal">220</span>)
+                <span class="call">love.graphics.setColor</span>(<span class="literal">.86</span>, <span class="literal">.86</span>, <span class="literal">.86</span>)
             end
 
             <span class="call">love.graphics.rectangle</span>(
