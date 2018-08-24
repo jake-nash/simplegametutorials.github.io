@@ -95,19 +95,18 @@ function <span class="name">love.draw</span>()
     <span class="highlight">local <span class="name">distanceX</span> = <span class="call">love.mouse.getX</span>() - <span class="name">eyeX</span></span>
     <span class="highlight">local <span class="name">distanceY</span> = <span class="call">love.mouse.getY</span>() - <span class="name">eyeY</span></span>
 
-    <span class="highlight">local <span class="name">output</span> = {}</span>
-
-    <span class="highlight"><span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'distance x: '</span>..<span class="name">distanceX</span>)</span>
-    <span class="highlight"><span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'distance y: '</span>..<span class="name">distanceY</span>)</span>
-
-    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
-    <span class="highlight"><span class="call">love.graphics.print</span>(<span class="call">table.concat</span>(<span class="name">output</span>, <span class="literal">'\n'</span>))</span>
-
     <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
     <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">eyeX</span></span>, <span class="highlight"><span class="name">eyeY</span></span>, <span class="literal">50</span>)
 
     <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.4</span>)
     <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="literal">200</span>, <span class="literal">200</span>, <span class="literal">15</span>)
+
+    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.print</span>(<span class="call">table.concat</span>({</span>
+    <span class="highlight">    <span class="literal">'distance x: '</span>..<span class="name">distanceX</span>,</span>
+    <span class="highlight">    <span class="literal">'distance y: '</span>..<span class="name">distanceY</span>,</span>
+    <span class="highlight">}, <span class="literal">'\n'</span>))</span>
+
 end
 </pre></div>
 <img src="3.png">
@@ -116,13 +115,17 @@ end
 <p>The square root of the distance on the X axis squared plus the distance on the Y axis squared is the distance in a straight line.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
     local <span class="name">distance</span> = <span class="call">math.sqrt</span>(<span class="name">distanceX</span>^<span class="literal">2</span> + <span class="name">distanceY</span>^<span class="literal">2</span>)
     
     <span class="comment">-- etc.</span>
 
-    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'distance: '</span>..<span class="name">distance</span>)
-
-    <span class="comment">-- etc.</span>
+    <span class="call">love.graphics.print</span>(<span class="call">table.concat</span>({
+        <span class="literal">'distance x: '</span>..<span class="name">distanceX</span>,
+        <span class="literal">'distance y: '</span>..<span class="name">distanceY</span>,
+    <span class="highlight">    <span class="literal">'distance: '</span>..<span class="name">distance</span>,</span>
+    }, <span class="literal">'\n'</span>))
 end
 </pre></div>
 <img src="4.png">
@@ -137,9 +140,12 @@ function <span class="name">love.draw</span>()
 
     <span class="comment">-- etc.</span>
 
-    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'angle: '</span>..<span class="name">angle</span>)
-
-    <span class="comment">-- etc.</span>
+    <span class="call">love.graphics.print</span>(<span class="call">table.concat</span>({
+        <span class="literal">'distance x: '</span>..<span class="name">distanceX</span>,
+        <span class="literal">'distance y: '</span>..<span class="name">distanceY</span>,
+        <span class="literal">'distance: '</span>..<span class="name">distance</span>,
+    <span class="highlight">    <span class="literal">'angle: '</span>..<span class="name">angle</span>,</span>
+    }, <span class="literal">'\n'</span>))
 end
 </pre></div>
 <img src="5.png">
@@ -157,13 +163,19 @@ function <span class="name">love.draw</span>()
 
     <span class="comment">-- etc.</span>
 
-    <span class="highlight"><span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'cos(angle): '</span>..<span class="call">math.cos</span>(<span class="name">angle</span>))</span>
-    <span class="highlight"><span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'sin(angle): '</span>..<span class="call">math.sin</span>(<span class="name">angle</span>))</span>
+    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.4</span>)
+    <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">pupilX</span></span>, <span class="highlight"><span class="name">pupilY</span></span>, <span class="literal">15</span>)
 
     <span class="comment">-- etc.</span>
 
-    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.4</span>)
-    <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">pupilX</span></span>, <span class="highlight"><span class="name">pupilY</span></span>)
+    <span class="call">love.graphics.print</span>(<span class="call">table.concat</span>({
+        <span class="literal">'distance x: '</span>..<span class="name">distanceX</span>,
+        <span class="literal">'distance y: '</span>..<span class="name">distanceY</span>,
+        <span class="literal">'distance: '</span>..<span class="name">distance</span>,
+        <span class="literal">'angle: '</span>..<span class="name">angle</span>,
+    <span class="highlight">    <span class="literal">'cos(angle): '</span>..<span class="call">math.cos</span>(<span class="name">angle</span>),</span>
+    <span class="highlight">    <span class="literal">'sin(angle): '</span>..<span class="call">math.sin</span>(<span class="name">angle</span>),</span>
+    }, <span class="literal">'\n'</span>))
 end
 </pre></div>
 <img src="6.png">
@@ -173,13 +185,7 @@ end
 function <span class="name">love.draw</span>()
     <span class="comment">-- etc.</span>
 
-    <span class="highlight">local <span class="name">eyeMaxPupilDistance</span> = <span class="literal">30</span></span>
-    <span class="highlight">if <span class="name">distance</span> > <span class="name">eyeMaxPupilDistance</span> then</span>
-    <span class="highlight">    <span class="name">distance</span> = <span class="name">eyeMaxPupilDistance</span></span>
-    <span class="highlight">end</span>
-
-    local <span class="name">pupilX</span> = <span class="name">eyeX</span> + (<span class="call">math.cos</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
-    local <span class="name">pupilY</span> = <span class="name">eyeY</span> + (<span class="call">math.sin</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
+    local <span class="name">distance</span> = <span class="highlight"><span class="call">math.min</span>(</span><span class="call">math.sqrt</span>(<span class="name">distanceX</span>^<span class="literal">2</span> + <span class="name">distanceY</span>^<span class="literal">2</span>)<span class="highlight">, <span class="literal">30</span>)</span>
 
     <span class="comment">-- etc.</span>
 end
@@ -192,13 +198,8 @@ function <span class="name">love.draw</span>()
     <span class="highlight">function <span class="name">drawEye</span>(<span class="name">eyeX</span>, <span class="name">eyeY</span>)</span>
         local <span class="name">distanceX</span> = <span class="call">love.mouse.getX</span>() - <span class="name">eyeX</span>
         local <span class="name">distanceY</span> = <span class="call">love.mouse.getY</span>() - <span class="name">eyeY</span>
-        local <span class="name">distance</span> = <span class="call">math.sqrt</span>(<span class="name">distanceX</span>^<span class="literal">2</span> + <span class="name">distanceY</span>^<span class="literal">2</span>)
+        local <span class="name">distance</span> = <span class="call">math.min</span>(<span class="call">math.sqrt</span>(<span class="name">distanceX</span>^<span class="literal">2</span> + <span class="name">distanceY</span>^<span class="literal">2</span>), <span class="literal">30</span>)
         local <span class="name">angle</span> = <span class="call">math.atan2</span>(<span class="name">distanceY</span>, <span class="name">distanceX</span>)
-
-        local <span class="name">eyeMaxPupilDistance</span> = <span class="literal">30</span>
-        if <span class="name">distance</span> > <span class="name">eyeMaxPupilDistance</span> then
-            <span class="name">distance</span> = <span class="name">eyeMaxPupilDistance</span>
-        end
 
         local <span class="name">pupilX</span> = <span class="name">eyeX</span> + (<span class="call">math.cos</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
         local <span class="name">pupilY</span> = <span class="name">eyeY</span> + (<span class="call">math.sin</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
