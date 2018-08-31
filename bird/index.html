@@ -79,13 +79,13 @@ img {
 <tr><td><b>Any key</b></td><td>Flap</td></tr>
 </table>
 <h2>Overview</h2>
-<p>The bird doesn't actually move forward, it stays still on the X axis while the pipes move to the left.</p>
-<p>The bird is drawn by a yellow rectangle, and each pipe is drawn by two green rectangles.</p>
+<p>The bird doesn't actually move forward; it stays still on the X axis while the pipes move to the left.</p>
+<p>The bird is drawn as a yellow rectangle, and each pipe is drawn as two green rectangles.</p>
 <p>The bird's Y position moves down by a certain speed each frame. Each frame this speed is increased to simulate gravity.</p>
-<p>When a key is pressed the bird's speed is set to a high number in the up direction.</p>
-<p>The pipes share the same width and the same height of the space between the segments.</p>
+<p>When a key is pressed, the bird's speed is set to a high number in the upward direction.</p>
+<p>The pipes share the same width, and the same space height between the segments.</p>
 <img src="2.png">
-<p>Each pipe has its own X position within the playing area and Y position of where the space starts.</p>
+<p>Each pipe has its own X position, and Y position the space.</p>
 <img src="3.png">
 <p>Since there are only two pipes in the playing area at one time, the information for only two pipes needs to stored. Once a pipe goes out of the playing area, it gets a new space position and its X position is reset to the right edge of the playing area.</p>
 <p>To see if the bird has collided with a pipe's two segments, three things need to be checked for each segment.</p>
@@ -133,7 +133,7 @@ end
 </pre></div>
 <img src="11.png">
 <h3>Moving the bird</h3>
-<p>The bird's Y position is made into a variable and every frame it increases by 30 multiplied by <span class="inlinecode">
+<p>The bird's Y position is made into a variable, and every frame it increases by 30 multiplied by <span class="inlinecode">
 <span class="name">dt</span></span>, making the bird move down 30 pixels per second.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
@@ -168,7 +168,7 @@ function <span class="name">love.update</span>(<span class="name">dt</span>)
 end
 </pre></div>
 <h3>Flapping</h3>
-<p>Pressing any key sets the bird's speed so that it moves upwards.</p>
+<p>Pressing any key sets the bird's speed to a negative number so that it moves upwards.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
     <span class="name">birdYSpeed</span> = -<span class="literal">165</span>
@@ -207,9 +207,9 @@ end
 <img src="13.png">
 <h3>Drawing two pipe segments</h3>
 <p>Instead of drawing one rectangle, two rectangles are drawn for the upper and lower segments.</p>
-<p>The top rectangle's height is set to where the "space" between the two segments starts. For now, this is 150.</p>
+<p>The top rectangle's height is set to where the space between the two segments starts. For now, this is 150.</p>
 <p>The bottom rectangle starts at the Y position of the top rectangle's height plus the amount of space between them (which is 100).</p>
-<p>The bottom rectangle's height is the playing area's height, minus the height of what is "already there" (the top rectangle and the space).</p>
+<p>The bottom rectangle's height is the playing area's height, minus the height of the top rectangle and the space.</p>
 <p>The pipe width is the same for both segments, so this is made into a variable.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
@@ -239,7 +239,7 @@ end
 <img src="14.png">
 <h3>Randomizing the space position</h3>
 <p>The pipe's space position is set to a random number between 0 (the top of the playing area) and the playing area height minus the space height (so that the bottom of the space would be touching the bottom of the playing area).</p>
-<p>The pipe's space position should be set only once, not every frame, so it is moved into <span class="inlinecode">
+<p>The pipe's space position should be set only once, so it is moved into <span class="inlinecode">
 <span class="name">love.load</span></span>. Setting the pipe's space position requires the space's height, so this is also moved into <span class="inlinecode">
 <span class="name">love.load</span></span>.</p>
 <p>To test this, pressing any key calls <span class="inlinecode">
@@ -560,7 +560,7 @@ end
 <img src="19.png">
 <h3>Moving two pipes</h3>
 <p>The code which moves the pipe is uncommented and turned into a function which takes a pipe's X position and space position, and returns the updated positions.</p>
-<p>When a pipe goes off the playing area it is set to the right of the playing area.</p>
+<p>When a pipe goes off the playing area, it is set to be at the right of the playing area.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.update</span>(<span class="name">dt</span>)
     <span class="comment">-- etc.</span>
@@ -600,8 +600,8 @@ end
 </pre></div>
 <img src="20.png">
 <h3>Initial X position for pipes</h3>
-<p>The first pipe's initial X position is the width of the playing area (i.e. the pipe's left edge is touching the right edge of the playing area).</p>
-<p>The second pipe's initial X position is set so that there is an even space between it and the first pipe on either side.</p>
+<p>The first pipe's initial X position is set to the width of the playing area (i.e. the pipe's left edge is touching the right edge of the playing area).</p>
+<p>The second pipe's initial X position is set so that there is an even space between it and the other pipe on either side.</p>
 <p>The distance the first pipe travels before it wraps around the playing area is the width of the playing area plus the width of the pipe, because it starts when its left edge is on the right edge of the playing area and ends when its right edge if on the left edge of the playing area. The second pipe's initial X position is set to half this distance.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()

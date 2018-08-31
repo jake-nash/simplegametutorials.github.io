@@ -87,12 +87,12 @@ img {
 <tr><td><b>Any key</b></td><td>Step forward in time</td></tr>
 </table>
 <h2>Overview</h2>
-<p>The cells are stored as a grid of boolean values, <span class="inlinecode">
-<span class="literal">true</span></span> for alive and <span class="inlinecode">
+<p>The cells in the grid are stored as boolean values: <span class="inlinecode">
+<span class="literal">true</span></span> for alive, <span class="inlinecode">
 <span class="literal">false</span></span> for dead.</p>
 <img src="2.png">
 <p>When time steps forward, a new grid is created, and whether the cells of this new grid are alive or dead is based on the current grid.</p>
-<p>After the new grid is complete, the current grid is replaced with the new grid.</p>
+<p>After the new grid is complete, the current grid is replaced by the new grid.</p>
 <h2>Coding</h2>
 <h3>Drawing a cell</h3>
 <p>A cell is drawn as a square.</p>
@@ -109,7 +109,7 @@ end
 </pre></div>
 <img src="3.png">
 <h3>Drawing a row of cells</h3>
-<p>A row of cells are drawn, with 1 pixel between each cell.</p>
+<p>A row of cells is drawn, with 1 pixel between each cell.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
     <span class="highlight">for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">70</span> do</span>
@@ -205,7 +205,7 @@ end
 </pre></div>
 <img src="7.png">
 <h3>Highlighting cells</h3>
-<p>The square under the mouse cursor is set to the highlighted color.</p>
+<p>The square under the mouse cursor is set to the highlight color.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
     for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">50</span> do
@@ -236,7 +236,7 @@ end
 <p>Each cell is represented by a boolean value: <span class="inlinecode">
 <span class="literal">true</span></span> for alive, <span class="inlinecode">
 <span class="literal">false</span></span> for dead.</p>
-<p>If the cell is alive, the alive color is used to draw the cell.</p>
+<p>If the cell is alive, then the alive color is used to draw the cell.</p>
 <p>To test this, some cells are manually set to alive.</p>
 <p>The grid's width/height in cells is reused from drawing the cells, so variables are made for these.</p>
 <div class="pre"><pre class="code">
@@ -285,7 +285,7 @@ end
 </pre></div>
 <img src="9.png">
 <h3>Set cells to alive with left mouse button</h3>
-<p>If the left mouse button is down, the selected cell is set to alive.</p>
+<p>If the left mouse button is down, then the selected cell is set to alive.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.update</span>()
     <span class="comment">-- etc.</span>
@@ -315,8 +315,8 @@ end
 <p>For now, right clicking a cell will print out how many alive neighbors it has.</p>
 <p><span class="inlinecode">
 <span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>]</span> is checked to see if it exists before <span class="inlinecode">
-<span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>][<span class="name">selectedX</span> + <span class="name">dx</span>]</span>, because if <span class="inlinecode">
-<span class="name">selectedY</span> + <span class="name">dy</span></span> is not on the grid, then <span class="inlinecode">
+<span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>][<span class="name">selectedX</span> + <span class="name">dx</span>]</span> is, because if <span class="inlinecode">
+<span class="name">selectedY</span> + <span class="name">dy</span></span> is not inside the grid, then <span class="inlinecode">
 <span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>]</span> will return <span class="inlinecode">
 <span class="literal">nil</span></span>, and <span class="inlinecode">
 <span class="name">grid</span>[<span class="name">selectedY</span> + <span class="name">dy</span>][<span class="name">selectedX</span> + <span class="name">dx</span>]</span> will error because the <span class="inlinecode">
@@ -324,7 +324,7 @@ end
 <span class="literal">nil</span></span>.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.mousepressed</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
-    <span class="comment">-- Temporary.</span>
+    <span class="comment">-- Temporary</span>
     if <span class="name">button</span> == <span class="literal">2</span> then
         local <span class="name">neighbourCount</span> = <span class="literal">0</span>
 
@@ -423,7 +423,7 @@ function <span class="name">love.update</span>()
 end
 </pre></div>
 <h3>Turning key repeat on</h3>
-<p>Key repeat is turned on so holding a key down will call <span class="inlinecode">
+<p>Key repeat is turned on, so that holding a key down will call <span class="inlinecode">
 <span class="name">love.keypressed</span></span> repeatedly.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()

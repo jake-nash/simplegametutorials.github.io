@@ -73,8 +73,8 @@ img {
 <img src="1.png">
 <p><a href="http://git.rockbox.org/?p=rockbox.git;a=blob_plain;f=apps/plugins/sokoban.levels">The levels used in this tutorial are from Rockbox.</a></p>
 <h2>Rules</h2>
-<p>Push all the boxes to storage locations.</p>
-<p>Boxes can only be moved if there is a free space beyond it, not a wall or another box.</p>
+<p>Push all the boxes on to the storage locations.</p>
+<p>Boxes can only be moved if there is a free space beyond it (not a wall or another box).</p>
 <h3>Legend</h3>
 <table>
 <tr><td><img src="2.png"><td>Player</td></tr>
@@ -92,7 +92,6 @@ img {
 <tr><td><b>p</b></td><td>Previous level</td></tr>
 </table>
 <h2>Overview</h2>
-<h3>Representing data</h3>
 <p>The different states a cell can be in are represented by the following strings:</p>
 <table>
 <tr><td><span class="inlinecode">
@@ -110,13 +109,12 @@ img {
 </table>
 <p>The level is stored as a grid of these strings.</p>
 <img src="8.png">
-<h3>Basic logic</h3>
 <p>When an arrow key is pressed, the grid is looped through to find where the player is.</p>
 <p>If the position on the grid adjacent to the player in the direction of the arrow pressed is movable (i.e. empty or a storage location), the values of the grid are changed to reflect the new player position.</p>
 <img src="9.png">
-<p>If position adjacent to the player is a box and the position beyond the box is movable, the grid is changed to reflect the new player and new box positions.</p>
+<p>If the position adjacent to the player is a box and the position beyond the box is movable, the grid is changed to reflect the new player and new box positions.</p>
 <img src="10.png">
-<p>The grid is looped through and if there are no boxes left which aren't on storage locations then the level is complete.</p>
+<p>If there are no boxes left which aren't on storage locations then the level is complete.</p>
 <h2>Coding</h2>
 <h3>Drawing a level</h3>
 <p>Each level is stored as a grid of strings. For now, a single level is stored, and a square is drawn for every cell which isn't a space (i.e. empty).</p>
@@ -183,7 +181,7 @@ end
 </pre></div>
 <img src="12.png">
 <h3>Settings colors</h3>
-<p>The background color is set, and the color of each cell is set.</p>
+<p>The background color is set, and the color of each cell is set based on its type.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.</span>
@@ -286,8 +284,8 @@ end
 <div class="pre"><pre class="console">
 5       5
 </pre></div>
-<h3>Finding cell in direction of key pressed</h3>
-<p>For now, the cell adjacent to the player in the direction of the key pressed is printed out.</p>
+<h3>Finding cell type in direction of key pressed</h3>
+<p>For now, the cell adjacent to the player in the direction of the key pressed has its type printed out.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
     if <span class="name">key</span> == <span class="literal">'up'</span> or <span class="name">key</span> == <span class="literal">'down'</span> or <span class="name">key</span> == <span class="literal">'left'</span> or <span class="name">key</span> == <span class="literal">'right'</span> then
@@ -337,7 +335,7 @@ current = level[5][5] (@)
 adjacent = level[5][4] ($)
 </pre></div>
 <h3>Creating test level</h3>
-<p>For testing player movement, a test level is made.</p>
+<p>A test level is made for testing player movement.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
     <span class="name">level</span> = {
@@ -359,9 +357,9 @@ end
 </pre></div>
 <img src="14.png">
 <h3>Moving player to empty location</h3>
-<p>If the player's current position is the cell type <span class="inlinecode">
+<p>If the value at the player's current position is <span class="inlinecode">
 <span class="name">player</span></span> (i.e. not <span class="inlinecode">
-<span class="name">playerOnStorage</span></span>) and the adjacent cell type is <span class="inlinecode">
+<span class="name">playerOnStorage</span></span>) and the adjacent cell is <span class="inlinecode">
 <span class="name">empty</span></span>, then the player's position becomes <span class="inlinecode">
 <span class="name">empty</span></span> and the adjacent position becomes <span class="inlinecode">
 <span class="name">player</span></span>.</p>
@@ -379,7 +377,7 @@ end
 <img src="15.png">
 <h3>Moving player to storage</h3>
 <p>If the adjacent position is <span class="inlinecode">
-<span class="name">storage</span></span> then the new adjacent position becomes <span class="inlinecode">
+<span class="name">storage</span></span>, then the new adjacent position becomes <span class="inlinecode">
 <span class="name">playerOnStorage</span></span>.</p>
 <p>Currently the player can move on to storage, but not off storage.</p>
 <div class="pre"><pre class="code">
@@ -401,8 +399,8 @@ end
 </pre></div>
 <img src="16.png">
 <h3>Simplifying code</h3>
-<p>The new adjacent position is changed based on what <span class="inlinecode">
-<span class="name">adjacent</span></span> is, so a table is made which returns the next adjacent cell type when indexed by the current adjacent cell type.</p>
+<p>The new adjacent position is set based on the type of <span class="inlinecode">
+<span class="name">adjacent</span></span>, so a table is made which returns the next adjacent cell type when indexed by the current adjacent cell type.</p>
 <p>Indexing by anything other than the values <span class="inlinecode">
 <span class="name">empty</span></span> or <span class="inlinecode">
 <span class="name">storage</span></span> will be result in <span class="inlinecode">
@@ -470,9 +468,9 @@ end
 <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span> + <span class="name">dy</span>]</span> is checked to see if it is not <span class="inlinecode">
 <span class="literal">nil</span></span> before it is indexed by <span class="inlinecode">
 [<span class="name">playerX</span> + <span class="name">dx</span> + <span class="name">dx</span>]</span>. The adjacent position isn't checked in the same way because there is always a border of walls around each level, so <span class="inlinecode">
-<span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>]</span> can never be <span class="inlinecode">
+<span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>]</span> won't ever be <span class="inlinecode">
 <span class="literal">nil</span></span>.</p>
-<p>If the adjacent cell is a box and the beyond cell is empty, the adjacent position is set to <span class="inlinecode">
+<p>If the adjacent cell is a box and the beyond cell is empty, then the adjacent position is set to <span class="inlinecode">
 <span class="name">player</span></span> and the beyond position is set to <span class="inlinecode">
 <span class="name">box</span></span>.</p>
 <div class="pre"><pre class="code">
@@ -505,7 +503,7 @@ end
 <img src="18.png">
 <h3>Pushing box on to storage</h3>
 <p>If the beyond position is <span class="inlinecode">
-<span class="name">storage</span></span> then the new beyond position becomes <span class="inlinecode">
+<span class="name">storage</span></span>, then beyond position is set to <span class="inlinecode">
 <span class="name">boxOnStorage</span></span>.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
@@ -608,8 +606,8 @@ end
 </pre></div>
 <h3>Loading level from levels table</h3>
 <p>The levels are stored in a table.</p>
-<p>The current level is stored as a number.</p>
-<p>The cells of the current level are copied into the level table.</p>
+<p>The number of the current level is also stored.</p>
+<p>The cells of the current level are copied into the levels table.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.</span>
@@ -661,8 +659,7 @@ end
 <img src="21.png">
 <h3>Resetting level</h3>
 <p>When the <b>r</b> key is pressed the level is reset.</p>
-<p>The code for copying the current level to the level table is reused from <span class="inlinecode">
-<span class="name">love.load</span></span>, so a function is made.</p>
+<p>The code for copying the current level to the levels table is reused, so a function is made.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.</span>
@@ -689,7 +686,7 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 end
 </pre></div>
 <h3>Next and previous level</h3>
-<p>When the <b>n</b> key is pressed the next level is loaded, and when the <b>p</b> key is pressed the previous level is loaded.</p>
+<p>When the <b>n</b> key is pressed, the next level is loaded, and when the <b>p</b> key is pressed, the previous level is loaded.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
     <span class="comment">-- etc.</span>
@@ -706,8 +703,8 @@ end
 </pre></div>
 <img src="22.png">
 <h3>Wrapping next and previous</h3>
-<p>If the previous level is before the first level, the last level is loaded.</p>
-<p>If the next level is after the last level, the first level is loaded.</p>
+<p>If the previous level is before the first level, then the last level is loaded.</p>
+<p>If the next level is after the last level, then the first level is loaded.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
     <span class="comment">-- etc.</span>
@@ -729,7 +726,7 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 end
 </pre></div>
 <h3>Go to next level when complete</h3>
-<p>After the player has moved, all of the cells in the level are looped through. If none of the cells are boxes (i.e. they are all boxes on storage) then the level is complete and the next level is loaded.</p>
+<p>After the player has moved, all of the cells in the level are looped through. If none of the cells are boxes (i.e. all the boxes are on storage), then the level is complete and the next level is loaded.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
     if <span class="name">key</span> == <span class="literal">'up'</span> or <span class="name">key</span> == <span class="literal">'down'</span> or <span class="name">key</span> == <span class="literal">'left'</span> or <span class="name">key</span> == <span class="literal">'right'</span> then

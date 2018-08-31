@@ -74,21 +74,21 @@ img {
 <h2>Rules</h2>
 <p>The game starts with a grid of covered cells. Under some of the cells are flowers. The game is over when a flower is uncovered.</p>
 <p>Left clicking a cell uncovers it, and if none of its adjacent cells contain flowers, they are also uncovered, and for <i>those</i> uncovered cells, if none of <i>their</i> adjacent cells contain flowers, they are also uncovered, and so on.</p>
-<p>Right clicking a cell toggles between the cell having a flag, a question mark, or nothing. Flags prevent a cell from being uncovered with a left click. Question marks are visual markers which don't affect the game.</p>
+<p>Right clicking a cell toggles between the cell having a flag, a question mark, or nothing. Flags prevent a cell from being uncovered with a left click. Question marks are visual markers which don't affect what happens when the cell is clicked.</p>
 <h2>Controls</h2>
 <table>
 <tr><td><b>Left click</b></td><td>Uncover a cell</td></tr>
 <tr><td><b>Right click</b></td><td>Cycle a covered cell through having a flag, a question mark, or nothing</td></tr>
 </table>
 <h2>Overview</h2>
-<p>The cells are represented by tables containing a boolean value indicating whether or not there is a flower under it, and a string value indicating which of four states the cell is in: covered, covered with a flag, covered with a question mark, or uncovered.</p>
+<p>The cells are represented by tables containing a boolean value indicating whether or not it contains a flower, and a string value indicating which of four states the cell is in: covered, covered with a flag, covered with a question mark, or uncovered.</p>
 <p>The cells which have flowers are chosen randomly. The first cell clicked is excluded from the possible options.</p>
 <p>When a cell is clicked, its position is added to the "uncover stack" table.</p>
-<p>While there is anything left on the uncover stack...</p>
+<p>While there is anything left in the uncover stack...</p>
 <ul>
 <li>A position is removed from the end of the stack.</li>
 <li>This position is set to <b>uncovered</b>.</li>
-<li>If there are no flowers surrounding this position, the surrounding <b>covered</b> and <b>question marked</b> positions are added to the uncover stack.</li>
+<li>If there are no flowers surrounding this position, the surrounding <b>covered</b> and <b>question marked</b> positions (i.e. not the <b>uncovered</b> and <b>flagged</b> positions) are added to the uncover stack.</li>
 </ul>
 <p>The cells are drawn by assembling the following images:</p>
 <img src="2.png">
@@ -150,8 +150,8 @@ end
 </pre></div>
 <img src="4.png">
 <h3>Keeping selected cell within grid</h3>
-<p>If the mouse is greater than the grid's X or Y cell count (i.e. it is off the right or bottom of the grid) the selected position is set to the last cell in that direction.</p>
-<p>The grid's X and Y cell count is reused from drawing the cells, so variables are made for them.</p>
+<p>If the mouse position is greater than the grid's X or Y cell count (i.e. it is off the right or bottom of the grid), then the selected position is set to the last cell in that direction.</p>
+<p>The grid's X and Y cell count is reused from drawing the cells, so variables are made for these.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.</span>
@@ -181,7 +181,7 @@ end
 </pre></div>
 <img src="5.png">
 <h3>Highlighting cells</h3>
-<p>The selected cell is a drawn with a different highlighted image.</p>
+<p>The selected cell is a drawn with the highlighted image.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
     for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
@@ -201,7 +201,7 @@ end
 </pre></div>
 <img src="6.png">
 <h3>Change cell image when left mouse button is down</h3>
-<p>When the left mouse button is down the selected cell is drawn as an uncovered cell.</p>
+<p>When the left mouse button is down, the selected cell is drawn as an uncovered cell.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
     for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
@@ -225,7 +225,8 @@ end
 </pre></div>
 <img src="7.png">
 <h3>Drawing flowers</h3>
-<p>A grid is created to store the state of the cells. Because each cell will have two values which need to be stored (whether it has a flower, and whether it is uncovered, has a flag, a question mark, or nothing) each cell is represented by a table.</p>
+<p>A grid is created to store the state of the cells.</p>
+<p>Each cell is represented by a table which stores two values: whether it has a flower, and whether it is uncovered/flagged/question marked/nothing.</p>
 <p>If a cell's <span class="inlinecode">
 <span class="literal">'flower'</span></span> key is true, the flower image is drawn over the cell image.</p>
 <div class="pre"><pre class="code">
@@ -261,7 +262,7 @@ end
 </pre></div>
 <img src="8.png">
 <h3>Simplifying code</h3>
-<p>The code for drawing covered cells and drawing the flower is the same except for the image to draw, so a function is created with the image and the needed X and Y values as parameters.</p>
+<p>The code for drawing covered cells and drawing the flower is the same except for the image to draw, so a function is created with the image and the X and Y values as parameters.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
     for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
@@ -288,7 +289,7 @@ function <span class="name">love.draw</span>()
 end
 </pre></div>
 <h3>Toggling flowers</h3>
-<p>For testing, right clicking a cell will toggle its flower.</p>
+<p>For testing purposes, right clicking a cell will toggle its flower.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
     if <span class="name">button</span> == <span class="literal">2</span> then
@@ -297,8 +298,8 @@ function <span class="name">love.mousereleased</span>(<span class="name">mouseX<
 end
 </pre></div>
 <h3>Showing surrounding flower count</h3>
-<p>To find the surrounding flower count, each position in the 8 directions around each cell is looped through, and if there is a cell at this position (i.e. the position on the grid is not nil) and there is a flower at this cell then 1 is added to the surrounding flower count.</p>
-<p>If the surrounding flower count is greater than 0, the appropriate number image is drawn over the cell.</p>
+<p>To find the surrounding flower count, each position in the 8 directions around each cell is looped through. If any of these positions is not outside the grid (i.e. the value at the position is not nil) and the cell at the position has a flower, then 1 is added to the surrounding flower count.</p>
+<p>If the surrounding flower count is greater than 0, then the appropriate number image is drawn over the cell.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
     for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
@@ -343,7 +344,7 @@ end
 <h3>Random flower placement</h3>
 <p>A table is created containing every X and Y position in the grid.</p>
 <p>Random positions are repeatedly removed from this table and the cells at these positions are set to have a flower.</p>
-<p>To test this, any key calls <span class="inlinecode">
+<p>To test this, pressing any key calls <span class="inlinecode">
 <span class="name">love.load</span></span>.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
@@ -369,11 +370,11 @@ end
 </pre></div>
 <img src="10.png">
 <h3>Uncovering cells</h3>
-<p>The cell tables are given a new key for the state of the cell as a string. For now, this is whether the cell is covered or uncovered.</p>
+<p>The cells are given a new key for the state of the cell. For now, this is only whether the cell is covered or uncovered.</p>
 <p>For now, when a cell is left clicked its state is set to <span class="inlinecode">
 <span class="literal">'uncovered'</span></span>.</p>
 <p>If a cell's state is <span class="inlinecode">
-<span class="literal">'uncovered'</span></span> the uncovered image is drawn instead of the covered images.</p>
+<span class="literal">'uncovered'</span></span>, then the uncovered image is drawn instead of the covered image.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.</span>
@@ -422,9 +423,9 @@ end
 </pre></div>
 <img src="11.png">
 <h3>Flood fill: uncover stack</h3>
-<p>Instead of uncovering a single cell, a stack of cells is created to uncover.</p>
+<p>Instead of uncovering a single cell, a stack of cells is created.</p>
 <p>While there are positions in the uncover stack, a position is removed from it and the cell at this position on the grid is uncovered.</p>
-<p>This stacks starts with just the selected position. More positions will be added to it later, but for now it will just contain the selected position, so it will only uncover the selected cell like before.</p>
+<p>For now, it will just contain the selected position, so it will only uncover the selected cell like before.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
     if <span class="name">button</span> == <span class="literal">1</span> then
@@ -446,7 +447,7 @@ function <span class="name">love.mousereleased</span>(<span class="name">mouseX<
 end
 </pre></div>
 <h3>Flood fill: adding to the stack</h3>
-<p>Each position in the 8 directions around each cell is looped through, and if there is a cell at this position (i.e. the position on the grid is not nil) and it is covered, then, for now, it added to the uncover stack.</p>
+<p>Each position in the 8 directions around each cell is looped through, and if the position is not outside the grid (i.e. the position on the grid is not nil) and it is covered, then, for now, it added to the uncover stack.</p>
 <p>This results in all of the cells becoming uncovered.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
@@ -487,7 +488,7 @@ end
 <img src="12.png">
 <h3>Flood fill: using surrounding flower count</h3>
 <p>The surrounding cells of a position removed from the uncover stack are only added to the stack if none of the surrounding cells have flowers.</p>
-<p>Finding the number of surrounding flowers is reused from drawing this number, so a function is made.</p>
+<p>Finding the number of surrounding flowers is reused from drawing it, so a function is made.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.</span>
@@ -564,7 +565,7 @@ end
 <h3>Drawing flags and question marks</h3>
 <p>A cell's state can also be a flag or a question mark.</p>
 <p>If a cell's state is a flag/question mark, the flag/question mark image is drawn over the cell.</p>
-<p>To test this, the state of two cells are changed to have a flag and to have a question mark.</p>
+<p>To test this, the state of two cells are changed to have a flag and a question mark.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.</span>
@@ -625,7 +626,7 @@ function <span class="name">love.mousereleased</span>(<span class="name">mouseX<
 end
 </pre></div>
 <h3>Prevent uncovering flags</h3>
-<p>If a cell has a flag it can't be uncovered by a left click.</p>
+<p>If a cell has a flag, then it can't be uncovered by a left click.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
     if <span class="name">button</span> == <span class="literal">1</span> <span class="highlight">and <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> ~= <span class="literal">'flag'</span></span> then
@@ -656,7 +657,7 @@ function <span class="name">love.mousereleased</span>(<span class="name">mouseX<
 end
 </pre></div>
 <h3>Change cell image when left mouse button is down over flag</h3>
-<p>If the left mouse button is down when the mouse is on a cell with a flag, the cell is drawn with the covered image.</p>
+<p>If the left mouse button is down when the mouse is on a cell with a flag, then the cell is drawn with the covered image.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
                 <span class="comment">-- etc. </span>
@@ -676,9 +677,9 @@ function <span class="name">love.draw</span>()
 end
 </pre></div>
 <h3>Game over</h3>
-<p>If a flower is uncovered the game is over.</p>
+<p>If a flower is uncovered, then the game is over.</p>
 <p>A variable is made to store whether the game is over or not.</p>
-<p>For now, if the game is over clicking cells does nothing.</p>
+<p>For now, clicking cells does nothing if the game is over.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()
     <span class="comment">-- etc.</span>
@@ -738,7 +739,7 @@ function <span class="name">love.mousereleased</span>(<span class="name">mouseX<
 end
 </pre></div>
 <h3>New game on next click</h3>
-<p>When the mouse is clicked when the game is over, the game is reset.</p>
+<p>If the game is over and a mouse button is clicked, then the game is reset.</p>
 <p>For now, <span class="inlinecode">
 <span class="name">love.load</span></span> is called to reset the game.</p>
 <div class="pre"><pre class="code">
@@ -750,8 +751,8 @@ function <span class="name">love.mousereleased</span>(<span class="name">mouseX<
     end
 end
 </pre></div>
-<h3>Don't highlight when game over</h3>
-<p>When the game is over the mouse no longer highlights cells.</p>
+<h3>Don't highlight when game is over</h3>
+<p>When the game is over, the mouse no longer highlights cells.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
     for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
@@ -781,7 +782,7 @@ end
 </pre></div>
 <img src="15.png">
 <h3>Hide numbers for covered cells</h3>
-<p>If a cell is not uncovered then its surrounding flower count is not shown.</p>
+<p>If a cell is not uncovered, then its surrounding flower count is not shown.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
             <span class="comment">-- etc.</span>
@@ -797,7 +798,7 @@ end
 </pre></div>
 <img src="16.png">
 <h3>Preventing clicking on flower on the first click</h3>
-<p>So that the first click doesn't uncover a flower, the code for placing flowers is moved so that it runs when the mouse is clicked, and the cell under the mouse cursor is not added to the possible flower positions.</p>
+<p>So that the first click doesn't uncover a flower, the code for placing flowers is moved so that it runs when a mouse button is clicked, and the cell under the mouse cursor is not added to the possible flower positions.</p>
 <p>A variable is created to store whether a click is the first click of the game.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.load</span>()

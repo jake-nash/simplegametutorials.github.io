@@ -82,8 +82,8 @@ img {
 <p>The number 16 represents the empty space.</p>
 <img src="2.png">
 <p>The other numbers are swapped with the empty space when an arrow key is pressed.</p>
-<p>At the start of the game, the grid is initially in sorted order, and random moves are made. Setting the grid to random numbers instead could result in an unsolvable board.</p>
-<p>After a piece has been moved, the pieces are looped through, and, if they all have their initial values, then the board is sorted and the game is over.</p>
+<p>At the start of the game, the grid is initially in sorted order, and random moves are made to shuffle it. If the grid were set to random numbers instead, it could result in an unsolvable board.</p>
+<p>After a piece has been moved, the pieces are looped through, and if they all have their initial sorted values, then the game is over.</p>
 <h2>Coding</h2>
 <h3>Drawing pieces</h3>
 <p>The pieces are drawn as squares.</p>
@@ -178,7 +178,7 @@ function <span class="name">love.draw</span>()
 end
 </pre></div>
 <h3>Not drawing the empty space</h3>
-<p>The number of pieces on each axis multiplied together gives the total number of pieces (in this case 4 times 4 makes a total of 16), and a piece is drawn only if it isn't this number.</p>
+<p>The number of pieces on each axis multiplied together gives the total number of pieces (in this case 4 times 4 is 16), and a piece is drawn only if it isn't this number.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.draw</span>()
     for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
@@ -208,7 +208,7 @@ end
 <img src="6.png">
 <h3>Finding position of empty space</h3>
 <p>The first step in moving a piece is finding the position of the empty space.</p>
-<p>When a key is pressed the grid is looped through, and, if a piece is equal to the number of pieces on each axis multiplied together (i.e. it's the empty space), then, for now, its position is printed.</p>
+<p>When a key is pressed, the grid is looped through, and if a piece is equal to the number of pieces on each axis multiplied together (i.e. it's the empty space), then, for now, its position is printed.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
     local <span class="name">emptyX</span>
@@ -230,7 +230,7 @@ end
 empty x: 4, empty y: 4
 </pre></div>
 <h3>Moving pieces down</h3>
-<p>For now, when a is key is pressed it swaps the empty space with the piece above it (i.e. minus 1 on the Y axis).</p>
+<p>For now, when a is key is pressed, the empty space is swapped with the piece above it (i.e. minus 1 on the Y axis).</p>
 <p>Currently this will error when a key is pressed and the empty space is at the top of the grid.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
@@ -241,7 +241,7 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 end
 </pre></div>
 <img src="7.png">
-<h3>Only move on Y axis if possible</h3>
+<h3>Only move down if possible</h3>
 <p>If <span class="inlinecode">
 <span class="name">grid</span>[<span class="name">emptyY</span> - <span class="literal">1</span>]</span> is nil (i.e. <span class="inlinecode">
 <span class="name">emptyY</span></span> is 1 so <span class="inlinecode">
@@ -261,7 +261,7 @@ function <span class="name">love.keypressed</span>(<span class="name">key</span>
 end
 </pre></div>
 <h3>Moving pieces up</h3>
-<p>The Y position of the piece that the empty space swaps with is made into a variable, and, when the up key is pressed it is set to the position below the empty space (i.e. plus 1 on the Y axis).</p>
+<p>The Y position of the piece that the empty space swaps with is made into a variable, and when the up key is pressed, it is set to the position below the empty space (i.e. plus 1 on the Y axis).</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
     <span class="comment">-- etc.</span>
@@ -281,7 +281,7 @@ end
 </pre></div>
 <h3>Moving pieces left and right</h3>
 <p>The X position of the piece that the empty space swaps with is made into a variable, and it is changed when the left or right arrow is pressed.</p>
-<p>The X and Y positions of piece that the empty space swaps with are initially set to the space's position, so that if one of the axes is not changed it uses the empty space's position on that axis.</p>
+<p>The X and Y positions of the piece that the empty space swaps with are initially set to the space's position, so that if one of the axes is not changed it uses the empty space's position on that axis.</p>
 <p>Currently this will error when the left/right key is pressed and the empty space is already at the rightmost/leftmost position.</p>
 <div class="pre"><pre class="code">
 function <span class="name">love.keypressed</span>(<span class="name">key</span>)
@@ -448,7 +448,7 @@ end
 </pre></div>
 <img src="10.png">
 <h3>Check if complete</h3>
-<p>After a move is made, the pieces are looped through, and if none of the pieces are not equal to the number they were initially given (i.e. they are all in their initial positions) then the game is complete.</p>
+<p>After a move is made, the pieces are looped through, and if none of the pieces are not equal to the number they were initially given (i.e. they are all in their sorted positions), then the game is complete.</p>
 <p>For now, <span class="inlinecode">
 <span class="name">love.load</span></span> is called to start a new game.</p>
 <div class="pre"><pre class="code">
