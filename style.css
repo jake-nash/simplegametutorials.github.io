@@ -1,0 +1,42 @@
+body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p, ul {
+    max-width: 637px;
+    line-height: 1.4;
+}
+a {
+    color: #059dc5;
+    text-decoration: none;
+    font-weight: 700;
+}
+a:hover {
+    text-decoration: underline;
+}
+.container {
+    width: 800px;
+    margin: 0 auto;
+}
+h1 {
+    font-size: 43px;
+    margin: 0;
+}
+.subheading {
+    font-size: 24px;
+    margin: 0;
+}
+.link {
+    font-size: 30px;
+}
+.screenshot {
+    max-height: 200px;
+}
