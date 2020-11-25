@@ -1,0 +1,746 @@
+<html><head><title>Sokoban Tutorial for Lua and L&OumlVE 11</title>
+<link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet">
+<style>
+body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    body {
+    background: #fff;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+a {
+    color: #059dc5;
+    text-decoration: none;
+    font-weight: 700;
+}
+a:hover {
+    text-decoration: underline;
+}
+h1 {
+    font-size: 60px;
+    margin: 0;
+}
+h2 {
+    font-size: 30px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #de53b3;
+    margin-bottom: 0;
+    display: inline-block;
+}
+h3 {
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #734590;
+    max-width: 695px;
+}
+td {
+    padding-right: 10px
+}
+pre {
+    margin-top: 0;
+    min-width: 695px;
+    margin-bottom: 10px;
+}
+.pre {
+    display: table;
+    margin-top: 16px;
+}
+table {
+    margin-top: 16px;
+}
+img {
+    display: block;
+    margin: 14px 0;
+}
+td img {
+    margin: 0;
+}
+.inlinecode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    color: #555;
+}
+.code {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    background: #fff;
+    color: #555;
+    padding: 12px;
+}
+.console {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 16px;
+    background: #333;
+    border-radius: 8px;
+    border: 1px solid #777;
+    color: #eee;
+}
+h2 + h3 {
+    margin-top: 20px;
+}
+.download {
+    font-size: 24px;
+    font-weight: 700;
+}
+.subheading {
+    font-size: 24px;
+    margin-top: 0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<p><a href="../../">Home page</a> > <a href="../">L&OumlVE tutorials</a></p><h1>Sokoban</h1><p class="subheading">A tutorial for Lua and L&OumlVE 11</p><p>Please send any feedback to <a href="mailto:simple.game.tutorials@gmail.com">simple.game.tutorials@gmail.com</a></p><p><a href="sokoban.love" class="download">Download sokoban.love</a></p><img src="1.png">
+<p><a href="http://git.rockbox.org/?p=rockbox.git;a=blob_plain;f=apps/plugins/sokoban.levels">The levels used in this tutorial are from Rockbox.</a></p>
+<h2>Rules</h2>
+<p>Push all the boxes on to the storage locations.</p>
+<p>Boxes can only be moved if there is a free space beyond it (not a wall or another box).</p>
+<h3>Legend</h3>
+<table>
+<tr><td><img src="2.png"><td>Player</td></tr>
+<tr><td><img src="3.png"><td>Player on storage</td></tr>
+<tr><td><img src="4.png"><td>Box</td></tr>
+<tr><td><img src="5.png"><td>Box on storage</td></tr>
+<tr><td><img src="6.png"><td>Storage</td></tr>
+<tr><td><img src="7.png"><td>Wall</td></tr>
+</table>
+<h3>Controls</h3>
+<table>
+<tr><td><b>Arrow keys</b></td><td>Move</td></tr>
+<tr><td><b>r</b></td><td>Reset level</td></tr>
+<tr><td><b>n</b></td><td>Next level</td></tr>
+<tr><td><b>p</b></td><td>Previous level</td></tr>
+</table>
+<h2>Overview</h2>
+<p>The different states a cell can be in are represented by the following strings:</p>
+<table>
+<tr><td><span class="inlinecode"><span class="literal">'@'</span></span></td><td>Player</td></tr>
+<tr><td><span class="inlinecode"><span class="literal">'+'</span></span></td><td>Player on storage</td></tr>
+<tr><td><span class="inlinecode"><span class="literal">'$'</span></span></td><td>Box</td></tr>
+<tr><td><span class="inlinecode"><span class="literal">'*'</span></span></td><td>Box on storage</td></tr>
+<tr><td><span class="inlinecode"><span class="literal">'.'</span></span></td><td>Storage</td></tr>
+<tr><td><span class="inlinecode"><span class="literal">'#'</span></span></td><td>Wall</td></tr>
+</table>
+<p>The level is stored as a grid of these strings.</p>
+<img src="8.png">
+<p>When an arrow key is pressed, the grid is looped through to find where the player is.</p>
+<p>If the position on the grid adjacent to the player in the direction of the arrow pressed is movable (i.e. empty or a storage location), the values of the grid are changed to reflect the new player position.</p>
+<img src="9.png">
+<p>If the position adjacent to the player is a box and the position beyond the box is movable, the grid is changed to reflect the new player and new box positions.</p>
+<img src="10.png">
+<p>If there are no boxes left which aren't on storage locations then the level is complete.</p>
+<h2>Coding</h2>
+<h3>Drawing a level</h3>
+<p>Each level is stored as a grid of strings. For now, a single level is stored, and a square is drawn for every cell which isn't a space (i.e. empty).</p>
+<p><a class="fullcodelink" target="_blank" href="1.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="name">level</span> = {
+        {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+        {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>},
+        {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+        {<span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'$'</span>, <span class="literal">' '</span>, <span class="literal">'$'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>},
+        {<span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">' '</span>, <span class="literal">'$'</span>, <span class="literal">'@'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+        {<span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'$'</span>, <span class="literal">'#'</span>},
+        {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>},
+        {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+    }
+end
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span>, <span class="name">row</span> in <span class="call">ipairs</span>(<span class="name">level</span>) do
+        for <span class="name">x</span>, <span class="name">cell</span> in <span class="call">ipairs</span>(<span class="name">row</span>) do
+            if <span class="name">cell</span> ~= <span class="literal">' '</span> then
+                local <span class="name">cellSize</span> = <span class="literal">23</span>
+
+                <span class="call">love.graphics.rectangle</span>(
+                    <span class="literal">'fill'</span>,
+                    (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                    (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                    <span class="name">cellSize</span>,
+                    <span class="name">cellSize</span>
+                )
+            end
+        end
+    end
+end
+</pre></div>
+<img src="11.png">
+<h3>Drawing cell types</h3>
+<p>The cell's string is drawn on top of the cell.</p>
+<p><a class="fullcodelink" target="_blank" href="2.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    for <span class="name">y</span>, <span class="name">row</span> in <span class="call">ipairs</span>(<span class="name">level</span>) do
+        for <span class="name">x</span>, <span class="name">cell</span> in <span class="call">ipairs</span>(<span class="name">row</span>) do
+            if <span class="name">cell</span> ~= <span class="literal">' '</span> then
+                local <span class="name">cellSize</span> = <span class="literal">23</span>
+
+                <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
+                <span class="call">love.graphics.rectangle</span>(
+                    <span class="literal">'fill'</span>,
+                    (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                    (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                    <span class="name">cellSize</span>,
+                    <span class="name">cellSize</span>
+                )
+                <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)</span>
+                <span class="highlight"><span class="call">love.graphics.print</span>(</span>
+                <span class="highlight">    <span class="name">level</span>[<span class="name">y</span>][<span class="name">x</span>],</span>
+                <span class="highlight">    (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,</span>
+                <span class="highlight">    (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span></span>
+                <span class="highlight">)</span>
+            end
+        end
+    end
+end
+</pre></div>
+<img src="12.png">
+<h3>Setting colors</h3>
+<p>The background color is set, and the color of each cell is set based on its type.</p>
+<p><a class="fullcodelink" target="_blank" href="3.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">.75</span>)
+
+    <span class="comment">-- etc.</span>
+end
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span>, <span class="name">row</span> in <span class="call">ipairs</span>(<span class="name">level</span>) do
+        for <span class="name">x</span>, <span class="name">cell</span> in <span class="call">ipairs</span>(<span class="name">row</span>) do
+            if <span class="name">cell</span> ~= <span class="literal">' '</span> then
+                local <span class="name">cellSize</span> = <span class="literal">23</span>
+
+                <span class="highlight">local <span class="name">colors</span> = {</span>
+                <span class="highlight">    [<span class="literal">'@'</span>] = {<span class="literal">.64</span>, <span class="literal">.53</span>, <span class="literal">1</span>},</span>
+                <span class="highlight">    [<span class="literal">'+'</span>] = {<span class="literal">.62</span>, <span class="literal">.47</span>, <span class="literal">1</span>},</span>
+                <span class="highlight">    [<span class="literal">'$'</span>] = {<span class="literal">1</span>, <span class="literal">.79</span>, <span class="literal">.49</span>},</span>
+                <span class="highlight">    [<span class="literal">'*'</span>] = {<span class="literal">.59</span>, <span class="literal">1</span>, <span class="literal">.5</span>},</span>
+                <span class="highlight">    [<span class="literal">'.'</span>] = {<span class="literal">.61</span>, <span class="literal">.9</span>, <span class="literal">1</span>},</span>
+                <span class="highlight">    [<span class="literal">'#'</span>] = {<span class="literal">1</span>, <span class="literal">.58</span>, <span class="literal">.82</span>},</span>
+                <span class="highlight">}</span>
+
+                <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="name">colors</span>[<span class="name">cell</span>])</span>
+                <span class="call">love.graphics.rectangle</span>(
+                    <span class="literal">'fill'</span>,
+                    (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                    (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                    <span class="name">cellSize</span>,
+                    <span class="name">cellSize</span>
+                )
+                <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
+                <span class="call">love.graphics.print</span>(
+                    <span class="name">level</span>[<span class="name">y</span>][<span class="name">x</span>],
+                    (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>,
+                    (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>
+                )
+            end
+        end
+    end
+end
+</pre></div>
+<img src="13.png">
+<h3>Naming cell types</h3>
+<p>So we don't have to remember which string refers to which cell type, the cell type strings are stored in variables.</p>
+<p><a class="fullcodelink" target="_blank" href="4.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">player</span> = <span class="literal">'@'</span>
+    <span class="name">playerOnStorage</span> = <span class="literal">'+'</span>
+    <span class="name">box</span> = <span class="literal">'$'</span>
+    <span class="name">boxOnStorage</span> = <span class="literal">'*'</span>
+    <span class="name">storage</span> = <span class="literal">'.'</span>
+    <span class="name">wall</span> = <span class="literal">'#'</span>
+    <span class="name">empty</span> = <span class="literal">' '</span>
+end
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span>, <span class="name">row</span> in <span class="call">ipairs</span>(<span class="name">level</span>) do
+        for <span class="name">x</span>, <span class="name">cell</span> in <span class="call">ipairs</span>(<span class="name">row</span>) do
+            if <span class="name">cell</span> ~= <span class="highlight"><span class="name">empty</span></span> then
+                local <span class="name">cellSize</span> = <span class="literal">23</span>
+
+                local <span class="name">colors</span> = {
+                    [<span class="highlight"><span class="name">player</span></span>] = {<span class="literal">.64</span>, <span class="literal">.53</span>, <span class="literal">1</span>},
+                    [<span class="highlight"><span class="name">playerOnStorage</span></span>] = {<span class="literal">.62</span>, <span class="literal">.47</span>, <span class="literal">1</span>},
+                    [<span class="highlight"><span class="name">box</span></span>] = {<span class="literal">1</span>, <span class="literal">.79</span>, <span class="literal">.49</span>},
+                    [<span class="highlight"><span class="name">boxOnStorage</span></span>] = {<span class="literal">.59</span>, <span class="literal">1</span>, <span class="literal">.5</span>},
+                    [<span class="highlight"><span class="name">storage</span></span>] = {<span class="literal">.61</span>, <span class="literal">.9</span>, <span class="literal">1</span>},
+                    [<span class="highlight"><span class="name">wall</span></span>] = {<span class="literal">1</span>, <span class="literal">.58</span>, <span class="literal">.82</span>},
+                }
+
+                <span class="comment">-- etc.</span>
+            end
+        end
+    end
+end
+</pre></div>
+<h3>Finding player cell</h3>
+<p>The first step in moving the player is finding which cell position they are at.</p>
+<p>The cell type of the player's current position and the cell type of the adjacent position in the direction of the arrow key pressed are stored in variables, and, for now, are printed.</p>
+<p><a class="fullcodelink" target="_blank" href="5.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">key</span> == <span class="literal">'up'</span> or <span class="name">key</span> == <span class="literal">'down'</span> or <span class="name">key</span> == <span class="literal">'left'</span> or <span class="name">key</span> == <span class="literal">'right'</span> then
+        local <span class="name">playerX</span>
+        local <span class="name">playerY</span>
+
+        for <span class="name">testY</span>, <span class="name">row</span> in <span class="call">ipairs</span>(<span class="name">level</span>) do
+            for <span class="name">testX</span>, <span class="name">cell</span> in <span class="call">ipairs</span>(<span class="name">row</span>) do
+                if <span class="name">cell</span> == <span class="name">player</span> or <span class="name">cell</span> == <span class="name">playerOnStorage</span> then
+                    <span class="name">playerX</span> = <span class="name">testX</span>
+                    <span class="name">playerY</span> = <span class="name">testY</span>
+                end
+            end
+        end
+
+        <span class="comment">-- Temporary</span>
+        <span class="call">print</span>(<span class="name">playerX</span>, <span class="name">playerY</span>)
+    end
+end
+</pre></div>
+<div class="pre"><pre class="console">
+5       5
+</pre></div>
+<h3>Finding cell type in direction of key pressed</h3>
+<p>For now, the cell adjacent to the player in the direction of the key pressed has its type printed out.</p>
+<p><a class="fullcodelink" target="_blank" href="6.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">key</span> == <span class="literal">'up'</span> or <span class="name">key</span> == <span class="literal">'down'</span> or <span class="name">key</span> == <span class="literal">'left'</span> or <span class="name">key</span> == <span class="literal">'right'</span> then
+
+        local <span class="name">dx</span> = <span class="literal">0</span>
+        local <span class="name">dy</span> = <span class="literal">0</span>
+        if <span class="name">key</span> == <span class="literal">'left'</span> then
+            <span class="name">dx</span> = -<span class="literal">1</span>
+        elseif <span class="name">key</span> == <span class="literal">'right'</span> then
+            <span class="name">dx</span> = <span class="literal">1</span>
+        elseif <span class="name">key</span> == <span class="literal">'up'</span> then
+            <span class="name">dy</span> = -<span class="literal">1</span>
+        elseif <span class="name">key</span> == <span class="literal">'down'</span> then
+            <span class="name">dy</span> = <span class="literal">1</span>
+        end
+
+        local <span class="name">current</span> = <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>]
+        local <span class="name">adjacent</span> = <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>]
+
+        <span class="comment">-- Temporary</span>
+        <span class="call">print</span>(<span class="literal">'current = level['</span>..<span class="name">playerY</span>..<span class="literal">']['</span>..<span class="name">playerX</span>..<span class="literal">'] ('</span>..<span class="name">current</span>..<span class="literal">')'</span>)
+        <span class="call">print</span>(<span class="literal">'adjacent = level['</span>..<span class="name">playerY</span> + <span class="name">dy</span>..<span class="literal">']['</span>..<span class="name">playerX</span> + <span class="name">dx</span>..<span class="literal">'] ('</span>..<span class="name">adjacent</span>..<span class="literal">')'</span>)
+        <span class="call">print</span>()
+    end
+end
+</pre></div>
+<div class="pre"><pre class="console">
+current = level[5][5] (@)
+adjacent = level[4][5] ( )
+
+current = level[5][5] (@)
+adjacent = level[5][6] (#)
+
+current = level[5][5] (@)
+adjacent = level[6][5] ($)
+
+current = level[5][5] (@)
+adjacent = level[5][4] ($)
+</pre></div>
+<h3>Creating test level</h3>
+<p>A test level is made for testing player movement.</p>
+<p><a class="fullcodelink" target="_blank" href="7.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="name">level</span> = {
+        {<span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+        {<span class="literal">'#'</span>, <span class="literal">'@'</span>, <span class="literal">' '</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>},
+        {<span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'$'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>},
+        {<span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'$'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>},
+        {<span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'$'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>},
+        {<span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'$'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>},
+        {<span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'*'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>},
+        {<span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'*'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>},
+        {<span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'*'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>},
+        {<span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'*'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>},
+        {<span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+    }
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="14.png">
+<h3>Moving player to empty location</h3>
+<p>If the value at the player's current position is <span class="inlinecode"><span class="name">player</span></span> (i.e. not <span class="inlinecode"><span class="name">playerOnStorage</span></span>) and the adjacent cell is <span class="inlinecode"><span class="name">empty</span></span>, then the player's position becomes <span class="inlinecode"><span class="name">empty</span></span> and the adjacent position becomes <span class="inlinecode"><span class="name">player</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="8.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+        <span class="comment">-- etc.</span>
+
+        if <span class="name">current</span> == <span class="name">player</span> and <span class="name">adjacent</span> == <span class="name">empty</span> then
+            <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">empty</span>
+            <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">player</span>
+        end
+    end
+end
+</pre></div>
+<img src="15.png">
+<h3>Moving player to storage</h3>
+<p>If the adjacent position is <span class="inlinecode"><span class="name">storage</span></span>, then the new adjacent position becomes <span class="inlinecode"><span class="name">playerOnStorage</span></span>.</p>
+<p>Currently the player can move on to storage, but not off storage.</p>
+<p><a class="fullcodelink" target="_blank" href="9.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+        <span class="comment">-- etc.</span>
+
+        if <span class="name">current</span> == <span class="name">player</span> then
+            <span class="highlight">if</span> <span class="name">adjacent</span> == <span class="name">empty</span> <span class="highlight">then</span>
+                <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">empty</span>
+                <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">player</span>
+            <span class="highlight">elseif <span class="name">adjacent</span> == <span class="name">storage</span> then</span>
+                <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">empty</span>
+                <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="highlight"><span class="name">playerOnStorage</span></span>
+            <span class="highlight">end</span>
+        end
+    end
+end
+</pre></div>
+<img src="16.png">
+<h3>Simplifying code</h3>
+<p>The new adjacent position (either <span class="inlinecode"><span class="name">player</span></span> or <span class="inlinecode"><span class="name">playerOnStorage</span></span>) is set based on the type of <span class="inlinecode"><span class="name">adjacent</span></span>, so a table is made which returns the next adjacent cell type when indexed by the current adjacent cell type.</p>
+<p>Indexing by anything other than the values <span class="inlinecode"><span class="name">empty</span></span> or <span class="inlinecode"><span class="name">storage</span></span> will be result in <span class="inlinecode"><span class="literal">nil</span></span>, so it is also be used to check if the player can move to the adjacent position.</p>
+<p><a class="fullcodelink" target="_blank" href="10.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+        <span class="comment">-- etc.</span>
+
+        <span class="highlight">local <span class="name">nextAdjacent</span> = {</span>
+        <span class="highlight">    [<span class="name">empty</span>] = <span class="name">player</span>,</span>
+        <span class="highlight">    [<span class="name">storage</span>] = <span class="name">playerOnStorage</span>,</span>
+        <span class="highlight">}</span>
+
+        if <span class="name">current</span> == <span class="name">player</span> <span class="highlight">and <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>]</span> then
+            <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">empty</span>
+            <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="highlight"><span class="name">nextAdjacent</span>[<span class="name">adjacent</span>]</span>
+        end
+
+        <span class="comment">-- etc.</span>
+end
+</pre></div>
+<h3>Moving player from storage</h3>
+<p>If the player is on storage, then the player's current position is set to <span class="inlinecode"><span class="name">storage</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="11.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+        <span class="comment">-- etc.</span>
+
+        if <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>] then
+            <span class="highlight">if</span> <span class="name">current</span> == <span class="name">player</span> then
+                <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">empty</span>
+                <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>]
+            <span class="highlight">elseif <span class="name">current</span> == <span class="name">playerOnStorage</span> then</span>
+                <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="highlight"><span class="name">storage</span></span>
+                <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>]
+            <span class="highlight">end</span>
+        end
+    end
+end
+</pre></div>
+<img src="17.png">
+<h3>Simplifying code</h3>
+<p>A table is made which returns the next cell type for the player's previous position when indexed by the current player cell type.</p>
+<p><a class="fullcodelink" target="_blank" href="12.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+        <span class="comment">-- etc.</span>
+
+        <span class="highlight">local <span class="name">nextCurrent</span> = {</span>
+        <span class="highlight">    [<span class="name">player</span>] = <span class="name">empty</span>,</span>
+        <span class="highlight">    [<span class="name">playerOnStorage</span>] = <span class="name">storage</span>,</span>
+        <span class="highlight">}</span>
+
+        if <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>] then
+            <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="highlight"><span class="name">nextCurrent</span>[<span class="name">current</span>]</span>
+            <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>]
+        end
+    end
+end
+</pre></div>
+<h3>Pushing box on to empty location</h3>
+<p>The cell beyond the adjacent cell is stored in a variable.</p>
+<p><span class="inlinecode"><span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span> + <span class="name">dy</span>]</span> is checked to see if it is not <span class="inlinecode"><span class="literal">nil</span></span> before it is indexed by <span class="inlinecode">[<span class="name">playerX</span> + <span class="name">dx</span> + <span class="name">dx</span>]</span>.</p>
+<p>(The adjacent position isn't checked in the same way because there is always a border of walls around each level, so <span class="inlinecode"><span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>]</span> won't ever be <span class="inlinecode"><span class="literal">nil</span></span>.)</p>
+<p>If the adjacent cell is a box and the beyond cell is empty, then the adjacent position is set to <span class="inlinecode"><span class="name">player</span></span> and the beyond position is set to <span class="inlinecode"><span class="name">box</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="13.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+        <span class="comment">-- etc.</span>
+
+        local <span class="name">current</span> = <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>]
+        local <span class="name">adjacent</span> = <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>]
+        <span class="highlight">local <span class="name">beyond</span></span>
+        <span class="highlight">if <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span> + <span class="name">dy</span>] then</span>
+        <span class="highlight">    <span class="name">beyond</span> = <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span> + <span class="name">dx</span>]</span>
+        <span class="highlight">end</span>
+
+        <span class="comment">-- etc.</span>
+
+        if <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>] then
+            <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">nextCurrent</span>[<span class="name">current</span>]
+            <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>]
+
+        <span class="highlight">elseif <span class="name">adjacent</span> == <span class="name">box</span> and <span class="name">beyond</span> == <span class="name">empty</span> then</span>
+        <span class="highlight">    <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">nextCurrent</span>[<span class="name">current</span>]</span>
+        <span class="highlight">    <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">player</span></span>
+        <span class="highlight">    <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span> + <span class="name">dx</span>] = <span class="name">box</span></span>
+        <span class="highlight">end</span>
+    end
+end
+</pre></div>
+<img src="18.png">
+<h3>Pushing box on to storage</h3>
+<p>If the beyond position is <span class="inlinecode"><span class="name">storage</span></span>, then beyond position is set to <span class="inlinecode"><span class="name">boxOnStorage</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="14.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+        <span class="comment">-- etc.</span>
+
+        if <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>] then
+            <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">nextCurrent</span>[<span class="name">current</span>]
+            <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>]
+
+        elseif <span class="name">adjacent</span> == <span class="name">box</span> then
+            <span class="highlight">if</span> <span class="name">beyond</span> == <span class="name">empty</span> then
+                <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">nextCurrent</span>[<span class="name">current</span>]
+                <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">player</span>
+                <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span> + <span class="name">dx</span>] = <span class="name">box</span>
+            <span class="highlight">elseif <span class="name">beyond</span> == <span class="name">storage</span> then</span>
+            <span class="highlight">    <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">nextCurrent</span>[<span class="name">current</span>]</span>
+            <span class="highlight">    <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">player</span></span>
+            <span class="highlight">    <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span> + <span class="name">dx</span>] = <span class="name">boxOnStorage</span></span>
+            <span class="highlight">end</span>
+        end
+    end
+end
+</pre></div>
+<img src="19.png">
+<h3>Simplifying code</h3>
+<p>A table is made which returns the next beyond cell type when indexed by the current beyond cell type.</p>
+<p><a class="fullcodelink" target="_blank" href="15.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+        <span class="comment">-- etc.</span>
+
+        <span class="highlight">local <span class="name">nextBeyond</span> = {</span>
+        <span class="highlight">    [<span class="name">empty</span>] = <span class="name">box</span>,</span>
+        <span class="highlight">    [<span class="name">storage</span>] = <span class="name">boxOnStorage</span>,</span>
+        <span class="highlight">}</span>
+
+        if <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>] then
+            <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">nextCurrent</span>[<span class="name">current</span>]
+            <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>]
+
+        elseif <span class="name">adjacent</span> == <span class="name">box</span> <span class="highlight">and <span class="name">nextBeyond</span>[<span class="name">beyond</span>]</span> then
+            <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">nextCurrent</span>[<span class="name">current</span>]
+            <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">player</span>
+            <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span> + <span class="name">dx</span>] = <span class="highlight"><span class="name">nextBeyond</span>[<span class="name">beyond</span>]</span>
+        end
+    end
+end
+</pre></div>
+<h3>Pushing box on storage</h3>
+<p>If the adjacent cell is a box on storage, then the adjacent position is set to <span class="inlinecode"><span class="name">boxOnStorage</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="16.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+        <span class="comment">-- etc.</span>
+
+        if <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>] then
+            <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">nextCurrent</span>[<span class="name">current</span>]
+            <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>]
+
+        elseif <span class="name">nextBeyond</span>[<span class="name">beyond</span>] then
+            <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">nextCurrent</span>[<span class="name">current</span>]
+
+            <span class="highlight">if</span> <span class="name">adjacent</span> == <span class="name">box</span> then
+                <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">player</span>
+            <span class="highlight">elseif <span class="name">adjacent</span> == <span class="name">boxOnStorage</span> then</span>
+                <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="highlight"><span class="name">playerOnStorage</span></span>
+            <span class="highlight">end</span>
+
+            <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span> + <span class="name">dx</span>] = <span class="name">nextBeyond</span>[<span class="name">beyond</span>]
+        end
+    end
+end
+</pre></div>
+<img src="20.png">
+<h3>Simplifying code</h3>
+<p>A table is made which returns the next adjacent cell type when a box is pushed when indexed by the current adjacent cell type.</p>
+<p><a class="fullcodelink" target="_blank" href="17.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+        <span class="comment">-- etc.</span>
+
+        <span class="highlight">local <span class="name">nextAdjacentPush</span> = {</span>
+        <span class="highlight">    [<span class="name">box</span>] = <span class="name">player</span>,</span>
+        <span class="highlight">    [<span class="name">boxOnStorage</span>] = <span class="name">playerOnStorage</span>,</span>
+        <span class="highlight">}</span>
+
+        if <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>] then
+            <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">nextCurrent</span>[<span class="name">current</span>]
+            <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="name">nextAdjacent</span>[<span class="name">adjacent</span>]
+
+        elseif <span class="name">nextBeyond</span>[<span class="name">beyond</span>] <span class="highlight">and <span class="name">nextAdjacentPush</span>[<span class="name">adjacent</span>]</span> then
+            <span class="name">level</span>[<span class="name">playerY</span>][<span class="name">playerX</span>] = <span class="name">nextCurrent</span>[<span class="name">current</span>]
+            <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span>] = <span class="highlight"><span class="name">nextAdjacentPush</span>[<span class="name">adjacent</span>]</span>
+            <span class="name">level</span>[<span class="name">playerY</span> + <span class="name">dy</span> + <span class="name">dy</span>][<span class="name">playerX</span> + <span class="name">dx</span> + <span class="name">dx</span>] = <span class="name">nextBeyond</span>[<span class="name">beyond</span>]
+        end
+    end
+end
+</pre></div>
+<h3>Loading level from levels table</h3>
+<p>The levels are stored in a table.</p>
+<p>The number of the current level is also stored.</p>
+<p>The cells of the current level are copied from the table containing all the levels into the current level table.</p>
+<p><a class="fullcodelink" target="_blank" href="18.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">levels</span> = {
+        {
+            {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'$'</span>, <span class="literal">' '</span>, <span class="literal">'$'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">' '</span>, <span class="literal">'$'</span>, <span class="literal">'@'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'$'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+        },
+        {
+            {<span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>},
+            {<span class="literal">'#'</span>, <span class="literal">'@'</span>, <span class="literal">'$'</span>, <span class="literal">'$'</span>, <span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'$'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>},
+            {<span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+        },
+        {
+            {<span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'$'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>},
+            {<span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'@'</span>, <span class="literal">' '</span>, <span class="literal">'$'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'$'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>},
+            {<span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'.'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'$'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+            {<span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>},
+            {<span class="literal">' '</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>},
+        },
+    }
+
+    <span class="name">currentLevel</span> = <span class="literal">1</span>
+
+    <span class="name">level</span> = {}
+    for <span class="name">y</span>, <span class="name">row</span> in <span class="call">ipairs</span>(<span class="name">levels</span>[<span class="name">currentLevel</span>]) do
+        <span class="name">level</span>[<span class="name">y</span>] = {}
+        for <span class="name">x</span>, <span class="name">cell</span> in <span class="call">ipairs</span>(<span class="name">row</span>) do
+            <span class="name">level</span>[<span class="name">y</span>][<span class="name">x</span>] = <span class="name">cell</span>
+        end
+    end
+end
+</pre></div>
+<img src="21.png">
+<h3>Resetting level</h3>
+<p>When the <b>r</b> key is pressed the level is reset.</p>
+<p>The code for copying the current level from the levels table is reused, so a function is made.</p>
+<p><a class="fullcodelink" target="_blank" href="19.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="highlight">function <span class="name">loadLevel</span>()</span>
+        <span class="name">level</span> = {}
+        for <span class="name">y</span>, <span class="name">row</span> in <span class="call">ipairs</span>(<span class="name">levels</span>[<span class="name">currentLevel</span>]) do
+            <span class="name">level</span>[<span class="name">y</span>] = {}
+            for <span class="name">x</span>, <span class="name">cell</span> in <span class="call">ipairs</span>(<span class="name">row</span>) do
+                <span class="name">level</span>[<span class="name">y</span>][<span class="name">x</span>] = <span class="name">cell</span>
+            end
+        end
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="call">loadLevel</span>()</span>
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    <span class="comment">-- etc.</span>
+
+    elseif <span class="name">key</span> == <span class="literal">'r'</span> then
+        <span class="call">loadLevel</span>()
+    end
+end
+</pre></div>
+<h3>Next and previous level</h3>
+<p>When the <b>n</b> key is pressed, the next level is loaded, and when the <b>p</b> key is pressed, the previous level is loaded.</p>
+<p><a class="fullcodelink" target="_blank" href="20.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    <span class="comment">-- etc.</span>
+
+    elseif <span class="name">key</span> == <span class="literal">'n'</span> then
+        <span class="name">currentLevel</span> = <span class="name">currentLevel</span> + <span class="literal">1</span>
+        <span class="call">loadLevel</span>()
+
+    elseif <span class="name">key</span> == <span class="literal">'p'</span> then
+        <span class="name">currentLevel</span> = <span class="name">currentLevel</span> - <span class="literal">1</span>
+        <span class="call">loadLevel</span>()
+    end
+end
+</pre></div>
+<img src="22.png">
+<h3>Wrapping next and previous level</h3>
+<p>If the next level is after the last level, then the first level is loaded.</p>
+<p>If the previous level is before the first level, then the last level is loaded.</p>
+<p><a class="fullcodelink" target="_blank" href="21.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    <span class="comment">-- etc.</span>
+
+    elseif <span class="name">key</span> == <span class="literal">'n'</span> then
+        <span class="name">currentLevel</span> = <span class="name">currentLevel</span> + <span class="literal">1</span>
+        <span class="highlight">if <span class="name">currentLevel</span> > #<span class="name">levels</span> then</span>
+        <span class="highlight">    <span class="name">currentLevel</span> = <span class="literal">1</span></span>
+        <span class="highlight">end</span>
+        <span class="call">loadLevel</span>()
+
+    elseif <span class="name">key</span> == <span class="literal">'p'</span> then
+        <span class="name">currentLevel</span> = <span class="name">currentLevel</span> - <span class="literal">1</span>
+        <span class="highlight">if <span class="name">currentLevel</span> < <span class="literal">1</span> then</span>
+        <span class="highlight">    <span class="name">currentLevel</span> = #<span class="name">levels</span></span>
+        <span class="highlight">end</span>
+        <span class="call">loadLevel</span>()
+    end
+end
+</pre></div>
+<h3>Go to next level when complete</h3>
+<p>After the player has moved, all of the cells in the level are looped through, and if none of the cells are boxes (i.e. all the boxes are on storage), then the level is complete and the next level is loaded.</p>
+<p><a class="fullcodelink" target="_blank" href="22.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">key</span> == <span class="literal">'up'</span> or <span class="name">key</span> == <span class="literal">'down'</span> or <span class="name">key</span> == <span class="literal">'left'</span> or <span class="name">key</span> == <span class="literal">'right'</span> then
+        <span class="comment">-- etc.</span>
+
+        local <span class="name">complete</span> = <span class="literal">true</span>
+
+        for <span class="name">y</span>, <span class="name">row</span> in <span class="call">ipairs</span>(<span class="name">level</span>) do
+            for <span class="name">x</span>, <span class="name">cell</span> in <span class="call">ipairs</span>(<span class="name">row</span>) do
+                if <span class="name">cell</span> == <span class="name">box</span> then
+                    <span class="name">complete</span> = <span class="literal">false</span>
+                end
+            end
+        end
+
+        if <span class="name">complete</span> then
+            <span class="name">currentLevel</span> = <span class="name">currentLevel</span> + <span class="literal">1</span>
+            if <span class="name">currentLevel</span> > #<span class="name">levels</span> then
+                <span class="name">currentLevel</span> = <span class="literal">1</span>
+            end
+            <span class="call">loadLevel</span>()
+        end
+
+    elseif <span class="name">key</span> == <span class="literal">'r'</span> then
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<h3>More levels</h3>
+<p><a class="fullcodelink" target="_blank" href="23.html">Full code at this point</a></p></div></body></html>
