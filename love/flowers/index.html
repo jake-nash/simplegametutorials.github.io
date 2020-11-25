@@ -1,0 +1,938 @@
+<html><head><title>Flowers Tutorial for Lua and L&OumlVE 11</title>
+<link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet">
+<style>
+body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    body {
+    background: #fff;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+a {
+    color: #059dc5;
+    text-decoration: none;
+    font-weight: 700;
+}
+a:hover {
+    text-decoration: underline;
+}
+h1 {
+    font-size: 60px;
+    margin: 0;
+}
+h2 {
+    font-size: 30px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #de53b3;
+    margin-bottom: 0;
+    display: inline-block;
+}
+h3 {
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #734590;
+    max-width: 695px;
+}
+td {
+    padding-right: 10px
+}
+pre {
+    margin-top: 0;
+    min-width: 695px;
+    margin-bottom: 10px;
+}
+.pre {
+    display: table;
+    margin-top: 16px;
+}
+table {
+    margin-top: 16px;
+}
+img {
+    display: block;
+    margin: 14px 0;
+}
+td img {
+    margin: 0;
+}
+.inlinecode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    color: #555;
+}
+.code {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    background: #fff;
+    color: #555;
+    padding: 12px;
+}
+.console {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 16px;
+    background: #333;
+    border-radius: 8px;
+    border: 1px solid #777;
+    color: #eee;
+}
+h2 + h3 {
+    margin-top: 20px;
+}
+.download {
+    font-size: 24px;
+    font-weight: 700;
+}
+.subheading {
+    font-size: 24px;
+    margin-top: 0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<p><a href="../../">Home page</a> > <a href="../">L&OumlVE tutorials</a></p><h1>Flowers</h1><p class="subheading">A tutorial for Lua and L&OumlVE 11</p><p>Please send any feedback to <a href="mailto:simple.game.tutorials@gmail.com">simple.game.tutorials@gmail.com</a></p><p><a href="flowers.love" class="download">Download flowers.love</a></p><img src="1.png">
+<h2>Rules</h2>
+<p>The game starts with a grid of covered cells. Under some of the cells are flowers. The game is over when a flower is uncovered.</p>
+<p>Left clicking a cell uncovers it, and if none of its adjacent cells contain flowers, they are also uncovered, and for <i>those</i> uncovered cells, if none of <i>their</i> adjacent cells contain flowers, they are also uncovered, and so on.</p>
+<p>Right clicking a cell toggles between the cell having a flag, a question mark, or nothing. Flags prevent a cell from being uncovered with a left click. Question marks are visual markers which don't affect what happens when the cell is clicked.</p>
+<p>The game is complete when all non-flower cells are uncovered.</p>
+<h3>Controls</h3>
+<table>
+<tr><td><b>Left click</b></td><td>Uncover a cell</td></tr>
+<tr><td><b>Right click</b></td><td>Cycle a covered cell through having a flag, a question mark, or nothing</td></tr>
+</table>
+<h2>Overview</h2>
+<p>The cells are represented by tables containing a boolean value indicating whether or not it contains a flower, and a string value indicating which of four states the cell is in: covered, covered with a flag, covered with a question mark, or uncovered.</p>
+<p>The cells which have flowers are chosen randomly. The first cell clicked is excluded from the possible options.</p>
+<p>When a cell is clicked, its position is added to the "uncover stack" table.</p>
+<p>While there is anything left in the uncover stack...</p>
+<ul>
+<li>A position is removed from the end of the stack.</li>
+<li>This position is set to <b>uncovered</b>.</li>
+<li>If there are no flowers surrounding this position, the surrounding <b>covered</b> and <b>question marked</b> positions (i.e. not the <b>uncovered</b> and <b>flagged</b> positions) are added to the uncover stack.</li>
+</ul>
+<p>The cells are drawn by assembling the following images:</p>
+<img src="2.png">
+<h2>Coding</h2>
+<h3>Loading images</h3>
+<p>All of the images needed for the game are loaded into a table.</p>
+<p><a class="fullcodelink" target="_blank" href="1.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="name">images</span> = {}
+
+    for <span class="name">imageIndex</span>, <span class="name">image</span> in <span class="call">ipairs</span>({
+        <span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">3</span>, <span class="literal">4</span>, <span class="literal">5</span>, <span class="literal">6</span>, <span class="literal">7</span>, <span class="literal">8</span>,
+        <span class="literal">'uncovered'</span>, <span class="literal">'covered_highlighted'</span>, <span class="literal">'covered'</span>,
+        <span class="literal">'flower'</span>, <span class="literal">'flag'</span>, <span class="literal">'question'</span>,
+    }) do
+        <span class="name">images</span>[<span class="name">image</span>] = <span class="call">love.graphics.newImage</span>(<span class="literal">'images/'</span>..<span class="name">image</span>..<span class="literal">'.png'</span>)
+    end
+end
+</pre></div>
+<h3>Drawing tiles</h3>
+<p>The covered cell image is drawn for every cell.</p>
+<p><a class="fullcodelink" target="_blank" href="2.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">14</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">19</span> do
+            local <span class="name">cellSize</span> = <span class="literal">18</span>
+            <span class="call">love.graphics.draw</span>(
+                <span class="name">images.covered</span>,
+                (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>, (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>
+            )
+        end
+    end
+end
+</pre></div>
+<img src="3.png">
+<h3>Selecting cells</h3>
+<p>The cell position under the mouse is updated every frame.</p>
+<p>This needs the cell size, so it is moved from <span class="inlinecode"><span class="name">love.draw</span></span> to <span class="inlinecode"><span class="name">love.load</span></span>.</p>
+<p>For now, this position is drawn as text.</p>
+<p><a class="fullcodelink" target="_blank" href="3.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">cellSize</span> = <span class="literal">18</span>
+end
+
+function <span class="name">love.update</span>()
+    <span class="name">selectedX</span> = <span class="call">math.floor</span>(<span class="call">love.mouse.getX</span>() / <span class="name">cellSize</span>) + <span class="literal">1</span>
+    <span class="name">selectedY</span> = <span class="call">math.floor</span>(<span class="call">love.mouse.getY</span>() / <span class="name">cellSize</span>) + <span class="literal">1</span>
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="comment">-- Removed: local cellSize = 18</span>
+
+    <span class="comment">-- Temporary</span>
+    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)
+    <span class="call">love.graphics.print</span>(<span class="literal">'selected x: '</span>..<span class="name">selectedX</span>..<span class="literal">' selected y: '</span>..<span class="name">selectedY</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+end
+</pre></div>
+<img src="4.png">
+<h3>Keeping selected cell within grid</h3>
+<p>If the mouse position is greater than the grid's X or Y cell count (i.e. it is off the right or bottom of the grid), then the selected position is set to the last cell on that axis.</p>
+<p>The grid's X and Y cell count is reused from drawing the cells, so variables are made for them.</p>
+<p><a class="fullcodelink" target="_blank" href="4.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">gridXCount</span> = <span class="literal">19</span>
+    <span class="name">gridYCount</span> = <span class="literal">14</span>
+end
+
+function <span class="name">love.update</span>()
+    <span class="comment">-- etc.</span>
+
+    if <span class="name">selectedX</span> > <span class="name">gridXCount</span> then
+        <span class="name">selectedX</span> = <span class="name">gridXCount</span>
+    end
+
+    if <span class="name">selectedY</span> > <span class="name">gridYCount</span> then
+        <span class="name">selectedY</span> = <span class="name">gridYCount</span>
+    end
+end
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="highlight"><span class="name">gridYCount</span></span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="highlight"><span class="name">gridXCount</span></span> do
+
+        <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="5.png">
+<h3>Highlighting cells</h3>
+<p>The selected cell is a drawn with the highlighted image.</p>
+<p><a class="fullcodelink" target="_blank" href="5.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="highlight">local <span class="name">image</span></span>
+            <span class="highlight">if <span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span> then</span>
+            <span class="highlight">    <span class="name">image</span> = <span class="name">images.covered_highlighted</span></span>
+            <span class="highlight">else</span>
+            <span class="highlight">    <span class="name">image</span> = <span class="name">images.covered</span></span>
+            <span class="highlight">end</span>
+            <span class="call">love.graphics.draw</span>(
+                <span class="highlight"><span class="name">image</span></span>,
+                (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>, (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>
+            )
+        end
+    end
+end
+</pre></div>
+<img src="6.png">
+<h3>Change cell image when left mouse button is down</h3>
+<p>When the left mouse button is down, the selected cell is drawn as an uncovered cell.</p>
+<p><a class="fullcodelink" target="_blank" href="6.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            local <span class="name">image</span>
+            if <span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span> then
+                <span class="highlight">if <span class="call">love.mouse.isDown</span>(<span class="literal">1</span>) then</span>
+                <span class="highlight">    <span class="name">image</span> = <span class="name">images.uncovered</span></span>
+                <span class="highlight">else</span>
+                    <span class="name">image</span> = <span class="name">images.covered_highlighted</span>
+                <span class="highlight">end</span>
+            else
+                <span class="name">image</span> = <span class="name">images.covered</span>
+            end
+            <span class="call">love.graphics.draw</span>(
+                <span class="name">image</span>,
+                (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>, (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>
+            )
+        end
+    end
+end
+</pre></div>
+<img src="7.png">
+<h3>Drawing flowers</h3>
+<p>A grid is created to store the state of the cells.</p>
+<p>Each cell will be represented by a table which stores two values: whether it has a flower, and whether it is uncovered/flagged/question marked/nothing.</p>
+<p>For now, it will only store the flower value.</p>
+<p>If a cell's <span class="inlinecode"><span class="literal">'flower'</span></span> key is true, for now, the flower image is drawn over the cell image.</p>
+<p><a class="fullcodelink" target="_blank" href="7.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">grid</span> = {}
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        <span class="name">grid</span>[<span class="name">y</span>] = {}
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] = {
+                <span class="name">flower</span> = <span class="literal">false</span>,
+            }
+        end
+    end
+
+    <span class="comment">-- Temporary</span>
+    <span class="name">grid</span>[<span class="literal">1</span>][<span class="literal">1</span>].<span class="name">flower</span> = <span class="literal">true</span>
+    <span class="name">grid</span>[<span class="literal">1</span>][<span class="literal">2</span>].<span class="name">flower</span> = <span class="literal">true</span>
+end
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="comment">-- etc.</span>
+
+            <span class="highlight">if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">flower</span> then</span>
+            <span class="highlight">    <span class="call">love.graphics.draw</span>(</span>
+            <span class="highlight">        <span class="name">images.flower</span>,</span>
+            <span class="highlight">        (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>, (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span></span>
+            <span class="highlight">    )</span>
+            <span class="highlight">end</span>
+        end
+    end
+end
+</pre></div>
+<img src="8.png">
+<h3>Simplifying code</h3>
+<p>The code for drawing cells and drawing the flower is the same except for the image to draw, so a function is created with the image and the X and Y values as parameters.</p>
+<p><a class="fullcodelink" target="_blank" href="8.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="highlight">local function <span class="name">drawCell</span>(<span class="name">image</span>, <span class="name">x</span>, <span class="name">y</span>)</span>
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">image</span>,
+                    (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>, (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>
+                )
+            <span class="highlight">end</span>
+
+            if <span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span> then
+                if <span class="call">love.mouse.isDown</span>(<span class="literal">1</span>) then
+                    <span class="highlight"><span class="call">drawCell</span>(<span class="name">images.uncovered</span>, <span class="name">x</span>, <span class="name">y</span>)</span>
+                else
+                    <span class="highlight"><span class="call">drawCell</span>(<span class="name">images.covered_highlighted</span>, <span class="name">x</span>, <span class="name">y</span>)</span>
+                end
+            else
+                <span class="highlight"><span class="call">drawCell</span>(<span class="name">images.covered</span>, <span class="name">x</span>, <span class="name">y</span>)</span>
+            end
+
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">flower</span> then
+                <span class="highlight"><span class="call">drawCell</span>(<span class="name">images.flower</span>, <span class="name">x</span>, <span class="name">y</span>)</span>
+            end
+        end
+    end
+end
+</pre></div>
+<h3>Toggling flowers</h3>
+<p>For testing purposes, right clicking a cell will toggle its flower.</p>
+<p><a class="fullcodelink" target="_blank" href="9.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    if <span class="name">button</span> == <span class="literal">2</span> then
+        <span class="comment">-- Temporary</span>
+        <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">flower</span> = not <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">flower</span>
+    end
+end
+</pre></div>
+<h3>Showing surrounding flower count</h3>
+<p>To find the surrounding flower count, each position in the 8 directions around each cell is looped through. If any of these positions is not outside the grid (i.e. the value at the position is not nil) and the cell at the position has a flower, then 1 is added to the surrounding flower count.</p>
+<p>If the surrounding flower count is greater than 0, then, for now, the appropriate number image is drawn over the cell.</p>
+<p><a class="fullcodelink" target="_blank" href="10.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            local function <span class="name">drawCell</span>(<span class="name">image</span>, <span class="name">x</span>, <span class="name">y</span>)
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">image</span>,
+                    (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>, (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>
+                )
+            end
+
+            if <span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span> then
+                if <span class="call">love.mouse.isDown</span>(<span class="literal">1</span>) then
+                    <span class="call">drawCell</span>(<span class="name">images.uncovered</span>, <span class="name">x</span>, <span class="name">y</span>)
+                else
+                    <span class="call">drawCell</span>(<span class="name">images.covered_highlighted</span>, <span class="name">x</span>, <span class="name">y</span>)
+                end
+            else
+                <span class="call">drawCell</span>(<span class="name">images.covered</span>, <span class="name">x</span>, <span class="name">y</span>)
+            end
+
+            <span class="highlight">local <span class="name">surroundingFlowerCount</span> = <span class="literal">0</span></span>
+
+            <span class="highlight">for <span class="name">dy</span> = -<span class="literal">1</span>, <span class="literal">1</span> do</span>
+            <span class="highlight">    for <span class="name">dx</span> = -<span class="literal">1</span>, <span class="literal">1</span> do</span>
+            <span class="highlight">        if not (<span class="name">dy</span> == <span class="literal">0</span> and <span class="name">dx</span> == <span class="literal">0</span>)</span>
+            <span class="highlight">        and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>]</span>
+            <span class="highlight">        and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>]</span>
+            <span class="highlight">        and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>].<span class="name">flower</span> then</span>
+            <span class="highlight">            <span class="name">surroundingFlowerCount</span> = <span class="name">surroundingFlowerCount</span> + <span class="literal">1</span></span>
+            <span class="highlight">        end</span>
+            <span class="highlight">    end</span>
+            <span class="highlight">end</span>
+
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">flower</span> then
+                <span class="call">drawCell</span>(<span class="name">images.flower</span>, <span class="name">x</span>, <span class="name">y</span>)
+            <span class="highlight">elseif <span class="name">surroundingFlowerCount</span> > <span class="literal">0</span> then</span>
+            <span class="highlight">    <span class="call">drawCell</span>(<span class="name">images</span>[<span class="name">surroundingFlowerCount</span>], <span class="name">x</span>, <span class="name">y</span>)</span>
+            end
+        end
+    end
+end
+</pre></div>
+<img src="9.png">
+<h3>Random flower placement</h3>
+<p>A table is created containing every X and Y position in the grid.</p>
+<p>Random positions are repeatedly removed from this table and the cells at these positions are set to have a flower.</p>
+<p>To test this, pressing any key calls <span class="inlinecode"><span class="name">love.load</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="11.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    local <span class="name">possibleFlowerPositions</span> = {}
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="call">table.insert</span>(<span class="name">possibleFlowerPositions</span>, {<span class="name">x</span> = <span class="name">x</span>, <span class="name">y</span> = <span class="name">y</span>})
+        end
+    end
+
+    for <span class="name">flowerIndex</span> = <span class="literal">1</span>, <span class="literal">40</span> do
+        local <span class="name">position</span> = <span class="call">table.remove</span>(
+            <span class="name">possibleFlowerPositions</span>,
+            <span class="call">love.math.random</span>(#<span class="name">possibleFlowerPositions</span>)
+        )
+        <span class="name">grid</span>[<span class="name">position.y</span>][<span class="name">position.x</span>].<span class="name">flower</span> = <span class="literal">true</span>
+    end
+end
+
+function <span class="name">love.keypressed</span>()
+    <span class="comment">-- Temporary</span>
+    <span class="call">love.load</span>()
+end
+</pre></div>
+<img src="10.png">
+<h3>Uncovering cells</h3>
+<p>The cells are given a new key for the state of the cell. For now, this is only whether the cell is covered or uncovered.</p>
+<p>For now, when a cell is left clicked its state is set to <span class="inlinecode"><span class="literal">'uncovered'</span></span>.</p>
+<p>If a cell's state is <span class="inlinecode"><span class="literal">'uncovered'</span></span>, then the uncovered image is drawn instead of the covered image.</p>
+<p><a class="fullcodelink" target="_blank" href="12.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">grid</span> = {}
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        <span class="name">grid</span>[<span class="name">y</span>] = {}
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] = {
+                <span class="name">flower</span> = <span class="literal">false</span>,
+                <span class="highlight"><span class="name">state</span> = <span class="literal">'covered'</span>, <span class="comment">-- 'covered', 'uncovered'</span></span>
+            }
+        end
+    end
+end
+
+function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    if <span class="name">button</span> == <span class="literal">1</span> then
+        <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> = <span class="literal">'uncovered'</span>
+    end
+end
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="comment">-- etc.</span>
+
+            <span class="highlight">if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> == <span class="literal">'uncovered'</span> then</span>
+            <span class="highlight">    <span class="call">drawCell</span>(<span class="name">images.uncovered</span>, <span class="name">x</span>, <span class="name">y</span>)</span>
+            <span class="highlight">else</span>
+                if <span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span> then
+                    if <span class="call">love.mouse.isDown</span>(<span class="literal">1</span>) then
+                        <span class="call">drawCell</span>(<span class="name">images.uncovered</span>, <span class="name">x</span>, <span class="name">y</span>)
+                    else
+                        <span class="call">drawCell</span>(<span class="name">images.covered_highlighted</span>, <span class="name">x</span>, <span class="name">y</span>)
+                    end
+                else
+                    <span class="call">drawCell</span>(<span class="name">images.covered</span>, <span class="name">x</span>, <span class="name">y</span>)
+                end
+            <span class="highlight">end</span>
+
+            <span class="comment">-- etc.</span>
+        end
+    end
+end
+</pre></div>
+<img src="11.png">
+<h3>Flood fill: uncover stack</h3>
+<p>A list of cell positions is created, and eventually all of the cell positions to be uncovered will be added to this list.</p>
+<p>For now, this "uncover stack" will just contain the selected position, so it will only uncover the selected cell like before.</p>
+<p>While there are positions in the uncover stack, a position is removed from it and the cell at this position on the grid is uncovered.</p>
+<p><a class="fullcodelink" target="_blank" href="13.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    if <span class="name">button</span> == <span class="literal">1</span> then
+        local <span class="name">stack</span> = {
+            {
+                <span class="name">x</span> = <span class="name">selectedX</span>,
+                <span class="name">y</span> = <span class="name">selectedY</span>,
+            }
+        }
+
+        while #<span class="name">stack</span> > <span class="literal">0</span> do
+            local <span class="name">current</span> = <span class="call">table.remove</span>(<span class="name">stack</span>)
+            local <span class="name">x</span> = <span class="name">current.x</span>
+            local <span class="name">y</span> = <span class="name">current.y</span>
+
+            <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> = <span class="literal">'uncovered'</span>
+        end
+    end
+end
+</pre></div>
+<h3>Flood fill: adding to the stack</h3>
+<p>Each position in the 8 directions around each cell is looped through, and if the position is not outside the grid (i.e. the position on the grid is not nil) and it is covered, then, for now, it added to the uncover stack.</p>
+<p>This results in all of the cells becoming uncovered.</p>
+<p><a class="fullcodelink" target="_blank" href="14.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    if <span class="name">button</span> == <span class="literal">1</span> then
+        local <span class="name">stack</span> = {
+            {
+                <span class="name">x</span> = <span class="name">selectedX</span>,
+                <span class="name">y</span> = <span class="name">selectedY</span>,
+            }
+        }
+
+        while #<span class="name">stack</span> > <span class="literal">0</span> do
+            local <span class="name">current</span> = <span class="call">table.remove</span>(<span class="name">stack</span>)
+            local <span class="name">x</span> = <span class="name">current.x</span>
+            local <span class="name">y</span> = <span class="name">current.y</span>
+
+            <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> = <span class="literal">'uncovered'</span>
+
+            <span class="highlight">for <span class="name">dy</span> = -<span class="literal">1</span>, <span class="literal">1</span> do</span>
+            <span class="highlight">    for <span class="name">dx</span> = -<span class="literal">1</span>, <span class="literal">1</span> do</span>
+            <span class="highlight">        if not (<span class="name">dx</span> == <span class="literal">0</span> and <span class="name">dy</span> == <span class="literal">0</span>)</span>
+            <span class="highlight">        and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>]</span>
+            <span class="highlight">        and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>]</span>
+            <span class="highlight">        and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>].<span class="name">state</span> == <span class="literal">'covered'</span> then</span>
+            <span class="highlight">            <span class="call">table.insert</span>(<span class="name">stack</span>, {</span>
+            <span class="highlight">                <span class="name">x</span> = <span class="name">x</span> + <span class="name">dx</span>,</span>
+            <span class="highlight">                <span class="name">y</span> = <span class="name">y</span> + <span class="name">dy</span>,</span>
+            <span class="highlight">            })</span>
+            <span class="highlight">        end</span>
+            <span class="highlight">    end</span>
+            <span class="highlight">end</span>
+        end
+    end
+end
+</pre></div>
+<img src="12.png">
+<h3>Flood fill: using surrounding flower count</h3>
+<p>The surrounding cells of a position removed from the uncover stack are only added to the stack if none of the surrounding cells have flowers.</p>
+<p>Finding the number of surrounding flowers is reused from drawing it, so a function is made.</p>
+<p><a class="fullcodelink" target="_blank" href="15.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="highlight">function <span class="name">getSurroundingFlowerCount</span>(<span class="name">x</span>, <span class="name">y</span>)</span>
+        local <span class="name">surroundingFlowerCount</span> = <span class="literal">0</span>
+
+        for <span class="name">dy</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
+            for <span class="name">dx</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
+                if not (<span class="name">dy</span> == <span class="literal">0</span> and <span class="name">dx</span> == <span class="literal">0</span>)
+                and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>]
+                and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>]
+                and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>].<span class="name">flower</span>
+                then
+                    <span class="name">surroundingFlowerCount</span> = <span class="name">surroundingFlowerCount</span> + <span class="literal">1</span>
+                end
+            end
+        end
+
+        <span class="highlight">return <span class="name">surroundingFlowerCount</span></span>
+    <span class="highlight">end</span>
+end
+
+function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    if <span class="name">button</span> == <span class="literal">1</span> then
+        local <span class="name">stack</span> = {
+            {
+                <span class="name">x</span> = <span class="name">selectedX</span>,
+                <span class="name">y</span> = <span class="name">selectedY</span>,
+            }
+        }
+
+        while #<span class="name">stack</span> > <span class="literal">0</span> do
+            local <span class="name">current</span> = <span class="call">table.remove</span>(<span class="name">stack</span>)
+            local <span class="name">x</span> = <span class="name">current.x</span>
+            local <span class="name">y</span> = <span class="name">current.y</span>
+
+            <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> = <span class="literal">'uncovered'</span>
+
+            <span class="highlight">if <span class="call">getSurroundingFlowerCount</span>(<span class="name">x</span>, <span class="name">y</span>) == <span class="literal">0</span> then</span>
+                for <span class="name">dy</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
+                    for <span class="name">dx</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
+                        if not (<span class="name">dx</span> == <span class="literal">0</span> and <span class="name">dy</span> == <span class="literal">0</span>)
+                        and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>]
+                        and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>]
+                        and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>].<span class="name">state</span> == <span class="literal">'covered'</span> then
+                            <span class="call">table.insert</span>(<span class="name">stack</span>, {
+                                <span class="name">x</span> = <span class="name">x</span> + <span class="name">dx</span>,
+                                <span class="name">y</span> = <span class="name">y</span> + <span class="name">dy</span>,
+                            })
+                        end
+                    end
+                end
+            <span class="highlight">end</span>
+        end
+    end
+end
+
+function <span class="name">love.draw</span>()
+            <span class="comment">-- etc.</span>
+
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">flower</span> then
+                <span class="call">drawCell</span>(<span class="name">images.flower</span>, <span class="name">x</span>, <span class="name">y</span>)
+            elseif <span class="highlight"><span class="call">getSurroundingFlowerCount</span>(<span class="name">x</span>, <span class="name">y</span>)</span> > <span class="literal">0</span> then
+                <span class="call">drawCell</span>(<span class="name">images</span>[<span class="highlight"><span class="call">getSurroundingFlowerCount</span>(<span class="name">x</span>, <span class="name">y</span>)</span>], <span class="name">x</span>, <span class="name">y</span>)
+            end
+        end
+    end
+end
+</pre></div>
+<img src="13.png">
+<h3>Drawing flags and question marks</h3>
+<p>A cell's state can also be a flag or a question mark.</p>
+<p>If a cell's state is a flag/question mark, the flag/question mark image is drawn over the cell.</p>
+<p>To test this, the state of two cells are changed to have a flag and a question mark.</p>
+<p><a class="fullcodelink" target="_blank" href="16.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">grid</span> = {}
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        <span class="name">grid</span>[<span class="name">y</span>] = {}
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] = {
+                <span class="name">flower</span> = <span class="literal">false</span>,
+                <span class="name">state</span> = <span class="literal">'covered'</span>, <span class="comment">-- 'covered', 'uncovered'<span class="highlight">, 'flag', 'question'</span></span>
+            }
+        end
+    end
+
+    <span class="comment">-- Temporary</span>
+    <span class="highlight"><span class="name">grid</span>[<span class="literal">1</span>][<span class="literal">1</span>].<span class="name">state</span> = <span class="literal">'flag'</span></span>
+    <span class="highlight"><span class="name">grid</span>[<span class="literal">1</span>][<span class="literal">2</span>].<span class="name">state</span> = <span class="literal">'question'</span></span>
+
+    <span class="comment">-- etc.</span>
+end
+
+function <span class="name">love.draw</span>()
+            <span class="comment">-- etc.</span>
+
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">flower</span> then
+                <span class="call">drawCell</span>(<span class="name">images.flower</span>, <span class="name">x</span>, <span class="name">y</span>)
+            elseif <span class="call">getSurroundingFlowerCount</span>(<span class="name">x</span>, <span class="name">y</span>) > <span class="literal">0</span> then
+                <span class="call">drawCell</span>(<span class="name">images</span>[<span class="call">getSurroundingFlowerCount</span>(<span class="name">x</span>, <span class="name">y</span>)], <span class="name">x</span>, <span class="name">y</span>)
+            end
+
+            <span class="highlight">if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> == <span class="literal">'flag'</span> then</span>
+            <span class="highlight">    <span class="call">drawCell</span>(<span class="name">images.flag</span>, <span class="name">x</span>, <span class="name">y</span>)</span>
+            <span class="highlight">elseif <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> == <span class="literal">'question'</span> then</span>
+            <span class="highlight">    <span class="call">drawCell</span>(<span class="name">images.question</span>, <span class="name">x</span>, <span class="name">y</span>)</span>
+            <span class="highlight">end</span>
+        end
+    end
+end
+</pre></div>
+<img src="14.png">
+<h3>Cycling flags and question marks</h3>
+<p>Right clicking a cell cycles its state through having nothing, a flag, and a question mark.</p>
+<p><a class="fullcodelink" target="_blank" href="17.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    if <span class="name">button</span> == <span class="literal">1</span> then
+        <span class="comment">-- etc.</span>
+
+    elseif <span class="name">button</span> == <span class="literal">2</span> then
+        if <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> == <span class="literal">'covered'</span> then
+            <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> = <span class="literal">'flag'</span>
+
+        elseif <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> == <span class="literal">'flag'</span> then
+            <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> = <span class="literal">'question'</span>
+
+        elseif <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> == <span class="literal">'question'</span> then
+            <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> = <span class="literal">'covered'</span>
+        end
+    end
+end
+</pre></div>
+<h3>Prevent uncovering flags</h3>
+<p>If a cell has a flag, then it can't be uncovered by a left click.</p>
+<p><a class="fullcodelink" target="_blank" href="18.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    if <span class="name">button</span> == <span class="literal">1</span> <span class="highlight">and <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> ~= <span class="literal">'flag'</span></span> then
+        <span class="comment">-- etc.</span>
+    end
+end
+</pre></div>
+<h3>Question marks don't stop fill</h3>
+<p>Positions are added to the uncover stack if the cell's state is covered or a question mark (but not a flag).</p>
+<p><a class="fullcodelink" target="_blank" href="19.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    <span class="comment">-- etc.</span>
+
+                        if not (<span class="name">dx</span> == <span class="literal">0</span> and <span class="name">dy</span> == <span class="literal">0</span>)
+                        and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>]
+                        and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>]
+                        and <span class="highlight">(</span>
+                            <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>].<span class="name">state</span> == <span class="literal">'covered'</span>
+                            <span class="highlight">or <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>].<span class="name">state</span> == <span class="literal">'question'</span></span>
+                        <span class="highlight">)</span> then
+                            <span class="call">table.insert</span>(<span class="name">stack</span>, {
+                                <span class="name">x</span> = <span class="name">x</span> + <span class="name">dx</span>,
+                                <span class="name">y</span> = <span class="name">y</span> + <span class="name">dy</span>,
+                            })
+
+    <span class="comment">-- etc.</span>
+</pre></div>
+<h3>Change cell image when left mouse button is down over flag</h3>
+<p>If the left mouse button is down when the mouse is on a cell with a flag, then the cell is drawn with the covered image.</p>
+<p><a class="fullcodelink" target="_blank" href="20.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+                if <span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span> then
+                    if <span class="call">love.mouse.isDown</span>(<span class="literal">1</span>) then
+                        <span class="highlight">if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> == <span class="literal">'flag'</span> then</span>
+                        <span class="highlight">    <span class="call">drawCell</span>(<span class="name">images.covered</span>, <span class="name">x</span>, <span class="name">y</span>)</span>
+                        <span class="highlight">else</span>
+                            <span class="call">drawCell</span>(<span class="name">images.uncovered</span>, <span class="name">x</span>, <span class="name">y</span>)
+                        <span class="highlight">end</span>
+                    else
+                        <span class="call">drawCell</span>(<span class="name">images.covered_highlighted</span>, <span class="name">x</span>, <span class="name">y</span>)
+                    end
+
+    <span class="comment">-- etc.</span>
+</pre></div>
+<h3>Game over</h3>
+<p>If a flower is uncovered, then the game is over.</p>
+<p>A variable is made to store whether the game is over or not.</p>
+<p>For now, clicking cells does nothing if the game is over.</p>
+<p><a class="fullcodelink" target="_blank" href="21.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">gameOver</span> = <span class="literal">false</span>
+end
+
+function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    <span class="highlight">if not <span class="name">gameOver</span> then</span>
+        if <span class="name">button</span> == <span class="literal">1</span> and <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> ~= <span class="literal">'flag'</span> then
+            <span class="highlight">if <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">flower</span> then</span>
+            <span class="highlight">    <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> = <span class="literal">'uncovered'</span></span>
+            <span class="highlight">    <span class="name">gameOver</span> = <span class="literal">true</span></span>
+            <span class="highlight">else</span>
+                local <span class="name">stack</span> = {
+                    {
+                        <span class="name">x</span> = <span class="name">selectedX</span>,
+                        <span class="name">y</span> = <span class="name">selectedY</span>,
+                    }
+                }
+
+                <span class="comment">-- etc.</span>
+
+                <span class="highlight">end</span>
+            end
+
+        elseif <span class="name">button</span> == <span class="literal">2</span> then
+            <span class="comment">-- etc.</span>
+        end
+    <span class="highlight">end</span>
+end
+</pre></div>
+<h3>Game won</h3>
+<p>If there are no cells which are covered and don't have a flower, then the game is won.</p>
+<p><a class="fullcodelink" target="_blank" href="22.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    if not <span class="name">gameOver</span> then
+        if <span class="name">button</span> == <span class="literal">1</span> and <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> ~= <span class="literal">'flag'</span> then
+            <span class="comment">-- etc.</span>
+
+            if <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">flower</span> then
+                <span class="comment">-- etc.</span>
+            else
+                <span class="comment">-- etc.</span>
+
+                <span class="highlight">local <span class="name">complete</span> = <span class="literal">true</span></span>
+
+                <span class="highlight">for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do</span>
+                <span class="highlight">    for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do</span>
+                <span class="highlight">        if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> ~= <span class="literal">'uncovered'</span></span>
+                <span class="highlight">        and not <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">flower</span> then</span>
+                <span class="highlight">            <span class="name">complete</span> = <span class="literal">false</span></span>
+                <span class="highlight">        end</span>
+                <span class="highlight">    end</span>
+                <span class="highlight">end</span>
+
+                <span class="highlight">if <span class="name">complete</span> then</span>
+                <span class="highlight">    <span class="name">gameOver</span> = <span class="literal">true</span></span>
+                <span class="highlight">end</span>
+            end
+
+        elseif <span class="name">button</span> == <span class="literal">2</span> then
+            <span class="comment">-- etc.</span>
+        end
+    end
+end
+</pre></div>
+<h3>New game on next click</h3>
+<p>If the game is over and a mouse button is clicked, then the game is reset.</p>
+<p>For now, <span class="inlinecode"><span class="name">love.load</span></span> is called to reset the game.</p>
+<p><a class="fullcodelink" target="_blank" href="23.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    if not <span class="name">gameOver</span> then
+        <span class="comment">-- etc.</span>
+    <span class="highlight">else</span>
+    <span class="highlight">    <span class="call">love.load</span>()</span>
+    end
+end
+</pre></div>
+<h3>Don't highlight when game is over</h3>
+<p>When the game is over, the mouse no longer highlights cells.</p>
+<p><a class="fullcodelink" target="_blank" href="24.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> == <span class="literal">'uncovered'</span> then
+                <span class="call">drawCell</span>(<span class="name">images.uncovered</span>, <span class="name">x</span>, <span class="name">y</span>)
+            else
+                if <span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span> <span class="highlight">and not <span class="name">gameOver</span></span> then
+
+    <span class="comment">-- etc.</span>
+</pre></div>
+<h3>Hide flowers until game is over</h3>
+<p>The flowers aren't drawn until the game is over.</p>
+<p><a class="fullcodelink" target="_blank" href="25.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">flower</span> <span class="highlight">and <span class="name">gameOver</span></span> then
+                <span class="call">drawCell</span>(<span class="name">images.flower</span>, <span class="name">x</span>, <span class="name">y</span>)
+
+    <span class="comment">-- etc.</span>
+</pre></div>
+<img src="15.png">
+<h3>Hide numbers for covered cells</h3>
+<p>If a cell is not uncovered, then its surrounding flower count is not shown.</p>
+<p><a class="fullcodelink" target="_blank" href="26.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+            <span class="comment">-- etc.</span>
+
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">flower</span> and <span class="name">gameOver</span> then
+                <span class="call">drawCell</span>(<span class="name">images.flower</span>, <span class="name">x</span>, <span class="name">y</span>)
+            elseif <span class="call">getSurroundingFlowerCount</span>(<span class="name">x</span>, <span class="name">y</span>) > <span class="literal">0</span>
+            <span class="highlight">and <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> == <span class="literal">'uncovered'</span></span> then
+                <span class="call">drawCell</span>(<span class="name">images</span>[<span class="call">getSurroundingFlowerCount</span>(<span class="name">x</span>, <span class="name">y</span>)], <span class="name">x</span>, <span class="name">y</span>)
+            end
+
+            <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="16.png">
+<h3>Preventing clicking on flower on the first click</h3>
+<p>So that the first click doesn't uncover a flower, the code for placing flowers is moved so that it runs when the left mouse button is clicked, and the cell under the mouse cursor is not added to the possible flower positions.</p>
+<p>A variable is created to store whether a click is the first click of the game.</p>
+<p><a class="fullcodelink" target="_blank" href="27.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">firstClick</span> = <span class="literal">true</span>
+end
+
+function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    if not <span class="name">gameOver</span> then
+        if <span class="name">button</span> == <span class="literal">1</span> and <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> ~= <span class="literal">'flag'</span> then
+            <span class="highlight">if <span class="name">firstClick</span> then</span>
+                <span class="highlight"><span class="name">firstClick</span> = <span class="literal">false</span></span>
+
+                local <span class="name">possibleFlowerPositions</span> = {}
+
+                for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+                    for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+                        <span class="highlight">if not (<span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span>) then</span>
+                            <span class="call">table.insert</span>(
+                                <span class="name">possibleFlowerPositions</span>,
+                                {<span class="name">x</span> = <span class="name">x</span>, <span class="name">y</span> = <span class="name">y</span>}
+                            )
+                        <span class="highlight">end</span>
+                    end
+                end
+
+                for <span class="name">flowerIndex</span> = <span class="literal">1</span>, <span class="literal">40</span> do
+                    local <span class="name">position</span> = <span class="call">table.remove</span>(
+                        <span class="name">possibleFlowerPositions</span>,
+                        <span class="call">love.math.random</span>(#<span class="name">possibleFlowerPositions</span>)
+                    )
+                    <span class="name">grid</span>[<span class="name">position.y</span>][<span class="name">position.x</span>].<span class="name">flower</span> = <span class="literal">true</span>
+                end
+            <span class="highlight">end</span>
+
+            if <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">flower</span> then
+                <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> = <span class="literal">'uncovered'</span>
+                <span class="name">gameOver</span> = <span class="literal">true</span>
+            else
+
+    <span class="comment">-- etc.</span>
+</pre></div>
+<h3>Resetting the game</h3>
+<p>When the game is over only some variables need to be reset, so a function is made.</p>
+<p><a class="fullcodelink" target="_blank" href="28.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="name">images</span> = {}
+
+    for <span class="name">imageIndex</span>, <span class="name">image</span> in <span class="call">ipairs</span>({
+        <span class="comment">-- etc.</span>
+    }) do
+        <span class="comment">-- etc.</span>
+    end
+
+    <span class="name">cellSize</span> = <span class="literal">18</span>
+
+    <span class="name">gridXCount</span> = <span class="literal">19</span>
+    <span class="name">gridYCount</span> = <span class="literal">14</span>
+
+    function <span class="name">getSurroundingFlowerCount</span>(<span class="name">x</span>, <span class="name">y</span>)
+        <span class="comment">-- etc.</span>
+    end
+
+    <span class="highlight">function <span class="name">reset</span>()</span>
+        <span class="name">grid</span> = {}
+
+        for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+            <span class="name">grid</span>[<span class="name">y</span>] = {}
+            for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+                <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] = {
+                    <span class="name">flower</span> = <span class="literal">false</span>,
+                    <span class="name">state</span> = <span class="literal">'covered'</span>, <span class="comment">-- 'covered', 'uncovered', 'flag', 'question'</span>
+                }
+            end
+        end
+
+        <span class="name">gameOver</span> = <span class="literal">false</span>
+        <span class="name">firstClick</span> = <span class="literal">true</span>
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="call">reset</span>()</span>
+end
+
+function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    if not <span class="name">gameOver</span> then
+        <span class="comment">-- etc.</span>
+    else
+        <span class="highlight"><span class="call">reset</span>()</span>
+    end
+end
+</pre></div>
+</div></body></html>

@@ -1,0 +1,525 @@
+<html><head><title>Repeat Tutorial for Lua and L&OumlVE 11</title>
+<link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet">
+<style>
+body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    body {
+    background: #fff;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+a {
+    color: #059dc5;
+    text-decoration: none;
+    font-weight: 700;
+}
+a:hover {
+    text-decoration: underline;
+}
+h1 {
+    font-size: 60px;
+    margin: 0;
+}
+h2 {
+    font-size: 30px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #de53b3;
+    margin-bottom: 0;
+    display: inline-block;
+}
+h3 {
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #734590;
+    max-width: 695px;
+}
+td {
+    padding-right: 10px
+}
+pre {
+    margin-top: 0;
+    min-width: 695px;
+    margin-bottom: 10px;
+}
+.pre {
+    display: table;
+    margin-top: 16px;
+}
+table {
+    margin-top: 16px;
+}
+img {
+    display: block;
+    margin: 14px 0;
+}
+td img {
+    margin: 0;
+}
+.inlinecode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    color: #555;
+}
+.code {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    background: #fff;
+    color: #555;
+    padding: 12px;
+}
+.console {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 16px;
+    background: #333;
+    border-radius: 8px;
+    border: 1px solid #777;
+    color: #eee;
+}
+h2 + h3 {
+    margin-top: 20px;
+}
+.download {
+    font-size: 24px;
+    font-weight: 700;
+}
+.subheading {
+    font-size: 24px;
+    margin-top: 0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<p><a href="../../">Home page</a> > <a href="../">L&OumlVE tutorials</a></p><h1>Repeat</h1><p class="subheading">A tutorial for Lua and L&OumlVE 11</p><p>Please send any feedback to <a href="mailto:simple.game.tutorials@gmail.com">simple.game.tutorials@gmail.com</a></p><p><a href="repeat.love" class="download">Download repeat.love</a></p><img src="1.png">
+<h2>Rules</h2>
+<p>Watch as a sequence of numbers flash.</p>
+<p>Repeat the sequence using the number keys.</p>
+<p>If you successfully repeat the sequence, a new number is added and the sequence flashes again</p>
+<h2>Coding</h2>
+<h3>Sequence</h3>
+<p>The sequence table is created. For now it contains a test sequence of numbers between 1 and 4.</p>
+<p><a class="fullcodelink" target="_blank" href="1.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="name">sequence</span> = {<span class="literal">4</span>, <span class="literal">3</span>, <span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">2</span>, <span class="literal">3</span>} <span class="comment">-- Temporary</span>
+end
+
+function <span class="name">love.draw</span>()
+    <span class="call">love.graphics.print</span>(<span class="call">table.concat</span>(<span class="name">sequence</span>, <span class="literal">', '</span>))
+end
+</pre></div>
+<img src="2.png">
+<h3>Current position in sequence</h3>
+<p>The current sequence position starts at 1.</p>
+<p>If the number in the sequence at the current position is pressed, then 1 is added to the current position.</p>
+<p>This will error once the current position is beyond the length of the sequence table.</p>
+<p><a class="fullcodelink" target="_blank" href="2.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="name">sequence</span> = {<span class="literal">4</span>, <span class="literal">3</span>, <span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">2</span>, <span class="literal">3</span>} <span class="comment">-- Temporary</span>
+    <span class="highlight"><span class="name">current</span> = <span class="literal">1</span></span>
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="call">tonumber</span>(<span class="name">key</span>) == <span class="name">sequence</span>[<span class="name">current</span>] then
+        <span class="name">current</span> = <span class="name">current</span> + <span class="literal">1</span>
+    end
+end
+
+function <span class="name">love.draw</span>()
+    <span class="call">love.graphics.print</span>(<span class="call">table.concat</span>(<span class="name">sequence</span>, <span class="literal">', '</span>))
+    <span class="highlight"><span class="call">love.graphics.print</span>(<span class="name">current</span>..<span class="literal">'/'</span>..#<span class="name">sequence</span>, <span class="literal">0</span>, <span class="literal">20</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.print</span>(<span class="literal">'sequence[current]: '</span>..<span class="name">sequence</span>[<span class="name">current</span>], <span class="literal">0</span>, <span class="literal">40</span>)</span>
+end
+</pre></div>
+<img src="3.png">
+<h3>Resetting current position</h3>
+<p>When the current position goes beyond the sequence length, it is reset to 1.</p>
+<p><a class="fullcodelink" target="_blank" href="3.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="call">tonumber</span>(<span class="name">key</span>) == <span class="name">sequence</span>[<span class="name">current</span>] then
+        <span class="name">current</span> = <span class="name">current</span> + <span class="literal">1</span>
+        <span class="highlight">if <span class="name">current</span> > #<span class="name">sequence</span> then</span>
+        <span class="highlight">    <span class="name">current</span> = <span class="literal">1</span></span>
+        <span class="highlight">end</span>
+    end
+end
+</pre></div>
+<h3>Adding to sequence</h3>
+<p>When the current position is reset, a random number between 1 and 4 is added to the sequence.</p>
+<p><a class="fullcodelink" target="_blank" href="4.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="call">tonumber</span>(<span class="name">key</span>) == <span class="name">sequence</span>[<span class="name">current</span>] then
+        <span class="name">current</span> = <span class="name">current</span> + <span class="literal">1</span>
+        if <span class="name">current</span> > #<span class="name">sequence</span> then
+            <span class="name">current</span> = <span class="literal">1</span>
+            <span class="highlight"><span class="call">table.insert</span>(<span class="name">sequence</span>, <span class="call">love.math.random</span>(<span class="literal">4</span>))</span>
+        end
+    end
+end
+</pre></div>
+<h3>Starting sequence with a single number</h3>
+<p>The sequence is now created with a single random number.</p>
+<p>Because the code for adding a random number to the sequence is reused, it is made into a function.</p>
+<p><a class="fullcodelink" target="_blank" href="5.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="name">sequence</span> = <span class="highlight">{}</span>
+
+    <span class="highlight">function <span class="name">addToSequence</span>()</span>
+    <span class="highlight">    <span class="call">table.insert</span>(<span class="name">sequence</span>, <span class="call">love.math.random</span>(<span class="literal">4</span>))</span>
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="call">addToSequence</span>()</span>
+
+    <span class="name">current</span> = <span class="literal">1</span>
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="call">tonumber</span>(<span class="name">key</span>) == <span class="name">sequence</span>[<span class="name">current</span>] then
+        <span class="name">current</span> = <span class="name">current</span> + <span class="literal">1</span>
+        if <span class="name">current</span> > #<span class="name">sequence</span> then
+            <span class="name">current</span> = <span class="literal">1</span>
+            <span class="highlight"><span class="call">addToSequence</span>()</span>
+        end
+    end
+end
+</pre></div>
+<h3>Resetting if an incorrect key is pressed</h3>
+<p>If the wrong key is pressed, then <span class="inlinecode"><span class="name">love.load</span></span> is called to reset the game.</p>
+<p><a class="fullcodelink" target="_blank" href="6.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="call">tonumber</span>(<span class="name">key</span>) == <span class="name">sequence</span>[<span class="name">current</span>] then
+        <span class="name">current</span> = <span class="name">current</span> + <span class="literal">1</span>
+        if <span class="name">current</span> > #<span class="name">sequence</span> then
+            <span class="name">current</span> = <span class="literal">1</span>
+            <span class="call">addToSequence</span>()
+        end
+    <span class="highlight">else</span>
+    <span class="highlight">    <span class="call">love.load</span>()</span>
+    end
+end
+</pre></div>
+<h3>Drawing first square</h3>
+<p>The first square is drawn with a dark red square and a white number.</p>
+<p>A larger font is used and the drawn text is repositioned.</p>
+<p><a class="fullcodelink" target="_blank" href="7.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="call">love.graphics.setNewFont</span>(<span class="literal">20</span>)
+end
+
+function <span class="name">love.draw</span>()
+    <span class="highlight">local <span class="name">squareSize</span> = <span class="literal">50</span></span>
+
+    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">.2</span>, <span class="literal">0</span>, <span class="literal">0</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="literal">0</span>, <span class="literal">0</span>, <span class="name">squareSize</span>, <span class="name">squareSize</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.print</span>(<span class="literal">1</span>, <span class="literal">19</span>, <span class="literal">14</span>)</span>
+
+    <span class="call">love.graphics.print</span>(<span class="name">current</span>..<span class="literal">'/'</span>..#<span class="name">sequence</span>, <span class="highlight"><span class="literal">20</span></span>, <span class="highlight"><span class="literal">60</span></span>)
+    <span class="call">love.graphics.print</span>(<span class="literal">'sequence[current]: '</span>..<span class="name">sequence</span>[<span class="name">current</span>], <span class="highlight"><span class="literal">20</span></span>, <span class="highlight"><span class="literal">100</span></span>)
+    <span class="call">love.graphics.print</span>(<span class="call">table.concat</span>(<span class="name">sequence</span>, <span class="literal">', '</span>)<span class="highlight">, <span class="literal">20</span>, <span class="literal">140</span></span>)
+end
+</pre></div>
+<img src="4.png">
+<h3>Drawing all squares</h3>
+<p>The rest of the squares are drawn similarly.</p>
+<p><a class="fullcodelink" target="_blank" href="8.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    local <span class="name">squareSize</span> = <span class="literal">50</span>
+
+    <span class="call">love.graphics.setColor</span>(<span class="literal">.2</span>, <span class="literal">0</span>, <span class="literal">0</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="literal">0</span>, <span class="literal">0</span>, <span class="name">squareSize</span>, <span class="name">squareSize</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+    <span class="call">love.graphics.print</span>(<span class="literal">1</span>, <span class="literal">19</span>, <span class="literal">14</span>)
+
+    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">.2</span>, <span class="literal">0</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="name">squareSize</span>, <span class="literal">0</span>, <span class="name">squareSize</span>, <span class="name">squareSize</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.print</span>(<span class="literal">2</span>, <span class="name">squareSize</span> + <span class="literal">19</span>, <span class="literal">14</span>)</span>
+
+    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.2</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="name">squareSize</span> * <span class="literal">2</span>, <span class="literal">0</span>, <span class="name">squareSize</span>, <span class="name">squareSize</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.print</span>(<span class="literal">3</span>, <span class="name">squareSize</span> * <span class="literal">2</span> + <span class="literal">19</span>, <span class="literal">14</span>)</span>
+
+    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">.2</span>, <span class="literal">.2</span>, <span class="literal">0</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="name">squareSize</span> * <span class="literal">3</span>, <span class="literal">0</span>, <span class="name">squareSize</span>, <span class="name">squareSize</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.print</span>(<span class="literal">4</span>, <span class="name">squareSize</span> * <span class="literal">3</span> + <span class="literal">19</span>, <span class="literal">14</span>)</span>
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="5.png">
+<h3>Simplifying code</h3>
+<p>The code for drawing each square is similar, so it is made into a function.</p>
+<p><a class="fullcodelink" target="_blank" href="9.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="highlight">local function <span class="name">drawSquare</span>(<span class="name">number</span>, <span class="name">color</span>)</span>
+        local <span class="name">squareSize</span> = <span class="literal">50</span>
+        <span class="call">love.graphics.setColor</span>(<span class="highlight"><span class="name">color</span></span>)
+        <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="name">squareSize</span> * <span class="highlight">(<span class="name">number</span> - <span class="literal">1</span>)</span>, <span class="literal">0</span>, <span class="name">squareSize</span>, <span class="name">squareSize</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+        <span class="call">love.graphics.print</span>(<span class="highlight"><span class="name">number</span></span>, <span class="name">squareSize</span> * <span class="highlight">(<span class="name">number</span> - <span class="literal">1</span>)</span> + <span class="literal">19</span>, <span class="literal">14</span>)
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="call">drawSquare</span>(<span class="literal">1</span>, {<span class="literal">.2</span>, <span class="literal">0</span>, <span class="literal">0</span>})</span>
+    <span class="highlight"><span class="call">drawSquare</span>(<span class="literal">2</span>, {<span class="literal">0</span>, <span class="literal">.2</span>, <span class="literal">0</span>})</span>
+    <span class="highlight"><span class="call">drawSquare</span>(<span class="literal">3</span>, {<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.2</span>})</span>
+    <span class="highlight"><span class="call">drawSquare</span>(<span class="literal">4</span>, {<span class="literal">.2</span>, <span class="literal">.2</span>, <span class="literal">0</span>})</span>
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<h3>Timer</h3>
+<p>Numbers will flash every second.</p>
+<p>A timer variable starts at 0 and increases by <span class="inlinecode"><span class="name">dt</span></span> each frame.</p>
+<p>When the timer is at or above 1 it is reset to 0.</p>
+<p>For now, 'tick' is printed every time the numbers will flash.</p>
+<p><a class="fullcodelink" target="_blank" href="10.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">timer</span> = <span class="literal">0</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="literal">1</span> then
+        <span class="name">timer</span> = <span class="literal">0</span>
+        <span class="comment">-- Temporary</span>
+        <span class="call">print</span>(<span class="literal">'tick'</span>)
+    end
+end
+</pre></div>
+<h3>Flashing squares</h3>
+<p>The current sequence position is reused to flash each square in the sequence.</p>
+<p>The timer is used to advance the current sequence position.</p>
+<p>For now, the square corresponding to the number at the current sequence position is drawn using its color, while the other squares are drawn in black.</p>
+<p>The test sequence from before is used again.</p>
+<p>This will error once <span class="inlinecode"><span class="name">current</span></span> goes beyond the length of <span class="inlinecode"><span class="name">sequence</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="11.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="name">sequence</span> = <span class="highlight">{<span class="literal">4</span>, <span class="literal">3</span>, <span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">2</span>, <span class="literal">3</span>} <span class="comment">-- Temporary</span></span>
+
+    <span class="comment">-- etc.</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="literal">1</span> then
+        <span class="name">timer</span> = <span class="literal">0</span>
+        <span class="highlight"><span class="name">current</span> = <span class="name">current</span> + <span class="literal">1</span></span>
+    end
+end
+
+function <span class="name">love.draw</span>()
+    local function <span class="name">drawSquare</span>(<span class="name">number</span>, <span class="name">color</span>)
+        local <span class="name">squareSize</span> = <span class="literal">50</span>
+
+        <span class="highlight">if <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>] then</span>
+            <span class="call">love.graphics.setColor</span>(<span class="name">color</span>)
+        <span class="highlight">else</span>
+        <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)</span>
+        <span class="highlight">end</span>
+
+        <span class="comment">-- etc.</span>
+    end
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="6.png">
+<h3>Flashing color</h3>
+<p>The squares are given a highlighted color for flashing.</p>
+<p><a class="fullcodelink" target="_blank" href="12.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    local function <span class="name">drawSquare</span>(<span class="name">number</span>, <span class="name">color</span><span class="highlight">, <span class="name">colorFlashing</span></span>)
+        local <span class="name">squareSize</span> = <span class="literal">50</span>
+
+        if <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>] then
+            <span class="call">love.graphics.setColor</span>(<span class="highlight"><span class="name">colorFlashing</span></span>)
+        else
+            <span class="call">love.graphics.setColor</span>(<span class="highlight"><span class="name">color</span></span>)
+        end
+
+        <span class="comment">-- etc.</span>
+    end
+
+    <span class="call">drawSquare</span>(<span class="literal">1</span>, {<span class="literal">.2</span>, <span class="literal">0</span>, <span class="literal">0</span>}<span class="highlight">, {<span class="literal">1</span>, <span class="literal">0</span>, <span class="literal">0</span>}</span>)
+    <span class="call">drawSquare</span>(<span class="literal">2</span>, {<span class="literal">0</span>, <span class="literal">.2</span>, <span class="literal">0</span>}<span class="highlight">, {<span class="literal">0</span>, <span class="literal">1</span>, <span class="literal">0</span>}</span>)
+    <span class="call">drawSquare</span>(<span class="literal">3</span>, {<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.2</span>}<span class="highlight">, {<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">1</span>}</span>)
+    <span class="call">drawSquare</span>(<span class="literal">4</span>, {<span class="literal">.2</span>, <span class="literal">.2</span>, <span class="literal">0</span>}<span class="highlight">, {<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">0</span>}</span>)
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="7.png">
+<h3>Watch and repeat</h3>
+<p>A variable is created which indicates whether the squares are flashing (<span class="inlinecode"><span class="literal">'watch'</span></span>) or whether the player is inputing numbers (<span class="inlinecode"><span class="literal">'repeat'</span></span>).</p>
+<p>The state starts as <span class="inlinecode"><span class="literal">'watch'</span></span> and changes to <span class="inlinecode"><span class="literal">'repeat'</span></span> after the flashing sequence has ended.</p>
+<p>The keyboard input code is only run if the state is <span class="inlinecode"><span class="literal">'repeat'</span></span>.</p>
+<p>Once the sequence has been successfully entered, the state changes back to <span class="inlinecode"><span class="literal">'watch'</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="13.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">state</span> = <span class="literal">'watch'</span> <span class="comment">-- 'watch', 'repeat'</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="highlight">if <span class="name">state</span> == <span class="literal">'watch'</span> then</span>
+        <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+        if <span class="name">timer</span> >= <span class="literal">1</span> then
+            <span class="name">timer</span> = <span class="literal">0</span>
+            <span class="name">current</span> = <span class="name">current</span> + <span class="literal">1</span>
+            <span class="highlight">if <span class="name">current</span> > #<span class="name">sequence</span> then</span>
+            <span class="highlight">    <span class="name">state</span> = <span class="literal">'repeat'</span></span>
+            <span class="highlight">    <span class="name">current</span> = <span class="literal">1</span></span>
+            <span class="highlight">end</span>
+        end
+    <span class="highlight">end</span>
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    <span class="highlight">if <span class="name">state</span> == <span class="literal">'repeat'</span> then</span>
+        if <span class="call">tonumber</span>(<span class="name">key</span>) == <span class="name">sequence</span>[<span class="name">current</span>] then
+            <span class="name">current</span> = <span class="name">current</span> + <span class="literal">1</span>
+            if <span class="name">current</span> > #<span class="name">sequence</span> then
+                <span class="name">current</span> = <span class="literal">1</span>
+                <span class="call">addToSequence</span>()
+                <span class="highlight"><span class="name">state</span> = <span class="literal">'watch'</span></span>
+            end
+        else
+            <span class="call">love.load</span>()
+        end
+    <span class="highlight">end</span>
+end
+
+function <span class="name">love.draw</span>()
+    local function <span class="name">drawSquare</span>(<span class="name">number</span>, <span class="name">color</span>)
+        local <span class="name">squareSize</span> = <span class="literal">50</span>
+
+        if <span class="highlight"><span class="name">state</span> == <span class="literal">'watch'</span> and</span> <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>] then
+            <span class="call">love.graphics.setColor</span>(<span class="name">colorFlashing</span>)
+        else
+            <span class="call">love.graphics.setColor</span>(<span class="name">color</span>)
+        end
+
+        <span class="comment">-- etc.</span>
+    end
+
+    <span class="comment">-- etc.</span>
+
+    <span class="highlight"><span class="call">love.graphics.print</span>(<span class="literal">'state: '</span>..<span class="name">state</span>, <span class="literal">20</span>, <span class="literal">180</span>)</span>
+end
+</pre></div>
+<img src="8.png">
+<h3>Momentary flashing</h3>
+<p>A boolean variable is used to indicate whether to set the highlighted color or not.</p>
+<p>It starts off as <span class="inlinecode"><span class="literal">false</span></span>, gets toggled to <span class="inlinecode"><span class="literal">true</span></span> when the timer ticks, and gets toggled back to <span class="inlinecode"><span class="literal">false</span></span> when the timer ticks again.</p>
+<p>The timer limit is changed to tick twice as fast.</p>
+<p><a class="fullcodelink" target="_blank" href="14.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">flashing</span> = <span class="literal">false</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    if <span class="name">state</span> == <span class="literal">'watch'</span> then
+        <span class="name">timer</span> = <span class="name">timer</span> + <span class="name">dt</span>
+        if <span class="name">timer</span> >= <span class="highlight"><span class="literal">0.5</span></span> then
+            <span class="name">timer</span> = <span class="literal">0</span>
+            <span class="highlight"><span class="name">flashing</span> = not <span class="name">flashing</span></span>
+            <span class="highlight">if not <span class="name">flashing</span> then</span>
+                <span class="name">current</span> = <span class="name">current</span> + <span class="literal">1</span>
+                if <span class="name">current</span> > #<span class="name">sequence</span> then
+                    <span class="name">state</span> = <span class="literal">'repeat'</span>
+                    <span class="name">current</span> = <span class="literal">1</span>
+                end
+            <span class="highlight">end</span>
+        end
+    end
+end
+
+function <span class="name">love.draw</span>()
+    local function <span class="name">drawSquare</span>(<span class="name">number</span>, <span class="name">color</span>, <span class="name">colorFlashing</span>)
+        local <span class="name">squareSize</span> = <span class="literal">50</span>
+
+        if <span class="name">state</span> == <span class="literal">'watch'</span> <span class="highlight">and <span class="name">flashing</span></span> and <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>] then
+            <span class="call">love.graphics.setColor</span>(<span class="name">colorFlashing</span>)
+        else
+            <span class="call">love.graphics.setColor</span>(<span class="name">color</span>)
+        end
+
+        <span class="comment">-- etc.</span>
+    end
+
+    <span class="comment">-- etc.</span>
+
+    <span class="highlight"><span class="call">love.graphics.print</span>(<span class="literal">'flashing: '</span>..<span class="call">tostring</span>(<span class="name">flashing</span>), <span class="literal">20</span>, <span class="literal">220</span>)</span>
+end
+</pre></div>
+<h3>Game over state</h3>
+<p>If the wrong key is pressed, instead of resetting the game immediately, the state is set to <span class="inlinecode"><span class="literal">'gameover'</span></span>. When a key is pressed in the <span class="inlinecode"><span class="literal">'gameover'</span></span> state, the game is then reset.</p>
+<p><a class="fullcodelink" target="_blank" href="15.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="name">sequence</span> = <span class="highlight">{}</span>
+    <span class="comment">-- etc.</span>
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">state</span> == <span class="literal">'repeat'</span> then
+        if <span class="call">tonumber</span>(<span class="name">key</span>) == <span class="name">sequence</span>[<span class="name">current</span>] then
+            <span class="name">current</span> = <span class="name">current</span> + <span class="literal">1</span>
+            if <span class="name">current</span> > #<span class="name">sequence</span> then
+                <span class="name">current</span> = <span class="literal">1</span>
+                <span class="call">addToSequence</span>()
+                <span class="name">state</span> = <span class="literal">'watch'</span>
+            end
+        else
+            <span class="highlight"><span class="name">state</span> = <span class="literal">'gameover'</span></span>
+        end
+    <span class="highlight">elseif <span class="name">state</span> == <span class="literal">'gameover'</span> then</span>
+        <span class="highlight"><span class="call">love.load</span>()</span>
+    end
+end
+</pre></div>
+<h3>Displaying text based on state</h3>
+<p>The current sequence position and the length of the sequence is only displayed if the game is in the <span class="inlinecode"><span class="literal">'repeat'</span></span> state, and a game over message is shown if the game is in the <span class="inlinecode"><span class="literal">'gameover'</span></span> state.</p>
+<p><a class="fullcodelink" target="_blank" href="16.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="highlight">if <span class="name">state</span> == <span class="literal">'repeat'</span> then</span>
+        <span class="call">love.graphics.print</span>(<span class="name">current</span>..<span class="literal">'/'</span>..#<span class="name">sequence</span>, <span class="literal">20</span>, <span class="literal">60</span>)
+    <span class="highlight">elseif <span class="name">state</span> == <span class="literal">'gameover'</span> then</span>
+    <span class="highlight">    <span class="call">love.graphics.print</span>(<span class="literal">'Game over!'</span>, <span class="literal">20</span>, <span class="literal">60</span>)</span>
+    <span class="highlight">end</span>
+
+    <span class="comment">-- Removed: love.graphics.print('sequence[current]: '..sequence[current], 20, 100)</span>
+    <span class="comment">-- Removed: love.graphics.print(table.concat(sequence, ', '), 20, 140)</span>
+    <span class="comment">-- Removed: love.graphics.print('state: '..state, 20, 180)</span>
+    <span class="comment">-- Removed: love.graphics.print('flashing: '..tostring(flashing), 20, 220)</span>
+end
+</pre></div>
+<img src="9.png">
+</div></body></html>

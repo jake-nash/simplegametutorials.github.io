@@ -1,0 +1,264 @@
+<html><head><title>Eyes Tutorial for Lua and L&OumlVE 11</title>
+<link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet">
+<style>
+body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    body {
+    background: #fff;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+a {
+    color: #059dc5;
+    text-decoration: none;
+    font-weight: 700;
+}
+a:hover {
+    text-decoration: underline;
+}
+h1 {
+    font-size: 60px;
+    margin: 0;
+}
+h2 {
+    font-size: 30px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #de53b3;
+    margin-bottom: 0;
+    display: inline-block;
+}
+h3 {
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #734590;
+    max-width: 695px;
+}
+td {
+    padding-right: 10px
+}
+pre {
+    margin-top: 0;
+    min-width: 695px;
+    margin-bottom: 10px;
+}
+.pre {
+    display: table;
+    margin-top: 16px;
+}
+table {
+    margin-top: 16px;
+}
+img {
+    display: block;
+    margin: 14px 0;
+}
+td img {
+    margin: 0;
+}
+.inlinecode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    color: #555;
+}
+.code {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    background: #fff;
+    color: #555;
+    padding: 12px;
+}
+.console {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 16px;
+    background: #333;
+    border-radius: 8px;
+    border: 1px solid #777;
+    color: #eee;
+}
+h2 + h3 {
+    margin-top: 20px;
+}
+.download {
+    font-size: 24px;
+    font-weight: 700;
+}
+.subheading {
+    font-size: 24px;
+    margin-top: 0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<p><a href="../../">Home page</a> > <a href="../">L&OumlVE tutorials</a></p><h1>Eyes</h1><p class="subheading">A tutorial for Lua and L&OumlVE 11</p><p>Please send any feedback to <a href="mailto:simple.game.tutorials@gmail.com">simple.game.tutorials@gmail.com</a></p><p><a href="eyes.love" class="download">Download eyes.love</a></p><img src="1.png">
+<p>The eyes follow the cursor.</p>
+<h3>Drawing an eye</h3>
+<p>The eye is drawn with a white circle and a smaller dark blue circle for the pupil.</p>
+<p><a class="fullcodelink" target="_blank" href="1.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+    <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="literal">200</span>, <span class="literal">200</span>, <span class="literal">50</span>)
+
+    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.4</span>)
+    <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="literal">200</span>, <span class="literal">200</span>, <span class="literal">15</span>)
+end
+</pre></div>
+<img src="2.png">
+<h3>Getting X and Y distance between cursor and eye</h3>
+<p>The distance between the center of the eye and the mouse cursor is displayed.</p>
+<p>The X and Y positions of the eye are reused from drawing the eye, so variables are made for them.</p>
+<p><a class="fullcodelink" target="_blank" href="2.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="highlight">local <span class="name">eyeX</span> = <span class="literal">200</span></span>
+    <span class="highlight">local <span class="name">eyeY</span> = <span class="literal">200</span></span>
+
+    <span class="highlight">local <span class="name">distanceX</span> = <span class="call">love.mouse.getX</span>() - <span class="name">eyeX</span></span>
+    <span class="highlight">local <span class="name">distanceY</span> = <span class="call">love.mouse.getY</span>() - <span class="name">eyeY</span></span>
+
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+    <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">eyeX</span></span>, <span class="highlight"><span class="name">eyeY</span></span>, <span class="literal">50</span>)
+
+    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.4</span>)
+    <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="literal">200</span>, <span class="literal">200</span>, <span class="literal">15</span>)
+
+    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.print</span>(<span class="call">table.concat</span>({</span>
+    <span class="highlight">    <span class="literal">'distance x: '</span>..<span class="name">distanceX</span>,</span>
+    <span class="highlight">    <span class="literal">'distance y: '</span>..<span class="name">distanceY</span>,</span>
+    <span class="highlight">}, <span class="literal">'\n'</span>))</span>
+
+end
+</pre></div>
+<img src="3.png">
+<h3>Getting straight-line distance between cursor and eye</h3>
+<p>The distance in a straight line is calculated using the Pythagorean theorem.</p>
+<p>The square root of the distance on the X axis squared plus the distance on the Y axis squared is the distance in a straight line.</p>
+<p><a class="fullcodelink" target="_blank" href="3.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local <span class="name">distance</span> = <span class="call">math.sqrt</span>(<span class="name">distanceX</span>^<span class="literal">2</span> + <span class="name">distanceY</span>^<span class="literal">2</span>)
+
+    <span class="comment">-- etc.</span>
+
+    <span class="call">love.graphics.print</span>(<span class="call">table.concat</span>({
+        <span class="literal">'distance x: '</span>..<span class="name">distanceX</span>,
+        <span class="literal">'distance y: '</span>..<span class="name">distanceY</span>,
+        <span class="highlight"><span class="literal">'distance: '</span>..<span class="name">distance</span>,</span>
+    }, <span class="literal">'\n'</span>))
+end
+</pre></div>
+<img src="4.png">
+<h3>Getting angle between cursor and eye</h3>
+<p>The angle in radians between the mouse cursor and the center of the eye is calculated using <span class="inlinecode"><span class="name">math.atan2</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="4.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local <span class="name">angle</span> = <span class="call">math.atan2</span>(<span class="name">distanceY</span>, <span class="name">distanceX</span>)
+
+    <span class="comment">-- etc.</span>
+
+    <span class="call">love.graphics.print</span>(<span class="call">table.concat</span>({
+        <span class="literal">'distance x: '</span>..<span class="name">distanceX</span>,
+        <span class="literal">'distance y: '</span>..<span class="name">distanceY</span>,
+        <span class="literal">'distance: '</span>..<span class="name">distance</span>,
+        <span class="highlight"><span class="literal">'angle: '</span>..<span class="name">angle</span>,</span>
+    }, <span class="literal">'\n'</span>))
+end
+</pre></div>
+<img src="5.png">
+<h3>Moving pupil</h3>
+<p>The cosine/sine of the X/Y positions give the ratio between the X/Y positions and the straight-line distance.</p>
+<p>For example, when the mouse is directly below the eye, all of the straight-line distance goes into the Y axis, so the cosine is 0 and the sine is 1.</p>
+<p>For another example, when the sine is 0.5, the Y distance is 0.5 (i.e. half) of the straight-line distance, and the X distance is around 0.86 of the straight-line distance.</p>
+<p>The pupil is moved by the cosine/sine of the angle multiplied by the distance, which brings the pupil to the mouse position.</p>
+<p><a class="fullcodelink" target="_blank" href="5.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="highlight">local <span class="name">pupilX</span> = <span class="name">eyeX</span> + (<span class="call">math.cos</span>(<span class="name">angle</span>) * <span class="name">distance</span>)</span>
+    <span class="highlight">local <span class="name">pupilY</span> = <span class="name">eyeY</span> + (<span class="call">math.sin</span>(<span class="name">angle</span>) * <span class="name">distance</span>)</span>
+
+    <span class="comment">-- etc.</span>
+
+    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.4</span>)
+    <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">pupilX</span></span>, <span class="highlight"><span class="name">pupilY</span></span>, <span class="literal">15</span>)
+
+    <span class="comment">-- etc.</span>
+
+    <span class="call">love.graphics.print</span>(<span class="call">table.concat</span>({
+        <span class="literal">'distance x: '</span>..<span class="name">distanceX</span>,
+        <span class="literal">'distance y: '</span>..<span class="name">distanceY</span>,
+        <span class="literal">'distance: '</span>..<span class="name">distance</span>,
+        <span class="literal">'angle: '</span>..<span class="name">angle</span>,
+        <span class="highlight"><span class="literal">'cos(angle): '</span>..<span class="call">math.cos</span>(<span class="name">angle</span>),</span>
+        <span class="highlight"><span class="literal">'sin(angle): '</span>..<span class="call">math.sin</span>(<span class="name">angle</span>),</span>
+    }, <span class="literal">'\n'</span>))
+end
+</pre></div>
+<img src="6.png">
+<h3>Moving pupil maximum distance</h3>
+<p>The straight-line distance is limited to a certain number so that it can't move outside of the eye.</p>
+<p><a class="fullcodelink" target="_blank" href="6.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local <span class="name">distance</span> = <span class="highlight"><span class="call">math.min</span>(</span><span class="call">math.sqrt</span>(<span class="name">distanceX</span>^<span class="literal">2</span> + <span class="name">distanceY</span>^<span class="literal">2</span>)<span class="highlight">, <span class="literal">30</span>)</span>
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="7.png">
+<h3>Multiple eyes</h3>
+<p>The code is made into a function which takes an eye's X and Y positions.</p>
+<p><a class="fullcodelink" target="_blank" href="7.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="highlight">function <span class="name">drawEye</span>(<span class="name">eyeX</span>, <span class="name">eyeY</span>)</span>
+        local <span class="name">distanceX</span> = <span class="call">love.mouse.getX</span>() - <span class="name">eyeX</span>
+        local <span class="name">distanceY</span> = <span class="call">love.mouse.getY</span>() - <span class="name">eyeY</span>
+        local <span class="name">distance</span> = <span class="call">math.min</span>(<span class="call">math.sqrt</span>(<span class="name">distanceX</span>^<span class="literal">2</span> + <span class="name">distanceY</span>^<span class="literal">2</span>), <span class="literal">30</span>)
+        local <span class="name">angle</span> = <span class="call">math.atan2</span>(<span class="name">distanceY</span>, <span class="name">distanceX</span>)
+
+        local <span class="name">pupilX</span> = <span class="name">eyeX</span> + (<span class="call">math.cos</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
+        local <span class="name">pupilY</span> = <span class="name">eyeY</span> + (<span class="call">math.sin</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
+
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+        <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">eyeX</span>, <span class="name">eyeY</span>, <span class="literal">50</span>)
+
+        <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.4</span>)
+        <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">pupilX</span>, <span class="name">pupilY</span>, <span class="literal">15</span>)
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="call">drawEye</span>(<span class="literal">200</span>, <span class="literal">200</span>)</span>
+    <span class="highlight"><span class="call">drawEye</span>(<span class="literal">330</span>, <span class="literal">200</span>)</span>
+end
+</pre></div>
+<img src="8.png">
+</div></body></html>
