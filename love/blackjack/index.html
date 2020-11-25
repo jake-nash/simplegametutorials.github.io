@@ -1,0 +1,1786 @@
+<html><head><title>Blackjack Tutorial for Lua and L&OumlVE 11</title>
+<link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet">
+<style>
+body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    body {
+    background: #fff;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+a {
+    color: #059dc5;
+    text-decoration: none;
+    font-weight: 700;
+}
+a:hover {
+    text-decoration: underline;
+}
+h1 {
+    font-size: 60px;
+    margin: 0;
+}
+h2 {
+    font-size: 30px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #de53b3;
+    margin-bottom: 0;
+    display: inline-block;
+}
+h3 {
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #734590;
+    max-width: 695px;
+}
+td {
+    padding-right: 10px
+}
+pre {
+    margin-top: 0;
+    min-width: 695px;
+    margin-bottom: 10px;
+}
+.pre {
+    display: table;
+    margin-top: 16px;
+}
+table {
+    margin-top: 16px;
+}
+img {
+    display: block;
+    margin: 14px 0;
+}
+td img {
+    margin: 0;
+}
+.inlinecode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    color: #555;
+}
+.code {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    background: #fff;
+    color: #555;
+    padding: 12px;
+}
+.console {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 16px;
+    background: #333;
+    border-radius: 8px;
+    border: 1px solid #777;
+    color: #eee;
+}
+h2 + h3 {
+    margin-top: 20px;
+}
+.download {
+    font-size: 24px;
+    font-weight: 700;
+}
+.subheading {
+    font-size: 24px;
+    margin-top: 0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<p><a href="../../">Home page</a> > <a href="../">L&OumlVE tutorials</a></p><h1>Blackjack</h1><p class="subheading">A tutorial for Lua and L&OumlVE 11</p><p>Please send any feedback to <a href="mailto:simple.game.tutorials@gmail.com">simple.game.tutorials@gmail.com</a></p><p><a href="blackjack.love" class="download">Download blackjack.love</a></p><img src="1.png">
+<h2>Rules</h2>
+<p>The dealer and player are dealt two cards each. The dealer's first card is hidden from the player.</p>
+<p>The player can hit (i.e. take another card) or stand (i.e. stop taking cards).</p>
+<p>If the total value of the player's hand goes over 21, then they have gone bust.</p>
+<p>Face cards (king, queen and jack) have a value of 10, and aces have a value of 11 unless this would make the total value of the hand go above 21, in which case they have a value of 1.</p>
+<p>After the player has stood or gone bust, the dealer takes cards until the total of their hand is 17 or over.</p>
+<p>The round is then over, and the hand with the highest total (if the total is 21 or under) wins the round.</p>
+<h3>Controls</h3>
+<table>
+<tr><td><b>Left click</b></td><td>Click on hit or stand button</td></tr>
+</table>
+<h2>Overview</h2>
+<p>Each card is represented by a table containing a string representing its suit, and a number representing its rank. Jacks, queens and kings are represented by the numbers 11, 12 and 13.</p>
+<p>The deck is represented by a table which initially contains one of every card.</p>
+<img src="2.png">
+<p>The player's and dealer's hands are represented by tables, and cards are removed from the deck at random positions and inserted into their hands when they take cards.</p>
+<p>The cards are assembled from the following images, with the images colored or flipped horizontally or vertically as necessary:</p>
+<img src="3.png">
+<h2>Coding</h2>
+<h3>The deck of cards</h3>
+<p>Each card is represented by a table containing a string representing its suit, and a number representing its rank. Jacks, queens and kings are represented by the numbers 11, 12 and 13.</p>
+<p>A table for the deck is created containing one of every card.</p>
+<p><a class="fullcodelink" target="_blank" href="1.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="name">deck</span> = {}
+    for <span class="name">suitIndex</span>, <span class="name">suit</span> in <span class="call">ipairs</span>({<span class="literal">'club'</span>, <span class="literal">'diamond'</span>, <span class="literal">'heart'</span>, <span class="literal">'spade'</span>}) do
+        for <span class="name">rank</span> = <span class="literal">1</span>, <span class="literal">13</span> do
+            <span class="call">table.insert</span>(<span class="name">deck</span>, {<span class="name">suit</span> = <span class="name">suit</span>, <span class="name">rank</span> = <span class="name">rank</span>})
+            <span class="comment">-- Temporary</span>
+            <span class="call">print</span>(<span class="literal">'suit: '</span>..<span class="name">suit</span>..<span class="literal">', rank: '</span>..<span class="name">rank</span>)
+        end
+    end
+
+    <span class="comment">-- Temporary</span>
+    <span class="call">print</span>(<span class="literal">'Total number of cards in deck: '</span>..#<span class="name">deck</span>)
+end
+</pre></div>
+<div class="pre"><pre class="console">
+suit: club, rank: 1
+suit: club, rank: 2
+suit: club, rank: 3
+suit: club, rank: 4
+suit: club, rank: 5
+suit: club, rank: 6
+suit: club, rank: 7
+suit: club, rank: 8
+suit: club, rank: 9
+suit: club, rank: 10
+suit: club, rank: 11
+suit: club, rank: 12
+suit: club, rank: 13
+suit: diamond, rank: 1
+suit: diamond, rank: 2
+suit: diamond, rank: 3
+suit: diamond, rank: 4
+suit: diamond, rank: 5
+suit: diamond, rank: 6
+suit: diamond, rank: 7
+suit: diamond, rank: 8
+suit: diamond, rank: 9
+suit: diamond, rank: 10
+suit: diamond, rank: 11
+suit: diamond, rank: 12
+suit: diamond, rank: 13
+suit: heart, rank: 1
+suit: heart, rank: 2
+suit: heart, rank: 3
+suit: heart, rank: 4
+suit: heart, rank: 5
+suit: heart, rank: 6
+suit: heart, rank: 7
+suit: heart, rank: 8
+suit: heart, rank: 9
+suit: heart, rank: 10
+suit: heart, rank: 11
+suit: heart, rank: 12
+suit: heart, rank: 13
+suit: spade, rank: 1
+suit: spade, rank: 2
+suit: spade, rank: 3
+suit: spade, rank: 4
+suit: spade, rank: 5
+suit: spade, rank: 6
+suit: spade, rank: 7
+suit: spade, rank: 8
+suit: spade, rank: 9
+suit: spade, rank: 10
+suit: spade, rank: 11
+suit: spade, rank: 12
+suit: spade, rank: 13
+Total number of cards in deck: 52
+</pre></div>
+<h3>Dealing the player's hand</h3>
+<p>A table for the player's hand is created.</p>
+<p>A card is removed from the deck table at a random index between 1 and the number of cards in the deck. This card is inserted into the player's hand.</p>
+<p>This happens again for the player's second card.</p>
+<p><a class="fullcodelink" target="_blank" href="2.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">playerHand</span> = {}
+    <span class="call">table.insert</span>(<span class="name">playerHand</span>, <span class="call">table.remove</span>(<span class="name">deck</span>, <span class="call">love.math.random</span>(#<span class="name">deck</span>)))
+    <span class="call">table.insert</span>(<span class="name">playerHand</span>, <span class="call">table.remove</span>(<span class="name">deck</span>, <span class="call">love.math.random</span>(#<span class="name">deck</span>)))
+
+    <span class="comment">-- Temporary</span>
+    <span class="call">print</span>(<span class="literal">'Player hand:'</span>)
+    for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">playerHand</span>) do
+        <span class="call">print</span>(<span class="literal">'suit: '</span>..<span class="name">card.suit</span>..<span class="literal">', rank: '</span>..<span class="name">card.rank</span>)
+    end
+
+    <span class="call">print</span>(<span class="literal">'Total number of cards in deck: '</span>..#<span class="name">deck</span>)
+end
+</pre></div>
+<div class="pre"><pre class="console">
+Player hand:
+suit: heart, rank: 1
+suit: spade, rank: 12
+Total number of cards in deck: 50
+</pre></div>
+<h3>Displaying the state of the game</h3>
+<p>For now, information about the state of the game will be displayed as text.</p>
+<p>A table is created for the output strings, and is concatenated and drawn to the screen.</p>
+<p><a class="fullcodelink" target="_blank" href="3.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    local <span class="name">output</span> = {}
+
+    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Player hand:'</span>)
+    for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">playerHand</span>) do
+        <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'suit: '</span>..<span class="name">card.suit</span>..<span class="literal">', rank: '</span>..<span class="name">card.rank</span>)
+    end
+
+    <span class="call">love.graphics.print</span>(<span class="call">table.concat</span>(<span class="name">output</span>, <span class="literal">'\n'</span>), <span class="literal">15</span>, <span class="literal">15</span>)
+end
+</pre></div>
+<img src="4.png">
+<h3>Dealing the dealer's hand</h3>
+<p>A table is created for the dealer's hand and two random cards from the deck are inserted into it.</p>
+<p><a class="fullcodelink" target="_blank" href="4.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">playerHand</span> = {}
+    <span class="call">table.insert</span>(<span class="name">playerHand</span>, <span class="call">table.remove</span>(<span class="name">deck</span>, <span class="call">love.math.random</span>(#<span class="name">deck</span>)))
+    <span class="call">table.insert</span>(<span class="name">playerHand</span>, <span class="call">table.remove</span>(<span class="name">deck</span>, <span class="call">love.math.random</span>(#<span class="name">deck</span>)))
+
+    <span class="highlight"><span class="name">dealerHand</span> = {}</span>
+    <span class="highlight"><span class="call">table.insert</span>(<span class="name">dealerHand</span>, <span class="call">table.remove</span>(<span class="name">deck</span>, <span class="call">love.math.random</span>(#<span class="name">deck</span>)))</span>
+    <span class="highlight"><span class="call">table.insert</span>(<span class="name">dealerHand</span>, <span class="call">table.remove</span>(<span class="name">deck</span>, <span class="call">love.math.random</span>(#<span class="name">deck</span>)))</span>
+end
+
+function <span class="name">love.draw</span>()
+    local <span class="name">output</span> = {}
+
+    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Player hand:'</span>)
+    for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">playerHand</span>) do
+        <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'suit: '</span>..<span class="name">card.suit</span>..<span class="literal">', rank: '</span>..<span class="name">card.rank</span>)
+    end
+
+    <span class="highlight"><span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">''</span>)</span>
+
+    <span class="highlight"><span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Dealer hand:'</span>)</span>
+    <span class="highlight">for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">dealerHand</span>) do</span>
+    <span class="highlight">    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'suit: '</span>..<span class="name">card.suit</span>..<span class="literal">', rank: '</span>..<span class="name">card.rank</span>)</span>
+    <span class="highlight">end</span>
+
+    <span class="call">love.graphics.print</span>(<span class="call">table.concat</span>(<span class="name">output</span>, <span class="literal">'\n'</span>), <span class="literal">15</span>, <span class="literal">15</span>)
+end
+</pre></div>
+<img src="5.png">
+<h3>Simplifying code</h3>
+<p>The only difference between the code for inserting a card into the player's hand and inserting a card into the dealer's hand is the hand to insert the card into, so a function is made with the hand as a parameter.</p>
+<p><a class="fullcodelink" target="_blank" href="5.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="highlight">local function <span class="name">takeCard</span>(<span class="name">hand</span>)</span>
+        <span class="call">table.insert</span>(<span class="highlight"><span class="name">hand</span></span>, <span class="call">table.remove</span>(<span class="name">deck</span>, <span class="call">love.math.random</span>(#<span class="name">deck</span>)))
+    <span class="highlight">end</span>
+
+    <span class="name">playerHand</span> = {}
+    <span class="highlight"><span class="call">takeCard</span>(<span class="name">playerHand</span>)</span>
+    <span class="highlight"><span class="call">takeCard</span>(<span class="name">playerHand</span>)</span>
+
+    <span class="name">dealerHand</span> = {}
+    <span class="highlight"><span class="call">takeCard</span>(<span class="name">dealerHand</span>)</span>
+    <span class="highlight"><span class="call">takeCard</span>(<span class="name">dealerHand</span>)</span>
+end
+</pre></div>
+<h3>Hitting</h3>
+<p>For now, the keyboard is used for input instead of on-screen buttons.</p>
+<p>When the <b>h</b> key is pressed, the player takes a card from the deck.</p>
+<p>Since <span class="inlinecode"><span class="name">takeCard</span></span> is used in <span class="inlinecode"><span class="name">love.keypressed</span></span> it is made global.</p>
+<p><a class="fullcodelink" target="_blank" href="6.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="comment">-- "local" removed</span>
+    function <span class="name">takeCard</span>(<span class="name">hand</span>)
+
+    <span class="comment">-- etc.</span>
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">key</span> == <span class="literal">'h'</span> then
+        <span class="call">takeCard</span>(<span class="name">playerHand</span>)
+    end
+end
+</pre></div>
+<img src="6.png">
+<h3>Getting total value of a hand</h3>
+<p>For each hand, the rank of each card is added together to get the total value of the hand.</p>
+<p>Currently this does not account for face cards having a value of 10 or for the value of aces sometimes being 11.</p>
+<p><a class="fullcodelink" target="_blank" href="7.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    local function <span class="name">getTotal</span>(<span class="name">hand</span>)
+        local <span class="name">total</span> = <span class="literal">0</span>
+
+        for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">hand</span>) do
+            <span class="name">total</span> = <span class="name">total</span> + <span class="name">card.rank</span>
+        end
+
+        return <span class="name">total</span>
+    end
+
+    <span class="comment">-- etc.</span>
+
+    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Total: '</span>..<span class="call">getTotal</span>(<span class="name">playerHand</span>))
+
+    <span class="comment">-- etc.</span>
+
+    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Total: '</span>..<span class="call">getTotal</span>(<span class="name">dealerHand</span>))
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="7.png">
+<h3>Total accounting for face cards</h3>
+<p>If a card's rank is higher than 10 (i.e. 11, 12 or 13), then it is a face card and its value is 10.</p>
+<p><a class="fullcodelink" target="_blank" href="8.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    local function <span class="name">getTotal</span>(<span class="name">hand</span>)
+        local <span class="name">total</span> = <span class="literal">0</span>
+
+        for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">hand</span>) do
+            <span class="highlight">if <span class="name">card.rank</span> > <span class="literal">10</span> then</span>
+            <span class="highlight">    <span class="name">total</span> = <span class="name">total</span> + <span class="literal">10</span></span>
+            <span class="highlight">else</span>
+                <span class="name">total</span> = <span class="name">total</span> + <span class="name">card.rank</span>
+            <span class="highlight">end</span>
+        end
+
+        return <span class="name">total</span>
+    end
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="8.png">
+<h3>Total accounting for ace</h3>
+<p>Aces have a value of 11 instead of 1 unless the value of the hand would go over 21.</p>
+<p>First, the values of all of the cards in the hand are added together, counting aces as 1 instead of 11.</p>
+<p>Then, if the hand has an ace and the total value of the hand is 11 or less, 10 is added to the total (10 is added instead of 11 because 1 has already been added to it). If the total value of the hand was 12 (or more), then an ace counting as 11 would make the value of the hand 22 (or more).</p>
+<p><a class="fullcodelink" target="_blank" href="9.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">getTotal</span>(<span class="name">hand</span>)
+        local <span class="name">total</span> = <span class="literal">0</span>
+        <span class="highlight">local <span class="name">hasAce</span> = <span class="literal">false</span></span>
+
+        for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">hand</span>) do
+            if <span class="name">card.rank</span> > <span class="literal">10</span> then
+                <span class="name">total</span> = <span class="name">total</span> + <span class="literal">10</span>
+            else
+                <span class="name">total</span> = <span class="name">total</span> + <span class="name">card.rank</span>
+            end
+
+            <span class="highlight">if <span class="name">card.rank</span> == <span class="literal">1</span> then</span>
+            <span class="highlight">    <span class="name">hasAce</span> = <span class="literal">true</span></span>
+            <span class="highlight">end</span>
+        end
+
+        <span class="highlight">if <span class="name">hasAce</span> and <span class="name">total</span> <= <span class="literal">11</span> then</span>
+        <span class="highlight">    <span class="name">total</span> = <span class="name">total</span> + <span class="literal">10</span></span>
+        <span class="highlight">end</span>
+
+        return <span class="name">total</span>
+    end
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="9.png">
+<h3>Standing</h3>
+<p>When the <b>s</b> key is pressed, the player stands and the round is over.</p>
+<p>The player can hit only when the round is not over.</p>
+<p><a class="fullcodelink" target="_blank" href="10.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="name">roundOver</span> = <span class="literal">false</span>
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">key</span> == <span class="literal">'h'</span> <span class="highlight">and not <span class="name">roundOver</span></span> then
+        <span class="call">takeCard</span>(<span class="name">playerHand</span>)
+    <span class="highlight">elseif <span class="name">key</span> == <span class="literal">'s'</span> then</span>
+    <span class="highlight">    <span class="name">roundOver</span> = <span class="literal">true</span></span>
+    end
+end
+</pre></div>
+<h3>Displaying the winner</h3>
+<p>When the round is over, the total of the player's hand is compared to the total of the dealer's hand and the winner is displayed.</p>
+<p>Currently this does not account for busts (i.e. hands with a value of over 21).</p>
+<p><a class="fullcodelink" target="_blank" href="11.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    if <span class="name">roundOver</span> then
+        <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">''</span>)
+
+        if <span class="call">getTotal</span>(<span class="name">playerHand</span>) > <span class="call">getTotal</span>(<span class="name">dealerHand</span>) then
+            <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Player wins'</span>)
+        elseif <span class="call">getTotal</span>(<span class="name">dealerHand</span>) > <span class="call">getTotal</span>(<span class="name">playerHand</span>) then
+            <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Dealer wins'</span>)
+        else
+            <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Draw'</span>)
+        end
+    end
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="10.png">
+<h3>Winner accounting for bust</h3>
+<p>The player or dealer wins if they haven't gone bust, and...</p>
+<ul>
+<li>their opponent has gone bust, or...</li>
+<li>their hand has a greater total than that of their opponent.</li>
+</ul>
+<p><a class="fullcodelink" target="_blank" href="12.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    if <span class="name">roundOver</span> then
+        <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">''</span>)
+
+        if <span class="highlight"><span class="call">getTotal</span>(<span class="name">playerHand</span>) <= <span class="literal">21</span></span>
+        <span class="highlight">and (</span>
+        <span class="highlight">    <span class="call">getTotal</span>(<span class="name">dealerHand</span>) > <span class="literal">21</span></span>
+        <span class="highlight">    or</span> <span class="call">getTotal</span>(<span class="name">playerHand</span>) > <span class="call">getTotal</span>(<span class="name">dealerHand</span>)
+        <span class="highlight">)</span> then
+            <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Player wins'</span>)
+        elseif <span class="highlight"><span class="call">getTotal</span>(<span class="name">dealerHand</span>) <= <span class="literal">21</span></span>
+        <span class="highlight">and (</span>
+        <span class="highlight">    <span class="call">getTotal</span>(<span class="name">playerHand</span>) > <span class="literal">21</span></span>
+        <span class="highlight">    or</span> <span class="call">getTotal</span>(<span class="name">dealerHand</span>) > <span class="call">getTotal</span>(<span class="name">playerHand</span>)
+        <span class="highlight">)</span> then
+            <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Dealer wins'</span>)
+        else
+            <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Draw'</span>)
+        end
+    end
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="11.png">
+<h3>Simplifying code</h3>
+<p>The only differences in the code determining if a hand has won is the hand in question and the opponent's hand, so a function is made.</p>
+<p><a class="fullcodelink" target="_blank" href="13.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    if <span class="name">roundOver</span> then
+        <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">''</span>)
+
+        <span class="highlight">local function <span class="name">hasHandWon</span>(<span class="name">thisHand</span>, <span class="name">otherHand</span>)</span>
+            return <span class="call">getTotal</span>(<span class="highlight"><span class="name">thisHand</span></span>) <= <span class="literal">21</span>
+            and (
+                <span class="call">getTotal</span>(<span class="highlight"><span class="name">otherHand</span></span>) > <span class="literal">21</span>
+                or <span class="call">getTotal</span>(<span class="highlight"><span class="name">thisHand</span></span>) > <span class="call">getTotal</span>(<span class="highlight"><span class="name">otherHand</span></span>)
+            )
+        <span class="highlight">end</span>
+
+        if <span class="highlight"><span class="call">hasHandWon</span>(<span class="name">playerHand</span>, <span class="name">dealerHand</span>)</span> then
+            <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Player wins'</span>)
+        elseif <span class="highlight"><span class="call">hasHandWon</span>(<span class="name">dealerHand</span>, <span class="name">playerHand</span>)</span> then
+            <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Dealer wins'</span>)
+        else
+            <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Draw'</span>)
+        end
+    end
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<h3>Play again</h3>
+<p>When a key is pressed and the round is over, <span class="inlinecode"><span class="name">love.load</span></span> is called (for now) to start another game.</p>
+<p><a class="fullcodelink" target="_blank" href="14.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    <span class="highlight">if not <span class="name">roundOver</span> then</span>
+        <span class="highlight">if <span class="name">key</span> == <span class="literal">'h'</span> then</span>
+            <span class="call">takeCard</span>(<span class="name">playerHand</span>)
+        elseif <span class="name">key</span> == <span class="literal">'s'</span> then
+            <span class="name">roundOver</span> = <span class="literal">true</span>
+        end
+    <span class="highlight">else</span>
+    <span class="highlight">    <span class="call">love.load</span>()</span>
+    <span class="highlight">end</span>
+end
+</pre></div>
+<h3>End round on bust or 21</h3>
+<p>If the player has gone bust or the value of their hand is already 21, the round is automatically over.</p>
+<p>Since this requires getting the total value of a hand, <span class="inlinecode"><span class="name">getTotal</span></span> is moved into <span class="inlinecode"><span class="name">love.load</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="15.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="comment">-- Moved and "local" removed</span>
+    function <span class="name">getTotal</span>(<span class="name">hand</span>)
+        <span class="comment">-- etc.</span>
+    end
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if not <span class="name">roundOver</span> then
+        if <span class="name">key</span> == <span class="literal">'h'</span> then
+            <span class="call">takeCard</span>(<span class="name">playerHand</span>)
+            <span class="highlight">if <span class="call">getTotal</span>(<span class="name">playerHand</span>) >= <span class="literal">21</span> then</span>
+            <span class="highlight">    <span class="name">roundOver</span> = <span class="literal">true</span></span>
+            <span class="highlight">end</span>
+        elseif <span class="name">key</span> == <span class="literal">'s'</span> then
+            <span class="name">roundOver</span> = <span class="literal">true</span>
+        end
+    else
+        <span class="call">love.load</span>()
+    end
+end
+</pre></div>
+<h3>Dealer hitting</h3>
+<p>If the player has stood, gone bust or has 21, the dealer takes cards while the value of their hand is less than 17.</p>
+<p><a class="fullcodelink" target="_blank" href="16.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if not <span class="name">roundOver</span> then
+        if <span class="name">key</span> == <span class="literal">'h'</span> then
+            <span class="call">takeCard</span>(<span class="name">playerHand</span>)
+            if <span class="call">getTotal</span>(<span class="name">playerHand</span>) >= <span class="literal">21</span> then
+                <span class="name">roundOver</span> = <span class="literal">true</span>
+            end
+        elseif <span class="name">key</span> == <span class="literal">'s'</span> then
+            <span class="name">roundOver</span> = <span class="literal">true</span>
+        end
+
+        <span class="highlight">if <span class="name">roundOver</span> then</span>
+        <span class="highlight">    while <span class="call">getTotal</span>(<span class="name">dealerHand</span>) < <span class="literal">17</span> do</span>
+        <span class="highlight">        <span class="call">takeCard</span>(<span class="name">dealerHand</span>)</span>
+        <span class="highlight">    end</span>
+        <span class="highlight">end</span>
+    else
+        <span class="call">love.load</span>()
+    end
+end
+</pre></div>
+<img src="12.png">
+<h3>Hiding the dealer's first card</h3>
+<p>Until the round is over, the dealer's first card (i.e. the first item of the dealer's hand table) is hidden.</p>
+<p><a class="fullcodelink" target="_blank" href="17.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Dealer hand:'</span>)
+    for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">dealerHand</span>) do
+        <span class="highlight">if not <span class="name">roundOver</span> and <span class="name">cardIndex</span> == <span class="literal">1</span> then</span>
+        <span class="highlight">    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'(Card hidden)'</span>)</span>
+        <span class="highlight">else</span>
+            <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'suit: '</span>..<span class="name">card.suit</span>..<span class="literal">', rank: '</span>..<span class="name">card.rank</span>)
+        <span class="highlight">end</span>
+    end
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="13.png">
+<h3>Hiding the dealer's total</h3>
+<p>Until the round is over, the total of the dealer's hand is hidden.</p>
+<p><a class="fullcodelink" target="_blank" href="18.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="highlight">if <span class="name">roundOver</span> then</span>
+        <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Total: '</span>..<span class="call">getTotal</span>(<span class="name">dealerHand</span>))
+    <span class="highlight">else</span>
+    <span class="highlight">    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Total: ?'</span>)</span>
+    <span class="highlight">end</span>
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="14.png">
+<h3>Loading images</h3>
+<p>All of the images used for drawing cards are loaded into a table.</p>
+<p><a class="fullcodelink" target="_blank" href="19.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="name">images</span> = {}
+    for <span class="name">nameIndex</span>, <span class="name">name</span> in <span class="call">ipairs</span>({
+        <span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">3</span>, <span class="literal">4</span>, <span class="literal">5</span>, <span class="literal">6</span>, <span class="literal">7</span>, <span class="literal">8</span>, <span class="literal">9</span>, <span class="literal">10</span>, <span class="literal">11</span>, <span class="literal">12</span>, <span class="literal">13</span>,
+        <span class="literal">'pip_heart'</span>, <span class="literal">'pip_diamond'</span>, <span class="literal">'pip_club'</span>, <span class="literal">'pip_spade'</span>,
+        <span class="literal">'mini_heart'</span>, <span class="literal">'mini_diamond'</span>, <span class="literal">'mini_club'</span>, <span class="literal">'mini_spade'</span>,
+        <span class="literal">'card'</span>, <span class="literal">'card_face_down'</span>,
+        <span class="literal">'face_jack'</span>, <span class="literal">'face_queen'</span>, <span class="literal">'face_king'</span>,
+    }) do
+        <span class="name">images</span>[<span class="name">name</span>] = <span class="call">love.graphics.newImage</span>(<span class="literal">'images/'</span>..<span class="name">name</span>..<span class="literal">'.png'</span>)
+    end
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<h3>Drawing cards</h3>
+<p>The line of code which displays the text is removed.</p>
+<p>The cards in the player's hand are looped through and (for now) a blank card is drawn for each one.</p>
+<p>The background color is set to white.</p>
+<p><a class="fullcodelink" target="_blank" href="20.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+
+    <span class="comment">-- etc.</span>
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="comment">-- Removed: love.graphics.print(table.concat(output, '\n'), 15, 15)</span>
+
+    for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">playerHand</span>) do
+        <span class="call">love.graphics.draw</span>(<span class="name">images.card</span>, (<span class="name">cardIndex</span> - <span class="literal">1</span>) * <span class="literal">60</span>)
+    end
+end
+</pre></div>
+<img src="15.png">
+<h3>Drawing text for suit and rank</h3>
+<p>For now, the suit and rank of each card is drawn as text.</p>
+<p><a class="fullcodelink" target="_blank" href="21.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">playerHand</span>) do
+        <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
+        <span class="call">love.graphics.draw</span>(<span class="name">images.card</span>, (<span class="name">cardIndex</span> - <span class="literal">1</span>) * <span class="literal">60</span>, <span class="literal">0</span>)
+
+        <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)</span>
+        <span class="highlight"><span class="call">love.graphics.print</span>(<span class="name">card.suit</span>, (<span class="name">cardIndex</span> - <span class="literal">1</span>) * <span class="literal">60</span>, <span class="literal">0</span>)</span>
+        <span class="highlight"><span class="call">love.graphics.print</span>(<span class="name">card.rank</span>, (<span class="name">cardIndex</span> - <span class="literal">1</span>) * <span class="literal">60</span>, <span class="literal">15</span>)</span>
+    end
+end
+</pre></div>
+<img src="16.png">
+<h3>Test hands</h3>
+<p>The code for drawing a card is made into a function, and test hands are created.</p>
+<p><a class="fullcodelink" target="_blank" href="22.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="highlight">local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)</span>
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+        <span class="call">love.graphics.draw</span>(<span class="name">images.card</span>, <span class="highlight"><span class="name">x</span></span>, <span class="highlight"><span class="name">y</span></span>)
+
+        <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)
+        <span class="call">love.graphics.print</span>(<span class="name">card.suit</span>, <span class="highlight"><span class="name">x</span></span>, <span class="highlight"><span class="name">y</span></span>)
+        <span class="call">love.graphics.print</span>(<span class="name">card.rank</span>, <span class="highlight"><span class="name">x</span></span>, <span class="highlight"><span class="name">y</span> +</span> <span class="literal">15</span>)
+    <span class="highlight">end</span>
+
+    <span class="highlight">local <span class="name">testHand1</span> = {</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'club'</span>, <span class="name">rank</span> = <span class="literal">1</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'diamond'</span>, <span class="name">rank</span> = <span class="literal">2</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'heart'</span>, <span class="name">rank</span> = <span class="literal">3</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'spade'</span>, <span class="name">rank</span> = <span class="literal">4</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'club'</span>, <span class="name">rank</span> = <span class="literal">5</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'diamond'</span>, <span class="name">rank</span> = <span class="literal">6</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'heart'</span>, <span class="name">rank</span> = <span class="literal">7</span>},</span>
+    <span class="highlight">}</span>
+
+    <span class="highlight">for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">testHand1</span>) do</span>
+    <span class="highlight">    <span class="call">drawCard</span>(<span class="name">card</span>, (<span class="name">cardIndex</span> - <span class="literal">1</span>) * <span class="literal">60</span>, <span class="literal">0</span>)</span>
+    <span class="highlight">end</span>
+
+    <span class="highlight">local <span class="name">testHand2</span> = {</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'spade'</span>, <span class="name">rank</span> = <span class="literal">8</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'club'</span>, <span class="name">rank</span> = <span class="literal">9</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'diamond'</span>, <span class="name">rank</span> = <span class="literal">10</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'heart'</span>, <span class="name">rank</span> = <span class="literal">11</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'spade'</span>, <span class="name">rank</span> = <span class="literal">12</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'club'</span>, <span class="name">rank</span> = <span class="literal">13</span>},</span>
+    <span class="highlight">}</span>
+
+    <span class="highlight">for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">testHand2</span>) do</span>
+    <span class="highlight">    <span class="call">drawCard</span>(<span class="name">card</span>, (<span class="name">cardIndex</span> - <span class="literal">1</span>) * <span class="literal">60</span>, <span class="literal">80</span>)</span>
+    <span class="highlight">end</span>
+end
+</pre></div>
+<img src="17.png">
+<h3>Drawing rank</h3>
+<p>The card's rank is drawn by indexing the image table with the card's rank, which corresponds to the appropriate image file.</p>
+<p><a class="fullcodelink" target="_blank" href="23.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+        <span class="call">love.graphics.draw</span>(<span class="name">images.card</span>, <span class="name">x</span>, <span class="name">y</span>)
+
+        <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)
+        <span class="highlight"><span class="call">love.graphics.draw</span>(<span class="name">images</span>[<span class="name">card.rank</span>], <span class="name">x</span> + <span class="literal">3</span>, <span class="name">y</span> + <span class="literal">4</span>)</span>
+    end
+end
+</pre></div>
+<img src="18.png">
+<h3>Drawing bottom number</h3>
+<p>The card's rank is drawn at the bottom right corner minus the same offset that was added to the number drawn at the top.</p>
+<p>The image is flipped both horizontally and vertically.</p>
+<p>To calculate the image's X and Y positions, the card's width and height are needed (and they will also be used when drawing the suit and pips), and the offset from the corner is reused from drawing the top number, so variables are made for them.</p>
+<p><a class="fullcodelink" target="_blank" href="24.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+        <span class="call">love.graphics.draw</span>(<span class="name">images.card</span>, <span class="name">x</span>, <span class="name">y</span>)
+
+        <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)
+
+        <span class="highlight">local <span class="name">cardWidth</span> = <span class="literal">53</span></span>
+        <span class="highlight">local <span class="name">cardHeight</span> = <span class="literal">73</span></span>
+        <span class="highlight">local <span class="name">numberOffsetX</span> = <span class="literal">3</span></span>
+        <span class="highlight">local <span class="name">numberOffsetY</span> = <span class="literal">4</span></span>
+
+        <span class="call">love.graphics.draw</span>(
+            <span class="name">images</span>[<span class="name">card.rank</span>],
+            <span class="name">x</span> + <span class="highlight"><span class="name">numberOffsetY</span></span>,
+            <span class="name">y</span> + <span class="highlight"><span class="name">numberOffsetY</span></span>
+        )
+        <span class="highlight"><span class="call">love.graphics.draw</span>(</span>
+        <span class="highlight">    <span class="name">images</span>[<span class="name">card.rank</span>],</span>
+        <span class="highlight">    <span class="name">x</span> + <span class="name">cardWidth</span> - <span class="name">numberOffsetX</span>,</span>
+        <span class="highlight">    <span class="name">y</span> + <span class="name">cardHeight</span> - <span class="name">numberOffsetY</span>,</span>
+        <span class="highlight">    <span class="literal">0</span>,</span>
+        <span class="highlight">    -<span class="literal">1</span></span>
+        <span class="highlight">)</span>
+    end
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="19.png">
+<h3>Drawing suit</h3>
+<p>The suit is drawn similarly to the rank.</p>
+<p><a class="fullcodelink" target="_blank" href="25.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
+        <span class="comment">-- etc.</span>
+
+        local <span class="name">suitOffsetX</span> = <span class="literal">3</span>
+        local <span class="name">suitOffsetY</span> = <span class="literal">14</span>
+        local <span class="name">suitImage</span> = <span class="name">images</span>[<span class="literal">'mini_'</span>..<span class="name">card.suit</span>]
+
+        <span class="call">love.graphics.draw</span>(
+            <span class="name">suitImage</span>,
+            <span class="name">x</span> + <span class="name">suitOffsetX</span>,
+            <span class="name">y</span> + <span class="name">suitOffsetY</span>
+        )
+        <span class="call">love.graphics.draw</span>(
+            <span class="name">suitImage</span>,
+            <span class="name">x</span> + <span class="name">cardWidth</span> - <span class="name">suitOffsetX</span>,
+            <span class="name">y</span> + <span class="name">cardHeight</span> - <span class="name">suitOffsetY</span>,
+            <span class="literal">0</span>,
+            -<span class="literal">1</span>
+        )
+    end
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="20.png">
+<h3>Simplifying code</h3>
+<p>The only differences between drawing the rank and suit are the image and the offset, so a function is made with these as parameters.</p>
+<p><a class="fullcodelink" target="_blank" href="26.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
+        <span class="comment">-- etc.</span>
+
+        local <span class="name">cardWidth</span> = <span class="literal">53</span>
+        local <span class="name">cardHeight</span> = <span class="literal">73</span>
+
+        <span class="highlight">local function <span class="name">drawCorner</span>(<span class="name">image</span>, <span class="name">offsetX</span>, <span class="name">offsetY</span>)</span>
+            <span class="call">love.graphics.draw</span>(
+                <span class="highlight"><span class="name">image</span></span>,
+                <span class="name">x</span> + <span class="highlight"><span class="name">offsetX</span></span>,
+                <span class="name">y</span> + <span class="highlight"><span class="name">offsetY</span></span>
+            )
+            <span class="call">love.graphics.draw</span>(
+                <span class="highlight"><span class="name">image</span></span>,
+                <span class="name">x</span> + <span class="name">cardWidth</span> - <span class="highlight"><span class="name">offsetX</span></span>,
+                <span class="name">y</span> + <span class="name">cardHeight</span> - <span class="highlight"><span class="name">offsetY</span></span>,
+                <span class="literal">0</span>,
+                -<span class="literal">1</span>
+            )
+        <span class="highlight">end</span>
+
+        <span class="highlight"><span class="call">drawCorner</span>(<span class="name">images</span>[<span class="name">card.rank</span>], <span class="literal">3</span>, <span class="literal">4</span>)</span>
+        <span class="highlight"><span class="call">drawCorner</span>(<span class="name">images</span>[<span class="literal">'mini_'</span>..<span class="name">card.suit</span>], <span class="literal">3</span>, <span class="literal">14</span>)</span>
+    end
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<h3>Setting color based on suit</h3>
+<p>If the card's suit is diamonds or hearts, then the color of the rank and suit is red, otherwise for clubs and spades it is black.</p>
+<p><a class="fullcodelink" target="_blank" href="27.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+        <span class="call">love.graphics.draw</span>(<span class="name">images.card</span>, <span class="name">x</span>, <span class="name">y</span>)
+
+        <span class="comment">-- Removed: love.graphics.setColor(0, 0, 0)</span>
+
+        <span class="highlight">if <span class="name">card.suit</span> == <span class="literal">'heart'</span> or <span class="name">card.suit</span> == <span class="literal">'diamond'</span> then</span>
+        <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">.89</span>, <span class="literal">.06</span>, <span class="literal">.39</span>)</span>
+        <span class="highlight">else</span>
+        <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">.2</span>, <span class="literal">.2</span>, <span class="literal">.2</span>)</span>
+        <span class="highlight">end</span>
+
+        <span class="comment">-- etc.</span>
+    end
+end
+</pre></div>
+<img src="21.png">
+<h3>Drawing face cards</h3>
+<p>If the card's rank is 11, 12 or 13, then the image for the jack, queen or king is drawn.</p>
+<p><a class="fullcodelink" target="_blank" href="28.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
+        <span class="comment">-- etc.</span>
+
+        if <span class="name">card.rank</span> > <span class="literal">10</span> then
+            local <span class="name">faceImage</span>
+
+            if <span class="name">card.rank</span> == <span class="literal">11</span> then
+                <span class="name">faceImage</span> = <span class="name">images.face_jack</span>
+            elseif <span class="name">card.rank</span> == <span class="literal">12</span> then
+                <span class="name">faceImage</span> = <span class="name">images.face_queen</span>
+            elseif <span class="name">card.rank</span> == <span class="literal">13</span> then
+                <span class="name">faceImage</span> = <span class="name">images.face_king</span>
+            end
+
+            <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+            <span class="call">love.graphics.draw</span>(<span class="name">faceImage</span>, <span class="name">x</span> + <span class="literal">12</span>, <span class="name">y</span> + <span class="literal">11</span>)
+        end
+    end
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="22.png">
+<h3>Drawing ace</h3>
+<p>A pip is drawn in the middle of the card if it is an ace.</p>
+<p><a class="fullcodelink" target="_blank" href="29.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
+        <span class="comment">-- etc.</span>
+
+        if <span class="name">card.rank</span> > <span class="literal">10</span> then
+            <span class="comment">-- etc.</span>
+        <span class="highlight">else</span>
+        <span class="highlight">    local <span class="name">pipImage</span> = <span class="name">images</span>[<span class="literal">'pip_'</span>..<span class="name">card.suit</span>]</span>
+        <span class="highlight">    </span>
+        <span class="highlight">    if <span class="name">card.rank</span> == <span class="literal">1</span> then</span>
+        <span class="highlight">        <span class="call">love.graphics.draw</span>(<span class="name">pipImage</span>, <span class="name">x</span> + <span class="literal">21</span>, <span class="name">y</span> + <span class="literal">31</span>)</span>
+        <span class="highlight">    end</span>
+        end
+    end
+
+    <span class="highlight">local <span class="name">testHand</span> = {</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'club'</span>, <span class="name">rank</span> = <span class="literal">1</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'diamond'</span>, <span class="name">rank</span> = <span class="literal">1</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'heart'</span>, <span class="name">rank</span> = <span class="literal">1</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'spade'</span>, <span class="name">rank</span> = <span class="literal">1</span>},</span>
+    <span class="highlight">}</span>
+
+    for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="highlight"><span class="name">testHand</span></span>) do
+        <span class="call">drawCard</span>(<span class="name">card</span>, (<span class="name">cardIndex</span> - <span class="literal">1</span>) * <span class="literal">60</span>, <span class="literal">0</span>)
+    end
+end
+</pre></div>
+<img src="23.png">
+<h3>Drawing 2</h3>
+<p>For a rank of 2, two pips are drawn.</p>
+<p>The first pip is in the middle on the X axis and at the top plus an offset of 7 on the Y axis.</p>
+<p>The second pip is also in the middle on the X axis, and is mirrored on the Y axis by being offset by 7 from the bottom and drawn flipped both horizontally and vertically, similarly to the rank and suit.</p>
+<p><a class="fullcodelink" target="_blank" href="30.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
+        <span class="comment">-- etc.</span>
+
+        if <span class="name">card.rank</span> > <span class="literal">10</span> then
+            <span class="comment">-- etc.</span>
+        else
+            local <span class="name">pipImage</span> = <span class="name">images</span>[<span class="literal">'pip_'</span>..<span class="name">card.suit</span>]
+            <span class="highlight">local <span class="name">pipWidth</span> = <span class="literal">11</span></span>
+
+            if <span class="name">card.rank</span> == <span class="literal">1</span> then
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">pipImage</span>,
+                    <span class="name">x</span> + <span class="literal">21</span>,
+                    <span class="name">y</span> + <span class="literal">31</span>
+                )
+            <span class="highlight">elseif <span class="name">card.rank</span> == <span class="literal">2</span> then</span>
+            <span class="highlight">    <span class="call">love.graphics.draw</span>(</span>
+            <span class="highlight">        <span class="name">pipImage</span>,</span>
+            <span class="highlight">        <span class="name">x</span> + <span class="literal">21</span>,</span>
+            <span class="highlight">        <span class="name">y</span> + <span class="literal">7</span></span>
+            <span class="highlight">    )</span>
+            <span class="highlight">    <span class="call">love.graphics.draw</span>(</span>
+            <span class="highlight">        <span class="name">pipImage</span>,</span>
+            <span class="highlight">        <span class="name">x</span> + <span class="literal">21</span> + <span class="name">pipWidth</span>,</span>
+            <span class="highlight">        <span class="name">y</span> + <span class="name">cardHeight</span> - <span class="literal">7</span>,</span>
+            <span class="highlight">        <span class="literal">0</span>,</span>
+            <span class="highlight">        -<span class="literal">1</span></span>
+            <span class="highlight">    )</span>
+            end
+        end
+    end
+
+    local <span class="name">testHand</span> = {
+        {<span class="name">suit</span> = <span class="literal">'club'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">2</span></span>},
+        {<span class="name">suit</span> = <span class="literal">'diamond'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">2</span></span>},
+        {<span class="name">suit</span> = <span class="literal">'heart'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">2</span></span>},
+        {<span class="name">suit</span> = <span class="literal">'spade'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">2</span></span>},
+    }
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="24.png">
+<h3>Simplifying code</h3>
+<p>Positions are reused, so they are made into variables.</p>
+<p><a class="fullcodelink" target="_blank" href="31.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+             <span class="comment">-- etc.</span>
+
+            local <span class="name">pipImage</span> = <span class="name">images</span>[<span class="literal">'pip_'</span>..<span class="name">card.suit</span>]
+            local <span class="name">pipWidth</span> = <span class="literal">11</span>
+
+            <span class="highlight">local <span class="name">xMid</span> = <span class="literal">21</span></span>
+            <span class="highlight">local <span class="name">yTop</span> = <span class="literal">7</span></span>
+
+            if <span class="name">card.rank</span> == <span class="literal">1</span> then
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">pipImage</span>,
+                    <span class="name">x</span> + <span class="highlight"><span class="name">xMid</span></span>,
+                    <span class="name">y</span> + <span class="literal">31</span>
+                )
+            elseif <span class="name">card.rank</span> == <span class="literal">2</span> then
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">pipImage</span>,
+                    <span class="name">x</span> + <span class="highlight"><span class="name">xMid</span></span>,
+                    <span class="name">y</span> + <span class="highlight"><span class="name">yTop</span></span>
+                )
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">pipImage</span>,
+                    <span class="name">x</span> + <span class="highlight"><span class="name">xMid</span></span> + <span class="name">pipWidth</span>,
+                    <span class="name">y</span> + <span class="name">cardHeight</span> - <span class="highlight"><span class="name">yTop</span></span>,
+                    <span class="literal">0</span>,
+                    -<span class="literal">1</span>
+                )
+            end
+
+            <span class="comment">-- etc.</span>
+end
+</pre></div>
+<h3>Drawing 3</h3>
+<p>Drawing a 3 is the same as drawing both an ace and a 2.</p>
+<p>The middle of the card on the Y axis is reused, so it is made into a variable.</p>
+<p><a class="fullcodelink" target="_blank" href="32.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
+        <span class="comment">-- etc.</span>
+
+        if <span class="name">card.rank</span> > <span class="literal">10</span> then
+            <span class="comment">-- etc.</span>
+        else
+            local <span class="name">pipImage</span> = <span class="name">images</span>[<span class="literal">'pip_'</span>..<span class="name">card.suit</span>]
+            local <span class="name">pipWidth</span> = <span class="literal">11</span>
+
+            local <span class="name">xMid</span> = <span class="literal">21</span>
+            local <span class="name">yTop</span> = <span class="literal">7</span>
+            <span class="highlight">local <span class="name">yMid</span> = <span class="literal">31</span></span>
+
+            if <span class="name">card.rank</span> == <span class="literal">1</span> then
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">pipImage</span>,
+                    <span class="name">x</span> + <span class="name">xMid</span>,
+                    <span class="name">y</span> + <span class="highlight"><span class="name">yMid</span></span>
+                )
+            elseif <span class="name">card.rank</span> == <span class="literal">2</span> then
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">pipImage</span>,
+                    <span class="name">x</span> + <span class="name">xMid</span>,
+                    <span class="name">y</span> + <span class="name">yTop</span>
+                )
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">pipImage</span>,
+                    <span class="name">x</span> + <span class="name">xMid</span> + <span class="name">pipWidth</span>,
+                    <span class="name">y</span> + <span class="name">cardHeight</span> - <span class="name">yTop</span>,
+                    <span class="literal">0</span>,
+                    -<span class="literal">1</span>
+                )
+            <span class="highlight">elseif <span class="name">card.rank</span> == <span class="literal">3</span> then</span>
+            <span class="highlight">    <span class="call">love.graphics.draw</span>(</span>
+            <span class="highlight">        <span class="name">pipImage</span>,</span>
+            <span class="highlight">        <span class="name">x</span> + <span class="name">xMid</span>,</span>
+            <span class="highlight">        <span class="name">y</span> + <span class="name">yMid</span></span>
+            <span class="highlight">    )</span>
+            <span class="highlight">    <span class="call">love.graphics.draw</span>(</span>
+            <span class="highlight">        <span class="name">pipImage</span>,</span>
+            <span class="highlight">        <span class="name">x</span> + <span class="name">xMid</span>,</span>
+            <span class="highlight">        <span class="name">y</span> + <span class="name">yTop</span></span>
+            <span class="highlight">    )</span>
+            <span class="highlight">    <span class="call">love.graphics.draw</span>(</span>
+            <span class="highlight">        <span class="name">pipImage</span>,</span>
+            <span class="highlight">        <span class="name">x</span> + <span class="name">xMid</span> + <span class="name">pipWidth</span>,</span>
+            <span class="highlight">        <span class="name">y</span> + <span class="name">cardHeight</span> - <span class="name">yTop</span>,</span>
+            <span class="highlight">        <span class="literal">0</span>,</span>
+            <span class="highlight">        -<span class="literal">1</span></span>
+            <span class="highlight">    )</span>
+            end
+        end
+    end
+
+    local <span class="name">testHand</span> = {
+        {<span class="name">suit</span> = <span class="literal">'club'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">3</span></span>},
+        {<span class="name">suit</span> = <span class="literal">'diamond'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">3</span></span>},
+        {<span class="name">suit</span> = <span class="literal">'heart'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">3</span></span>},
+        {<span class="name">suit</span> = <span class="literal">'spade'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">3</span></span>},
+    }
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="25.png">
+<h3>Drawing 4</h3>
+<p>The pips for rank 4 are in the same position on the Y axis as the pips for rank 2, with a different X offset and mirrored on the X axis.</p>
+<p><a class="fullcodelink" target="_blank" href="33.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
+        <span class="comment">-- etc.</span>
+
+        if <span class="name">card.rank</span> > <span class="literal">10</span> then
+            <span class="comment">-- etc.</span>
+        else
+            local <span class="name">pipImage</span> = <span class="name">images</span>[<span class="literal">'pip_'</span>..<span class="name">card.suit</span>]
+            local <span class="name">pipWidth</span> = <span class="literal">11</span>
+
+            <span class="highlight">local <span class="name">xLeft</span> = <span class="literal">11</span></span>
+            local <span class="name">xMid</span> = <span class="literal">21</span>
+            local <span class="name">yTop</span> = <span class="literal">7</span>
+            local <span class="name">yMid</span> = <span class="literal">31</span>
+
+            if <span class="name">card.rank</span> == <span class="literal">1</span> then
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">pipImage</span>,
+                    <span class="name">x</span> + <span class="name">xMid</span>,
+                    <span class="name">y</span> + <span class="name">yMid</span>
+                )
+            elseif <span class="name">card.rank</span> == <span class="literal">2</span> then
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">pipImage</span>,
+                    <span class="name">x</span> + <span class="name">xMid</span>,
+                    <span class="name">y</span> + <span class="name">yTop</span>
+                )
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">pipImage</span>,
+                    <span class="name">x</span> + <span class="name">xMid</span> + <span class="name">pipWidth</span>,
+                    <span class="name">y</span> + <span class="name">cardHeight</span> - <span class="name">yTop</span>,
+                    <span class="literal">0</span>,
+                    -<span class="literal">1</span>
+                )
+            elseif <span class="name">card.rank</span> == <span class="literal">3</span> then
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">pipImage</span>,
+                    <span class="name">x</span> + <span class="name">xMid</span>,
+                    <span class="name">y</span> + <span class="name">yMid</span>
+                )
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">pipImage</span>,
+                    <span class="name">x</span> + <span class="name">xMid</span>,
+                    <span class="name">y</span> + <span class="name">yTop</span>
+                )
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">pipImage</span>,
+                    <span class="name">x</span> + <span class="name">xMid</span> + <span class="name">pipWidth</span>,
+                    <span class="name">y</span> + <span class="name">cardHeight</span> - <span class="name">yTop</span>,
+                    <span class="literal">0</span>,
+                    -<span class="literal">1</span>
+                )
+            <span class="highlight">elseif <span class="name">card.rank</span> == <span class="literal">4</span> then</span>
+            <span class="highlight">    <span class="call">love.graphics.draw</span>(</span>
+            <span class="highlight">        <span class="name">pipImage</span>,</span>
+            <span class="highlight">        <span class="name">x</span> + <span class="name">xLeft</span>,</span>
+            <span class="highlight">        <span class="name">y</span> + <span class="name">yTop</span></span>
+            <span class="highlight">    )</span>
+            <span class="highlight">    <span class="call">love.graphics.draw</span>(</span>
+            <span class="highlight">        <span class="name">pipImage</span>,</span>
+            <span class="highlight">        <span class="name">x</span> + <span class="name">cardWidth</span> - <span class="name">xLeft</span> - <span class="name">pipWidth</span>,</span>
+            <span class="highlight">        <span class="name">y</span> + <span class="name">yTop</span></span>
+            <span class="highlight">    )</span>
+            <span class="highlight">    <span class="call">love.graphics.draw</span>(</span>
+            <span class="highlight">        <span class="name">pipImage</span>,</span>
+            <span class="highlight">        <span class="name">x</span> + <span class="name">xLeft</span> + <span class="name">pipWidth</span>,</span>
+            <span class="highlight">        <span class="name">y</span> + <span class="name">cardHeight</span> - <span class="name">yTop</span>,</span>
+            <span class="highlight">        <span class="literal">0</span>,</span>
+            <span class="highlight">        -<span class="literal">1</span></span>
+            <span class="highlight">    )</span>
+            <span class="highlight">    <span class="call">love.graphics.draw</span>(</span>
+            <span class="highlight">        <span class="name">pipImage</span>,</span>
+            <span class="highlight">        <span class="name">x</span> + <span class="name">cardWidth</span> - <span class="name">xLeft</span>,</span>
+            <span class="highlight">        <span class="name">y</span> + <span class="name">cardHeight</span> - <span class="name">yTop</span>,</span>
+            <span class="highlight">        <span class="literal">0</span>,</span>
+            <span class="highlight">        -<span class="literal">1</span></span>
+            <span class="highlight">    )</span>
+            end
+        end
+    end
+
+    local <span class="name">testHand</span> = {
+        {<span class="name">suit</span> = <span class="literal">'club'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">4</span></span>},
+        {<span class="name">suit</span> = <span class="literal">'diamond'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">4</span></span>},
+        {<span class="name">suit</span> = <span class="literal">'heart'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">4</span></span>},
+        {<span class="name">suit</span> = <span class="literal">'spade'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">4</span></span>},
+    }
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="26.png">
+<h3>Simplifying code</h3>
+<p>Pips have an X and Y offset, and can be mirrored on the X and Y axes.</p>
+<p>A function is made with the offsets and whether to mirror on the X or Y axes as parameters.</p>
+<p><a class="fullcodelink" target="_blank" href="34.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
+        <span class="comment">-- etc.</span>
+
+        if <span class="name">card.rank</span> > <span class="literal">10</span> then
+            <span class="comment">-- etc.</span>
+        else
+            <span class="highlight">local function <span class="name">drawPip</span>(<span class="name">offsetX</span>, <span class="name">offsetY</span>, <span class="name">mirrorX</span>, <span class="name">mirrorY</span>)</span>
+                local <span class="name">pipImage</span> = <span class="name">images</span>[<span class="literal">'pip_'</span>..<span class="name">card.suit</span>]
+                local <span class="name">pipWidth</span> = <span class="literal">11</span>
+
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">pipImage</span>,
+                    <span class="name">x</span> + <span class="highlight"><span class="name">offsetX</span></span>,
+                    <span class="name">y</span> + <span class="highlight"><span class="name">offsetY</span></span>
+                )
+                <span class="highlight">if <span class="name">mirrorX</span> then</span>
+                    <span class="call">love.graphics.draw</span>(
+                        <span class="name">pipImage</span>,
+                        <span class="name">x</span> + <span class="name">cardWidth</span> - <span class="highlight"><span class="name">offsetX</span></span> - <span class="name">pipWidth</span>,
+                        <span class="name">y</span> + <span class="highlight"><span class="name">offsetY</span></span>
+                    )
+                <span class="highlight">end</span>
+                <span class="highlight">if <span class="name">mirrorY</span> then</span>
+                    <span class="call">love.graphics.draw</span>(
+                        <span class="name">pipImage</span>,
+                        <span class="name">x</span> + <span class="highlight"><span class="name">offsetX</span></span> + <span class="name">pipWidth</span>,
+                        <span class="name">y</span> + <span class="name">cardHeight</span> - <span class="highlight"><span class="name">offsetY</span></span>,
+                        <span class="literal">0</span>,
+                        -<span class="literal">1</span>
+                    )
+                <span class="highlight">end</span>
+                <span class="highlight">if <span class="name">mirrorX</span> and <span class="name">mirrorY</span> then</span>
+                    <span class="call">love.graphics.draw</span>(
+                        <span class="name">pipImage</span>,
+                        <span class="name">x</span> + <span class="name">cardWidth</span> - <span class="highlight"><span class="name">offsetX</span></span>,
+                        <span class="name">y</span> + <span class="name">cardHeight</span> - <span class="highlight"><span class="name">offsetY</span></span>,
+                        <span class="literal">0</span>,
+                        -<span class="literal">1</span>
+                    )
+                <span class="highlight">end</span>
+            <span class="highlight">end</span>
+
+            local <span class="name">xLeft</span> = <span class="literal">11</span>
+            local <span class="name">xMid</span> = <span class="literal">21</span>
+            local <span class="name">yTop</span> = <span class="literal">7</span>
+            local <span class="name">yMid</span> = <span class="literal">31</span>
+
+            if <span class="name">card.rank</span> == <span class="literal">1</span> then
+                <span class="highlight"><span class="call">drawPip</span>(<span class="name">xMid</span>, <span class="name">yMid</span>)</span>
+
+            elseif <span class="name">card.rank</span> == <span class="literal">2</span> then
+                <span class="highlight"><span class="call">drawPip</span>(<span class="name">xMid</span>, <span class="name">yTop</span>, <span class="literal">false</span>, <span class="literal">true</span>)</span>
+
+            elseif <span class="name">card.rank</span> == <span class="literal">3</span> then
+                <span class="highlight"><span class="call">drawPip</span>(<span class="name">xMid</span>, <span class="name">yTop</span>, <span class="literal">false</span>, <span class="literal">true</span>)</span>
+                <span class="highlight"><span class="call">drawPip</span>(<span class="name">xMid</span>, <span class="name">yMid</span>)</span>
+
+            elseif <span class="name">card.rank</span> == <span class="literal">4</span> then
+                <span class="highlight"><span class="call">drawPip</span>(<span class="name">xLeft</span>, <span class="name">yTop</span>, <span class="literal">true</span>, <span class="literal">true</span>)</span>
+            end
+        end
+    end
+
+    local <span class="name">testHand</span> = {
+        {<span class="name">suit</span> = <span class="literal">'club'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">1</span></span>},
+        {<span class="name">suit</span> = <span class="literal">'diamond'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">2</span></span>},
+        {<span class="name">suit</span> = <span class="literal">'heart'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">3</span></span>},
+        {<span class="name">suit</span> = <span class="literal">'spade'</span>, <span class="name">rank</span> = <span class="highlight"><span class="literal">4</span></span>},
+    }
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="27.png">
+<h3>Drawing the rest of the ranks</h3>
+<p>The rest of the ranks are drawn, with two new variables made for repeated Y offsets.</p>
+<p><a class="fullcodelink" target="_blank" href="35.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawCard</span>(<span class="name">card</span>, <span class="name">x</span>, <span class="name">y</span>)
+        <span class="comment">-- etc.</span>
+
+        if <span class="name">card.rank</span> > <span class="literal">10</span> then
+            <span class="comment">-- etc.</span>
+        else
+            <span class="comment">-- etc.</span>
+
+            local <span class="name">xLeft</span> = <span class="literal">11</span>
+            local <span class="name">xMid</span> = <span class="literal">21</span>
+            local <span class="name">yTop</span> = <span class="literal">7</span>
+            <span class="highlight">local <span class="name">yThird</span> = <span class="literal">19</span></span>
+            <span class="highlight">local <span class="name">yQtr</span> = <span class="literal">23</span></span>
+            local <span class="name">yMid</span> = <span class="literal">31</span>
+
+            if <span class="name">card.rank</span> == <span class="literal">1</span> then
+                <span class="call">drawPip</span>(<span class="name">xMid</span>, <span class="name">yMid</span>)
+
+            elseif <span class="name">card.rank</span> == <span class="literal">2</span> then
+                <span class="call">drawPip</span>(<span class="name">xMid</span>, <span class="name">yTop</span>, <span class="literal">false</span>, <span class="literal">true</span>)
+
+            elseif <span class="name">card.rank</span> == <span class="literal">3</span> then
+                <span class="call">drawPip</span>(<span class="name">xMid</span>, <span class="name">yTop</span>, <span class="literal">false</span>, <span class="literal">true</span>)
+                <span class="call">drawPip</span>(<span class="name">xMid</span>, <span class="name">yMid</span>)
+
+            elseif <span class="name">card.rank</span> == <span class="literal">4</span> then
+                <span class="call">drawPip</span>(<span class="name">xLeft</span>, <span class="name">yTop</span>, <span class="literal">true</span>, <span class="literal">true</span>)
+
+            <span class="highlight">elseif <span class="name">card.rank</span> == <span class="literal">5</span> then</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xLeft</span>, <span class="name">yTop</span>, <span class="literal">true</span>, <span class="literal">true</span>)</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xMid</span>, <span class="name">yMid</span>)</span>
+
+            <span class="highlight">elseif <span class="name">card.rank</span> == <span class="literal">6</span> then</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xLeft</span>, <span class="name">yTop</span>, <span class="literal">true</span>, <span class="literal">true</span>)</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xLeft</span>, <span class="name">yMid</span>, <span class="literal">true</span>)</span>
+
+            <span class="highlight">elseif <span class="name">card.rank</span> == <span class="literal">7</span> then</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xLeft</span>, <span class="name">yTop</span>, <span class="literal">true</span>, <span class="literal">true</span>)</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xLeft</span>, <span class="name">yMid</span>, <span class="literal">true</span>)</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xMid</span>, <span class="name">yThird</span>)</span>
+
+            <span class="highlight">elseif <span class="name">card.rank</span> == <span class="literal">8</span> then</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xLeft</span>, <span class="name">yTop</span>, <span class="literal">true</span>, <span class="literal">true</span>)</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xLeft</span>, <span class="name">yMid</span>, <span class="literal">true</span>)</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xMid</span>, <span class="name">yThird</span>, <span class="literal">false</span>, <span class="literal">true</span>)</span>
+
+            <span class="highlight">elseif <span class="name">card.rank</span> == <span class="literal">9</span> then</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xLeft</span>, <span class="name">yTop</span>, <span class="literal">true</span>, <span class="literal">true</span>)</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xLeft</span>, <span class="name">yQtr</span>, <span class="literal">true</span>, <span class="literal">true</span>)</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xMid</span>, <span class="name">yMid</span>)</span>
+
+            <span class="highlight">elseif <span class="name">card.rank</span> == <span class="literal">10</span> then</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xLeft</span>, <span class="name">yTop</span>, <span class="literal">true</span>, <span class="literal">true</span>)</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xLeft</span>, <span class="name">yQtr</span>, <span class="literal">true</span>, <span class="literal">true</span>)</span>
+            <span class="highlight">    <span class="call">drawPip</span>(<span class="name">xMid</span>, <span class="literal">16</span>, <span class="literal">false</span>, <span class="literal">true</span>)</span>
+            end
+        end
+    end
+
+    <span class="highlight">local <span class="name">testHand1</span> = {</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'club'</span>, <span class="name">rank</span> = <span class="literal">1</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'diamond'</span>, <span class="name">rank</span> = <span class="literal">2</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'heart'</span>, <span class="name">rank</span> = <span class="literal">3</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'spade'</span>, <span class="name">rank</span> = <span class="literal">4</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'club'</span>, <span class="name">rank</span> = <span class="literal">5</span>},</span>
+    <span class="highlight">}</span>
+
+    <span class="highlight">for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">testHand1</span>) do</span>
+    <span class="highlight">    <span class="call">drawCard</span>(<span class="name">card</span>, (<span class="name">cardIndex</span> - <span class="literal">1</span>) * <span class="literal">60</span>, <span class="literal">0</span>)</span>
+    <span class="highlight">end</span>
+
+    <span class="highlight">local <span class="name">testHand2</span> = {</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'diamond'</span>, <span class="name">rank</span> = <span class="literal">6</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'heart'</span>, <span class="name">rank</span> = <span class="literal">7</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'spade'</span>, <span class="name">rank</span> = <span class="literal">8</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'club'</span>, <span class="name">rank</span> = <span class="literal">9</span>},</span>
+    <span class="highlight">    {<span class="name">suit</span> = <span class="literal">'diamond'</span>, <span class="name">rank</span> = <span class="literal">10</span>},</span>
+    <span class="highlight">}</span>
+
+    <span class="highlight">for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">testHand2</span>) do</span>
+    <span class="highlight">    <span class="call">drawCard</span>(<span class="name">card</span>, (<span class="name">cardIndex</span> - <span class="literal">1</span>) * <span class="literal">60</span>, <span class="literal">80</span>)</span>
+    <span class="highlight">end</span>
+end
+</pre></div>
+<img src="28.png">
+<h3>Positioning hands</h3>
+<p>The player's and dealer's hands are drawn.</p>
+<p>They use the same space between the cards, and the same offset on the X axis, so variables are made for them.</p>
+<p><a class="fullcodelink" target="_blank" href="36.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local <span class="name">cardSpacing</span> = <span class="literal">60</span>
+    local <span class="name">marginX</span> = <span class="literal">10</span>
+
+    for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">dealerHand</span>) do
+        <span class="call">drawCard</span>(<span class="name">card</span>, ((<span class="name">cardIndex</span> - <span class="literal">1</span>) * <span class="name">cardSpacing</span>) + <span class="name">marginX</span>, <span class="literal">30</span>)
+    end
+
+    for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">playerHand</span>) do
+        <span class="call">drawCard</span>(<span class="name">card</span>, ((<span class="name">cardIndex</span> - <span class="literal">1</span>) * <span class="name">cardSpacing</span>) + <span class="name">marginX</span>, <span class="literal">140</span>)
+    end
+end
+</pre></div>
+<img src="29.png">
+<h3>Hiding the dealer's first card</h3>
+<p>Until the round is over, the dealer's first card is hidden. Instead of drawing a blank card, the face down card image is used.</p>
+<p>The Y position of the face down card is reused from drawing the dealer's other cards, so it is made into a variable.</p>
+<p><a class="fullcodelink" target="_blank" href="37.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">dealerHand</span>) do
+        <span class="highlight">local <span class="name">dealerMarginY</span> = <span class="literal">30</span></span>
+        <span class="highlight">if not <span class="name">roundOver</span> and <span class="name">cardIndex</span> == <span class="literal">1</span> then</span>
+        <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
+        <span class="highlight">    <span class="call">love.graphics.draw</span>(<span class="name">images.card_face_down</span>, <span class="name">marginX</span>, <span class="name">dealerMarginY</span>)</span>
+        <span class="highlight">else</span>
+            <span class="call">drawCard</span>(<span class="name">card</span>, ((<span class="name">cardIndex</span> - <span class="literal">1</span>) * <span class="name">cardSpacing</span>) + <span class="name">marginX</span>, <span class="highlight"><span class="name">dealerMarginY</span></span>)
+        <span class="highlight">end</span>
+    end
+
+    for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">playerHand</span>) do
+        <span class="call">drawCard</span>(<span class="name">card</span>, ((<span class="name">cardIndex</span> - <span class="literal">1</span>) * <span class="name">cardSpacing</span>) + <span class="name">marginX</span>, <span class="literal">140</span>)
+    end
+end
+</pre></div>
+<img src="30.png">
+<h3>Displaying totals</h3>
+<p>The total of each hand are drawn.</p>
+<p>The dealer's total is drawn only when the round is over.</p>
+<p><a class="fullcodelink" target="_blank" href="38.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)
+
+    if <span class="name">roundOver</span> then
+        <span class="call">love.graphics.print</span>(<span class="literal">'Total: '</span>..<span class="call">getTotal</span>(<span class="name">dealerHand</span>), <span class="name">marginX</span>, <span class="literal">10</span>)
+    else
+        <span class="call">love.graphics.print</span>(<span class="literal">'Total: ?'</span>, <span class="name">marginX</span>, <span class="literal">10</span>)
+    end
+
+    <span class="call">love.graphics.print</span>(<span class="literal">'Total: '</span>..<span class="call">getTotal</span>(<span class="name">playerHand</span>), <span class="name">marginX</span>, <span class="literal">120</span>)
+end
+</pre></div>
+<img src="31.png">
+<h3>Displaying winner</h3>
+<p>When the round is over, the result of the game is drawn.</p>
+<p><a class="fullcodelink" target="_blank" href="39.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    if <span class="name">roundOver</span> then
+        local function <span class="name">hasHandWon</span>(<span class="name">thisHand</span>, <span class="name">otherHand</span>)
+            return <span class="call">getTotal</span>(<span class="name">thisHand</span>) <= <span class="literal">21</span>
+            and (
+                <span class="call">getTotal</span>(<span class="name">otherHand</span>) > <span class="literal">21</span>
+                or <span class="call">getTotal</span>(<span class="name">thisHand</span>) > <span class="call">getTotal</span>(<span class="name">otherHand</span>)
+            )
+        end
+
+        <span class="highlight">local function <span class="name">drawWinner</span>(<span class="name">message</span>)</span>
+        <span class="highlight">    <span class="call">love.graphics.print</span>(<span class="name">message</span>, <span class="name">marginX</span>, <span class="literal">268</span>)</span>
+        <span class="highlight">end</span>
+
+        <span class="highlight">if <span class="call">hasHandWon</span>(<span class="name">playerHand</span>, <span class="name">dealerHand</span>) then</span>
+        <span class="highlight">    <span class="call">drawWinner</span>(<span class="literal">'Player wins'</span>)</span>
+        <span class="highlight">elseif <span class="call">hasHandWon</span>(<span class="name">dealerHand</span>, <span class="name">playerHand</span>) then</span>
+        <span class="highlight">    <span class="call">drawWinner</span>(<span class="literal">'Dealer wins'</span>)</span>
+        <span class="highlight">else</span>
+        <span class="highlight">    <span class="call">drawWinner</span>(<span class="literal">'Draw'</span>)</span>
+        <span class="highlight">end</span>
+    end
+end
+</pre></div>
+<img src="32.png">
+<h3>Removing text output code</h3>
+<p>The code relating to text output is removed.</p>
+<p><a class="fullcodelink" target="_blank" href="40.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="highlight"><span class="comment">-- Removed:</span></span>
+    <span class="highlight"><span class="comment">-- local output = {}</span></span>
+
+    <span class="highlight"><span class="comment">-- table.insert(output, 'Player hand:')</span></span>
+    <span class="highlight"><span class="comment">-- for cardIndex, card in ipairs(playerHand) do</span></span>
+    <span class="highlight"><span class="comment">--     table.insert(output, 'suit: '..card.suit..', rank: '..card.rank)</span></span>
+    <span class="highlight"><span class="comment">-- end</span></span>
+    <span class="highlight"><span class="comment">-- table.insert(output, 'Total: '..getTotal(playerHand))</span></span>
+
+    <span class="highlight"><span class="comment">-- table.insert(output, '')</span></span>
+
+    <span class="highlight"><span class="comment">-- table.insert(output, 'Dealer hand:')</span></span>
+    <span class="highlight"><span class="comment">-- for cardIndex, card in ipairs(dealerHand) do</span></span>
+    <span class="highlight"><span class="comment">--     if not roundOver and cardIndex == 1 then</span></span>
+    <span class="highlight"><span class="comment">--         table.insert(output, '(Card hidden)')</span></span>
+    <span class="highlight"><span class="comment">--     else</span></span>
+    <span class="highlight"><span class="comment">--         table.insert(output, 'suit: '..card.suit..', rank: '..card.rank)</span></span>
+    <span class="highlight"><span class="comment">--     end</span></span>
+    <span class="highlight"><span class="comment">-- end</span></span>
+
+    <span class="highlight"><span class="comment">-- if roundOver then</span></span>
+    <span class="highlight"><span class="comment">--     table.insert(output, 'Total: '..getTotal(dealerHand))</span></span>
+    <span class="highlight"><span class="comment">-- else</span></span>
+    <span class="highlight"><span class="comment">--     table.insert(output, 'Total: ?')</span></span>
+    <span class="highlight"><span class="comment">-- end</span></span>
+
+    <span class="highlight"><span class="comment">-- if roundOver then</span></span>
+    <span class="highlight"><span class="comment">--     table.insert(output, '')</span></span>
+
+    <span class="highlight"><span class="comment">--     local function hasHandWon(thisHand, otherHand)</span></span>
+    <span class="highlight"><span class="comment">--         return getTotal(thisHand) <= 21</span></span>
+    <span class="highlight"><span class="comment">--         and (</span></span>
+    <span class="highlight"><span class="comment">--             getTotal(otherHand) > 21</span></span>
+    <span class="highlight"><span class="comment">--             or getTotal(thisHand) > getTotal(otherHand)</span></span>
+    <span class="highlight"><span class="comment">--         )</span></span>
+    <span class="highlight"><span class="comment">--     end</span></span>
+
+    <span class="highlight"><span class="comment">--     if hasHandWon(playerHand, dealerHand) then</span></span>
+    <span class="highlight"><span class="comment">--         table.insert(output, 'Player wins')</span></span>
+    <span class="highlight"><span class="comment">--     elseif hasHandWon(dealerHand, playerHand) then</span></span>
+    <span class="highlight"><span class="comment">--         table.insert(output, 'Dealer wins')</span></span>
+    <span class="highlight"><span class="comment">--     else</span></span>
+    <span class="highlight"><span class="comment">--         table.insert(output, 'Draw')</span></span>
+    <span class="highlight"><span class="comment">--     end</span></span>
+    <span class="highlight"><span class="comment">-- end</span></span>
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<h3>Drawing hit and stand buttons</h3>
+<p>The hit and stand buttons are drawn as rectangles with text on top.</p>
+<p><a class="fullcodelink" target="_blank" href="41.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="literal">10</span>, <span class="literal">230</span>, <span class="literal">53</span>, <span class="literal">25</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+    <span class="call">love.graphics.print</span>(<span class="literal">'Hit!'</span>, <span class="literal">26</span>, <span class="literal">236</span>)
+
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="literal">70</span>, <span class="literal">230</span>, <span class="literal">53</span>, <span class="literal">25</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+    <span class="call">love.graphics.print</span>(<span class="literal">'Stand'</span>, <span class="literal">78</span>, <span class="literal">236</span>)
+end
+</pre></div>
+<img src="33.png">
+<h3>Drawing play again button</h3>
+<p>The "play again" button is drawn occupying the same position as the other buttons, since it will only be visible when the round is over.</p>
+<p><a class="fullcodelink" target="_blank" href="42.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="comment">--[[
+    love.graphics.setColor(1, .5, .2)
+    love.graphics.rectangle('fill', 10, 230, 53, 25)
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.print('Hit!', 16, 236)
+
+    love.graphics.setColor(1, .5, .2)
+    love.graphics.rectangle('fill', 70, 230, 53, 25)
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.print('Stand', 78, 236)
+    --]]</span>
+
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="literal">10</span>, <span class="literal">230</span>, <span class="literal">113</span>, <span class="literal">25</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+    <span class="call">love.graphics.print</span>(<span class="literal">'Play again'</span>, <span class="literal">34</span>, <span class="literal">236</span>)
+end
+</pre></div>
+<img src="34.png">
+<h3>Basing text position on button position</h3>
+<p>The X and Y positions of the button text is based on the X and Y positions of the buttons plus an offset.</p>
+<p>Each button's X position is used twice, so they are made into variables.</p>
+<p>The same Y position is used by all buttons, so it is made into a variable.</p>
+<p><a class="fullcodelink" target="_blank" href="43.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="highlight">local <span class="name">buttonY</span> = <span class="literal">230</span></span>
+
+    <span class="highlight">local <span class="name">buttonHitX</span> = <span class="literal">10</span></span>
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">buttonHitX</span></span>, <span class="highlight"><span class="name">buttonY</span></span>, <span class="literal">53</span>, <span class="literal">25</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+    <span class="call">love.graphics.print</span>(<span class="literal">'Hit!'</span>, <span class="highlight"><span class="name">buttonHitX</span> + <span class="literal">16</span></span>, <span class="highlight"><span class="name">buttonY</span> + <span class="literal">6</span></span>)
+
+    <span class="highlight">local <span class="name">buttonStandX</span> = <span class="literal">70</span></span>
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">buttonStandX</span></span>, <span class="highlight"><span class="name">buttonY</span></span>, <span class="literal">53</span>, <span class="literal">25</span>)
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+    <span class="call">love.graphics.print</span>(<span class="literal">'Stand'</span>, <span class="highlight"><span class="name">buttonStandX</span> + <span class="literal">8</span></span>, <span class="highlight"><span class="name">buttonY</span> + <span class="literal">6</span></span>)
+
+    <span class="comment">--[[
+    <span class="highlight">local buttonPlayAgainX = 10</span>
+    love.graphics.setColor(1, .5, .2)
+    love.graphics.rectangle('fill', <span class="highlight">buttonPlayAgainX</span>, <span class="highlight">buttonY</span>, 113, 25)
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.print('Play again', <span class="highlight">buttonPlayAgainX + 24</span>, <span class="highlight">buttonY + 6</span>)
+    --]]</span>
+end
+</pre></div>
+<h3>Simplifying code</h3>
+<p>The only difference between the code for drawing each button is the button's text, X position, width, and text offset on the X axis. A function is made with these as parameters.</p>
+<p><a class="fullcodelink" target="_blank" href="44.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="highlight">local function <span class="name">drawButton</span>(<span class="name">text</span>, <span class="name">buttonX</span>, <span class="name">buttonWidth</span>, <span class="name">textOffsetX</span>)</span>
+        local <span class="name">buttonY</span> = <span class="literal">230</span>
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
+        <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">buttonX</span></span>, <span class="name">buttonY</span>, <span class="highlight"><span class="name">buttonWidth</span></span>, <span class="literal">25</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+        <span class="call">love.graphics.print</span>(<span class="highlight"><span class="name">text</span></span>, <span class="highlight"><span class="name">buttonX</span> + <span class="name">textOffsetX</span></span>, <span class="name">buttonY</span> + <span class="literal">6</span>)
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="call">drawButton</span>(<span class="literal">'Hit!'</span>, <span class="literal">10</span>, <span class="literal">53</span>, <span class="literal">16</span>)</span>
+    <span class="highlight"><span class="call">drawButton</span>(<span class="literal">'Stand'</span>, <span class="literal">70</span>, <span class="literal">53</span>, <span class="literal">8</span>)</span>
+    <span class="highlight"><span class="comment">-- drawButton('Play again', 10, 113, 24)</span></span>
+end
+</pre></div>
+<h3>Highlighting button when cursor is over it</h3>
+<p>The color of the rectangle changes when the mouse cursor is over it.</p>
+<p>The cursor is over the button if...</p>
+<ul>
+<li>the mouse's X position is to the right of the button's left edge</li>
+<li>the mouse's X position is to the left of the button's right edge (i.e less than the position of the button plus the width of the button)</li>
+<li>the mouse's Y position is below the button's top edge</li>
+<li>the mouse's Y position is above the button's bottom edge (i.e. less than the position of the button plus the height of the button)</li>
+</ul>
+<p>The button height is reused from drawing the button, so a variable is made.</p>
+<p><a class="fullcodelink" target="_blank" href="45.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawButton</span>(<span class="name">text</span>, <span class="name">buttonX</span>, <span class="name">buttonWidth</span>, <span class="name">textOffsetX</span>)
+        local <span class="name">buttonY</span> = <span class="literal">230</span>
+        <span class="highlight">local <span class="name">buttonHeight</span> = <span class="literal">25</span></span>
+
+        <span class="highlight">if <span class="call">love.mouse.getX</span>() >= <span class="name">buttonX</span></span>
+        <span class="highlight">and <span class="call">love.mouse.getX</span>() < <span class="name">buttonX</span> + <span class="name">buttonWidth</span></span>
+        <span class="highlight">and <span class="call">love.mouse.getY</span>() >= <span class="name">buttonY</span></span>
+        <span class="highlight">and <span class="call">love.mouse.getY</span>() < <span class="name">buttonY</span> + <span class="name">buttonHeight</span> then</span>
+        <span class="highlight">    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.8</span>, <span class="literal">.3</span>)</span>
+        <span class="highlight">else</span>
+            <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
+        <span class="highlight">end</span>
+        <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="name">buttonX</span>, <span class="name">buttonY</span>, <span class="name">buttonWidth</span>, <span class="highlight"><span class="name">buttonHeight</span></span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+        <span class="call">love.graphics.print</span>(<span class="name">text</span>, <span class="name">buttonX</span> + <span class="name">textOffsetX</span>, <span class="name">buttonY</span> + <span class="literal">6</span>)
+    end
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<img src="35.png">
+<h3>Clicking buttons</h3>
+<p>If a mouse button is released and the mouse is over a button, then the button has been clicked, and (for now) the name of the button is printed.</p>
+<p>Checking if the mouse is over a button is reused from drawing the button, so it is made into a function and moved into <span class="inlinecode"><span class="name">love.load</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="46.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="highlight">function <span class="name">isMouseInButton</span>(<span class="name">buttonX</span>, <span class="name">buttonWidth</span>)</span>
+        local <span class="name">buttonY</span> = <span class="literal">230</span>
+        local <span class="name">buttonHeight</span> = <span class="literal">25</span>
+
+        <span class="highlight">return</span> <span class="call">love.mouse.getX</span>() >= <span class="name">buttonX</span>
+        and <span class="call">love.mouse.getX</span>() < <span class="name">buttonX</span> + <span class="name">buttonWidth</span>
+        and <span class="call">love.mouse.getY</span>() >= <span class="name">buttonY</span>
+        and <span class="call">love.mouse.getY</span>() < <span class="name">buttonY</span> + <span class="name">buttonHeight</span>
+    <span class="highlight">end</span>
+end
+
+function <span class="name">love.mousereleased</span>()
+    if <span class="call">isMouseInButton</span>(<span class="literal">10</span>, <span class="literal">53</span>) then
+        <span class="call">print</span>(<span class="literal">'Hit!'</span>)
+    elseif <span class="call">isMouseInButton</span>(<span class="literal">70</span>, <span class="literal">53</span>) then
+        <span class="call">print</span>(<span class="literal">'Stand'</span>)
+    <span class="comment">--elseif isMouseInButton(10, 113) then</span>
+    <span class="comment">--    print('Play again')</span>
+    end
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawButton</span>(<span class="name">text</span>, <span class="name">buttonX</span>, <span class="name">buttonWidth</span>, <span class="name">textOffsetX</span>)
+        local <span class="name">buttonY</span> = <span class="literal">230</span>
+        local <span class="name">buttonHeight</span> = <span class="literal">25</span>
+
+        if <span class="highlight"><span class="call">isMouseInButton</span>(<span class="name">buttonX</span>, <span class="name">buttonWidth</span>)</span> then
+            <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.8</span>, <span class="literal">.3</span>)
+        else
+            <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
+        end
+        <span class="comment">-- etc.</span>
+    end
+
+    <span class="comment">-- etc.</span>
+end
+</pre></div>
+<h3>Button tables</h3>
+<p>So that the information for each button is stored in one place, a table is created for each button.</p>
+<p><a class="fullcodelink" target="_blank" href="47.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    local <span class="name">buttonY</span> = <span class="literal">230</span>
+    local <span class="name">buttonHeight</span> = <span class="literal">25</span>
+    local <span class="name">textOffsetY</span> = <span class="literal">6</span>
+
+    <span class="name">buttonHit</span> = {
+        <span class="name">x</span> = <span class="literal">10</span>,
+        <span class="name">y</span> = <span class="name">buttonY</span>,
+        <span class="name">width</span> = <span class="literal">53</span>,
+        <span class="name">height</span> = <span class="name">buttonHeight</span>,
+        <span class="name">text</span> = <span class="literal">'Hit!'</span>,
+        <span class="name">textOffsetX</span> = <span class="literal">16</span>,
+        <span class="name">textOffsetY</span> = <span class="name">textOffsetY</span>,
+    }
+
+    <span class="name">buttonStand</span> = {
+        <span class="name">x</span> = <span class="literal">70</span>,
+        <span class="name">y</span> = <span class="name">buttonY</span>,
+        <span class="name">width</span> = <span class="literal">53</span>,
+        <span class="name">height</span> = <span class="name">buttonHeight</span>,
+        <span class="name">text</span> = <span class="literal">'Stand'</span>,
+        <span class="name">textOffsetX</span> = <span class="literal">8</span>,
+        <span class="name">textOffsetY</span> = <span class="name">textOffsetY</span>,
+    }
+
+    <span class="name">buttonPlayAgain</span> = {
+        <span class="name">x</span> = <span class="literal">10</span>,
+        <span class="name">y</span> = <span class="name">buttonY</span>,
+        <span class="name">width</span> = <span class="literal">113</span>,
+        <span class="name">height</span> = <span class="name">buttonHeight</span>,
+        <span class="name">text</span> = <span class="literal">'Play again'</span>,
+        <span class="name">textOffsetX</span> = <span class="literal">24</span>,
+        <span class="name">textOffsetY</span> = <span class="name">textOffsetY</span>,
+    }
+
+    function <span class="name">isMouseInButton</span>(<span class="highlight"><span class="name">button</span></span>)
+        <span class="comment">-- Removed: local buttonY = 230</span>
+        <span class="comment">-- Removed: local buttonHeight = 25</span>
+
+        return <span class="call">love.mouse.getX</span>() >= <span class="highlight"><span class="name">button.x</span></span>
+        and <span class="call">love.mouse.getX</span>() < <span class="highlight"><span class="name">button.x</span></span> + <span class="highlight"><span class="name">button.width</span></span>
+        and <span class="call">love.mouse.getY</span>() >= <span class="highlight"><span class="name">button.y</span></span>
+        and <span class="call">love.mouse.getY</span>() < <span class="highlight"><span class="name">button.y</span></span> + <span class="highlight"><span class="name">button.height</span></span>
+    end
+end
+
+function <span class="name">love.mousereleased</span>()
+    if <span class="call">isMouseInButton</span>(<span class="highlight"><span class="name">buttonHit</span></span>) then
+        <span class="call">print</span>(<span class="literal">'Hit!'</span>)
+    elseif <span class="call">isMouseInButton</span>(<span class="highlight"><span class="name">buttonStand</span></span>) then
+        <span class="call">print</span>(<span class="literal">'Stand'</span>)
+    <span class="comment">--elseif isMouseInButton(<span class="highlight">buttonPlayAgain</span>) then</span>
+    <span class="comment">--    print('Play again')</span>
+    end
+end
+
+function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    local function <span class="name">drawButton</span>(<span class="highlight"><span class="name">button</span></span>)
+        <span class="comment">-- Removed: local buttonY = 230</span>
+        <span class="comment">-- Removed: local buttonHeight = 25</span>
+
+        if <span class="call">isMouseInButton</span>(<span class="highlight"><span class="name">button</span></span>) then
+            <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.8</span>, <span class="literal">.3</span>)
+        else
+            <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">.5</span>, <span class="literal">.2</span>)
+        end
+
+        <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">button.x</span></span>, <span class="highlight"><span class="name">button.y</span></span>, <span class="highlight"><span class="name">button.width</span></span>, <span class="highlight"><span class="name">button.height</span></span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+        <span class="call">love.graphics.print</span>(<span class="highlight"><span class="name">button.text</span></span>, <span class="highlight"><span class="name">button.x</span></span> + <span class="highlight"><span class="name">button.textOffsetX</span></span>, <span class="highlight"><span class="name">button.y</span></span> + <span class="highlight"><span class="name">button.textOffsetY</span></span>)
+    end
+
+    <span class="call">drawButton</span>(<span class="highlight"><span class="name">buttonHit</span></span>)
+    <span class="call">drawButton</span>(<span class="highlight"><span class="name">buttonStand</span></span>)
+    <span class="comment">-- drawButton(<span class="highlight">buttonPlayAgain</span>)</span>
+end
+</pre></div>
+<h3>Showing play again button after round is over</h3>
+<p>The hit and stand buttons are shown while the round is in progress, and the play again button is shown when the round is over.</p>
+<p><a class="fullcodelink" target="_blank" href="48.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="highlight">if not <span class="name">roundOver</span> then</span>
+        <span class="call">drawButton</span>(<span class="name">buttonHit</span>)
+        <span class="call">drawButton</span>(<span class="name">buttonStand</span>)
+    <span class="highlight">else</span>
+        <span class="call">drawButton</span>(<span class="name">buttonPlayAgain</span>)
+    <span class="highlight">end</span>
+end
+</pre></div>
+<h3>Using buttons</h3>
+<p>The code from <span class="inlinecode"><span class="name">love.keypressed</span></span> is moved to <span class="inlinecode"><span class="name">love.mousepressed</span></span>, and instead of using the keys it uses the on-screen buttons.</p>
+<p><a class="fullcodelink" target="_blank" href="49.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.</span><span class="highlight"><span class="name">mousereleased</span></span>()
+    if not <span class="name">roundOver</span> then
+        if <span class="highlight"><span class="call">isMouseInButton</span>(<span class="name">buttonHit</span>)</span> then
+            <span class="call">takeCard</span>(<span class="name">playerHand</span>)
+            if <span class="call">getTotal</span>(<span class="name">playerHand</span>) >= <span class="literal">21</span> then
+                <span class="name">roundOver</span> = <span class="literal">true</span>
+            end
+        elseif <span class="highlight"><span class="call">isMouseInButton</span>(<span class="name">buttonStand</span>)</span> then
+            <span class="name">roundOver</span> = <span class="literal">true</span>
+        end
+
+        if <span class="name">roundOver</span> then
+            while <span class="call">getTotal</span>(<span class="name">dealerHand</span>) < <span class="literal">17</span> do
+                <span class="call">takeCard</span>(<span class="name">dealerHand</span>)
+            end
+        end
+    <span class="highlight">elseif <span class="call">isMouseInButton</span>(<span class="name">buttonPlayAgain</span>) then</span>
+        <span class="call">love.load</span>()
+    end
+end
+</pre></div>
+<h3>Resetting the game</h3>
+<p>Only some variables need to be reset when the play again button is clicked, so a function is made.</p>
+<p><a class="fullcodelink" target="_blank" href="50.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
+    <span class="comment">-- etc.</span>
+
+    <span class="highlight">function <span class="name">reset</span>()</span>
+        <span class="name">deck</span> = {}
+        for <span class="name">suitIndex</span>, <span class="name">suit</span> in <span class="call">ipairs</span>({<span class="literal">'club'</span>, <span class="literal">'diamond'</span>, <span class="literal">'heart'</span>, <span class="literal">'spade'</span>}) do
+            for <span class="name">rank</span> = <span class="literal">1</span>, <span class="literal">13</span> do
+                <span class="call">table.insert</span>(<span class="name">deck</span>, {<span class="name">suit</span> = <span class="name">suit</span>, <span class="name">rank</span> = <span class="name">rank</span>})
+            end
+        end
+
+        <span class="name">playerHand</span> = {}
+        <span class="call">takeCard</span>(<span class="name">playerHand</span>)
+        <span class="call">takeCard</span>(<span class="name">playerHand</span>)
+
+        <span class="name">dealerHand</span> = {}
+        <span class="call">takeCard</span>(<span class="name">dealerHand</span>)
+        <span class="call">takeCard</span>(<span class="name">dealerHand</span>)
+
+        <span class="name">roundOver</span> = <span class="literal">false</span>
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="call">reset</span>()</span>
+end
+
+function <span class="name">love.mousereleased</span>()
+    <span class="comment">-- etc.</span>
+
+    elseif <span class="call">isMouseInButton</span>(<span class="name">buttonPlayAgain</span>) then
+        <span class="highlight"><span class="call">reset</span>()</span>
+    end
+end
+</pre></div>
+</div></body></html>
