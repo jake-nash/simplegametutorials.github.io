@@ -1,0 +1,509 @@
+<html><head><title>Fifteen Tutorial for Python and Pygame Zero 1.2</title>
+<link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet">
+<style>
+body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    body {
+    background: #fff;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+a {
+    color: #059dc5;
+    text-decoration: none;
+    font-weight: 700;
+}
+a:hover {
+    text-decoration: underline;
+}
+h1 {
+    font-size: 60px;
+    margin: 0;
+}
+h2 {
+    font-size: 30px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #de53b3;
+    margin-bottom: 0;
+    display: inline-block;
+}
+h3 {
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #734590;
+    max-width: 695px;
+}
+td {
+    padding-right: 10px
+}
+pre {
+    margin-top: 0;
+    min-width: 695px;
+    margin-bottom: 10px;
+}
+.pre {
+    display: table;
+    margin-top: 16px;
+}
+table {
+    margin-top: 16px;
+}
+img {
+    display: block;
+    margin: 14px 0;
+}
+td img {
+    margin: 0;
+}
+.inlinecode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    color: #555;
+}
+.code {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    background: #fff;
+    color: #555;
+    padding: 12px;
+}
+.console {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 16px;
+    background: #333;
+    border-radius: 8px;
+    border: 1px solid #777;
+    color: #eee;
+}
+h2 + h3 {
+    margin-top: 20px;
+}
+.download {
+    font-size: 24px;
+    font-weight: 700;
+}
+.subheading {
+    font-size: 24px;
+    margin-top: 0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<p><a href="../../">Home page</a> > <a href="../">Pygame Zero tutorials</a></p><h1>Fifteen</h1><p class="subheading">A tutorial for Python and Pygame Zero 1.2</p><p>Please send any feedback to <a href="mailto:simple.game.tutorials@gmail.com">simple.game.tutorials@gmail.com</a></p><p><a href="fifteen.py" class="download">Download fifteen.py</a></p>
+<img src="1.png">
+<h2>Rules</h2>
+<p>There is a board with 15 pieces and an empty space. Move the pieces around until they are in sequential order by using the arrow keys to move pieces into the empty space.</p>
+<h3>Controls</h3>
+<table>
+<tr><td><b>Arrow keys</b></td><td>Move piece</td></tr>
+</table>
+<h2>Overview</h2>
+<p>The pieces are stored as a grid of numbers.</p>
+<p>The number 16 represents the empty space.</p>
+<img src="2.png">
+<p>The other numbers are swapped with the empty space when an arrow key is pressed.</p>
+<p>At the start of the game, the grid is initially in sorted order, and random moves are made to shuffle it. (If the piece positions were totally random instead, it could result in an unsolvable board.)</p>
+<p>After a piece has been moved, the pieces are looped through, and if they all have their initial sorted values, then the game is over.</p>
+<h2>Coding</h2>
+<h3>Drawing pieces</h3>
+<p>The pieces are drawn as squares.</p>
+<p>For now, a piece is drawn where the empty space should be.</p>
+<p><a class="fullcodelink" target="_blank" href="1.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="literal">4</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="literal">4</span>):
+            <span class="name">piece_size</span> = <span class="literal">100</span>
+            <span class="name">piece_draw_size</span> = <span class="name">piece_size</span> - <span class="literal">1</span>
+
+            <span class="call">screen.draw.filled_rect</span>(
+                <span class="call">Rect</span>(
+                    <span class="name">x</span> * <span class="name">piece_size</span>, <span class="name">y</span> * <span class="name">piece_size</span>,
+                    <span class="name">piece_draw_size</span>, <span class="name">piece_draw_size</span>
+                ),
+                <span class="name">color</span>=(<span class="literal">100</span>, <span class="literal">20</span>, <span class="literal">150</span>)
+            )
+</pre></div>
+<img src="3.png">
+<h3>Drawing numbers</h3>
+<p>The piece numbers are drawn on top of the pieces.</p>
+<p>A piece number is calculated by adding the Y position (i.e. row number) multiplied by the number of pieces in a row to the X position plus 1.</p>
+<p>For example, on the first row, the Y position is 0, so nothing is added to each X position, so the first number on the first row is 1. On the second row, 4 is added to each X position, so the first number on the second row is 5.</p>
+<p><a class="fullcodelink" target="_blank" href="2.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="literal">4</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="literal">4</span>):
+            <span class="comment"># etc.</span>
+
+            <span class="call">screen.draw.text</span>(
+                <span class="call">str</span>(<span class="name">y</span> * <span class="literal">4</span> + <span class="name">x</span> + <span class="literal">1</span>),
+                (<span class="name">x</span> * <span class="name">piece_size</span>, <span class="name">y</span> * <span class="name">piece_size</span>),
+                <span class="name">fontsize</span>=<span class="literal">60</span>
+            )
+</pre></div>
+<img src="4.png">
+<h3>Creating the grid</h3>
+<p>A grid is created with each piece's number stored at its position on the grid, and this number is drawn.</p>
+<p>The number of pieces on the X and Y axes are reused from drawing the pieces, so they are made into variables.</p>
+<p><a class="fullcodelink" target="_blank" href="3.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="name">grid_x_count</span> = <span class="literal">4</span>
+<span class="name">grid_y_count</span> = <span class="literal">4</span>
+
+<span class="name">grid</span> = []
+
+for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+    <span class="call">grid.append</span>([])
+    for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+        <span class="name">grid</span>[<span class="name">y</span>].<span class="call">append</span>(<span class="name">y</span> * <span class="name">grid_x_count</span> + <span class="name">x</span> + <span class="literal">1</span>)
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="highlight"><span class="name">grid_y_count</span></span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="highlight"><span class="name">grid_x_count</span></span>):
+            <span class="comment"># etc.</span>
+
+            <span class="call">screen.draw.text</span>(
+                <span class="call">str</span>(<span class="highlight"><span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>]</span>),
+                (<span class="name">x</span> * <span class="name">piece_size</span>, <span class="name">y</span> * <span class="name">piece_size</span>),
+                <span class="name">fontsize</span>=<span class="literal">60</span>
+            )
+</pre></div>
+<h3>Not drawing the empty space</h3>
+<p>The number of pieces on each axis multiplied together gives the total number of pieces (i.e. 4 times 4 means 16 pieces), and a piece is drawn only if it isn't this number.</p>
+<p><a class="fullcodelink" target="_blank" href="4.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+            <span class="highlight">if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] == <span class="name">grid_x_count</span> * <span class="name">grid_y_count</span>:</span>
+            <span class="highlight">    continue</span>
+
+            <span class="comment"># etc.</span>
+</pre></div>
+<img src="5.png">
+<h3>Finding position of empty space</h3>
+<p>The first step in moving a piece is finding the position of the empty space.</p>
+<p>When a key is pressed, the grid is looped through, and if a piece is equal to the number of pieces on each axis multiplied together (i.e. it's the empty space), then, for now, its position is printed.</p>
+<p><a class="fullcodelink" target="_blank" href="5.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] == <span class="name">grid_x_count</span> * <span class="name">grid_y_count</span>:
+                <span class="name">empty_x</span> = <span class="name">x</span>
+                <span class="name">empty_y</span> = <span class="name">y</span>
+
+    <span class="comment"># Temporary</span>
+    <span class="call">print</span>(<span class="literal">'empty x: '</span> + <span class="call">str</span>(<span class="name">empty_x</span>) + <span class="literal">', empty y: '</span> + <span class="call">str</span>(<span class="name">empty_y</span>))
+</pre></div>
+<div class="pre"><pre class="console">
+empty x: 3, empty y: 3
+</pre></div>
+<h3>Moving pieces down</h3>
+<p>If the Y position of the empty space is greater than 0, it means that there is a piece above the empty space, so moving a piece down is possible.</p>
+<p>The empty space is changed to the piece number above the space, and the piece above the space is changed to the space number.</p>
+<p>For now, any key moves a piece down.</p>
+<img src="6.png">
+<p><a class="fullcodelink" target="_blank" href="6.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    <span class="comment"># etc.</span>
+
+    if <span class="name">empty_y</span> > <span class="literal">0</span>:
+        <span class="name">changed</span> = (<span class="name">grid</span>[<span class="name">empty_y</span>][<span class="name">empty_x</span>], <span class="name">grid</span>[<span class="name">empty_y</span> - <span class="literal">1</span>][<span class="name">empty_x</span>])
+        <span class="name">grid</span>[<span class="name">empty_y</span> - <span class="literal">1</span>][<span class="name">empty_x</span>], <span class="name">grid</span>[<span class="name">empty_y</span>][<span class="name">empty_x</span>] = <span class="name">changed</span>
+</pre></div>
+<h3>Moving pieces up</h3>
+<p>If the Y position of the empty space is less than number of rows of the grid, it means that there is a piece below the empty space, so moving the piece up is possible.</p>
+<p>The Y position of the piece that the empty space swaps with is made into a variable. When the up key is pressed, it is set to the position below the empty space (i.e. plus 1 on the Y axis).</p>
+<p><a class="fullcodelink" target="_blank" href="7.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    <span class="comment"># etc.</span>
+
+    <span class="highlight"><span class="name">new_empty_y</span> = <span class="name">empty_y</span></span>
+
+    <span class="highlight">if <span class="name">key</span> == <span class="name">keys.DOWN</span>:</span>
+    <span class="highlight">    <span class="name">new_empty_y</span> -= <span class="literal">1</span></span>
+    <span class="highlight">elif <span class="name">key</span> == <span class="name">keys.UP</span>:</span>
+    <span class="highlight">    <span class="name">new_empty_y</span> += <span class="literal">1</span></span>
+
+    if <span class="highlight"><span class="literal">0</span> <= <span class="name">new_empty_y</span> < <span class="name">grid_y_count</span></span>:
+        <span class="name">changed</span> = (<span class="name">grid</span>[<span class="name">empty_y</span>][<span class="name">empty_x</span>], <span class="name">grid</span>[<span class="highlight"><span class="name">new_empty_y</span></span>][<span class="name">empty_x</span>])
+        <span class="name">grid</span>[<span class="highlight"><span class="name">new_empty_y</span></span>][<span class="name">empty_x</span>], <span class="name">grid</span>[<span class="name">empty_y</span>][<span class="name">empty_x</span>] = <span class="name">changed</span>
+</pre></div>
+<h3>Moving pieces left and right</h3>
+<p>The X position of the piece that the empty space swaps with is made into a variable, and it is changed when the left or right arrow is pressed.</p>
+<p><a class="fullcodelink" target="_blank" href="8.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    <span class="comment"># etc.</span>
+
+    <span class="name">new_empty_y</span> = <span class="name">empty_y</span>
+    <span class="highlight"><span class="name">new_empty_x</span> = <span class="name">empty_x</span></span>
+
+    if <span class="name">key</span> == <span class="name">keys.DOWN</span>:
+        <span class="name">new_empty_y</span> -= <span class="literal">1</span>
+    elif <span class="name">key</span> == <span class="name">keys.UP</span>:
+        <span class="name">new_empty_y</span> += <span class="literal">1</span>
+    <span class="highlight">elif <span class="name">key</span> == <span class="name">keys.RIGHT</span>:</span>
+    <span class="highlight">    <span class="name">new_empty_x</span> -= <span class="literal">1</span></span>
+    <span class="highlight">elif <span class="name">key</span> == <span class="name">keys.LEFT</span>:</span>
+    <span class="highlight">    <span class="name">new_empty_x</span> += <span class="literal">1</span></span>
+
+    if <span class="highlight">(</span>
+        <span class="literal">0</span> <= <span class="name">new_empty_y</span> < <span class="name">grid_y_count</span> <span class="highlight">and</span>
+        <span class="highlight"><span class="literal">0</span> <= <span class="name">new_empty_x</span> < <span class="name">grid_x_count</span></span>
+    <span class="highlight">)</span>:
+        <span class="name">changed</span> = (<span class="name">grid</span>[<span class="name">empty_y</span>][<span class="name">empty_x</span>], <span class="name">grid</span>[<span class="name">new_empty_y</span>][<span class="highlight"><span class="name">new_empty_x</span></span>])
+        <span class="name">grid</span>[<span class="name">new_empty_y</span>][<span class="highlight"><span class="name">new_empty_x</span></span>], <span class="name">grid</span>[<span class="name">empty_y</span>][<span class="name">empty_x</span>] = <span class="name">changed</span>
+</pre></div>
+<img src="7.png">
+<h3>Shuffling</h3>
+<p>At the beginning of the game, a number of random moves are made to shuffle the board.</p>
+<p>A random number between 1 and 4 is generated and a move is made in one of the four movement directions based on this number.</p>
+<p>The <b>random</b> module is imported so that <span class="inlinecode"><span class="name">random.randint</span></span> can be used.</p>
+<p><a class="fullcodelink" target="_blank" href="9.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="highlight">import <span class="name">random</span></span>
+
+<span class="comment"># etc.</span>
+
+<span class="highlight">for <span class="name">move_number</span> in <span class="call">range</span>(<span class="literal">1000</span>):</span>
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] == <span class="name">grid_x_count</span> * <span class="name">grid_y_count</span>:
+                <span class="name">empty_x</span> = <span class="name">x</span>
+                <span class="name">empty_y</span> = <span class="name">y</span>
+
+    <span class="name">new_empty_y</span> = <span class="name">empty_y</span>
+    <span class="name">new_empty_x</span> = <span class="name">empty_x</span>
+
+    <span class="highlight"><span class="name">roll</span> = <span class="call">random.randint</span>(<span class="literal">0</span>, <span class="literal">3</span>)</span>
+    if <span class="highlight"><span class="name">roll</span> == <span class="literal">0</span></span>:
+        <span class="name">new_empty_y</span> -= <span class="literal">1</span>
+    elif <span class="highlight"><span class="name">roll</span> == <span class="literal">1</span></span>:
+        <span class="name">new_empty_y</span> += <span class="literal">1</span>
+    elif <span class="highlight"><span class="name">roll</span> == <span class="literal">2</span></span>:
+        <span class="name">new_empty_x</span> -= <span class="literal">1</span>
+    elif <span class="highlight"><span class="name">roll</span> == <span class="literal">3</span></span>:
+        <span class="name">new_empty_x</span> += <span class="literal">1</span>
+
+    if (
+        <span class="literal">0</span> <= <span class="name">new_empty_y</span> < <span class="name">grid_y_count</span> and
+        <span class="literal">0</span> <= <span class="name">new_empty_x</span> < <span class="name">grid_x_count</span>
+    ):
+        <span class="name">changed</span> = (<span class="name">grid</span>[<span class="name">empty_y</span>][<span class="name">empty_x</span>], <span class="name">grid</span>[<span class="name">new_empty_y</span>][<span class="name">new_empty_x</span>])
+        <span class="name">grid</span>[<span class="name">new_empty_y</span>][<span class="name">new_empty_x</span>], <span class="name">grid</span>[<span class="name">empty_y</span>][<span class="name">empty_x</span>] = <span class="name">changed</span>
+</pre></div>
+<img src="8.png">
+<h3>Simplifying code</h3>
+<p>The only difference between the shuffling code and the keyboard controlled code is how the direction of the move is determined, so a function is made with the direction as a parameter.</p>
+<p><a class="fullcodelink" target="_blank" href="10.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="highlight">def <span class="name">move</span>(<span class="name">direction</span>):</span>
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] == <span class="name">grid_x_count</span> * <span class="name">grid_y_count</span>:
+                <span class="name">empty_x</span> = <span class="name">x</span>
+                <span class="name">empty_y</span> = <span class="name">y</span>
+
+    <span class="name">new_empty_y</span> = <span class="name">empty_y</span>
+    <span class="name">new_empty_x</span> = <span class="name">empty_x</span>
+
+    if <span class="highlight"><span class="name">direction</span> == <span class="literal">'down'</span></span>:
+        <span class="name">new_empty_y</span> -= <span class="literal">1</span>
+    elif <span class="highlight"><span class="name">direction</span> == <span class="literal">'up'</span></span>:
+        <span class="name">new_empty_y</span> += <span class="literal">1</span>
+    elif <span class="highlight"><span class="name">direction</span> == <span class="literal">'right'</span></span>:
+        <span class="name">new_empty_x</span> -= <span class="literal">1</span>
+    elif <span class="highlight"><span class="name">direction</span> == <span class="literal">'left'</span></span>:
+        <span class="name">new_empty_x</span> += <span class="literal">1</span>
+
+    if (
+        <span class="literal">0</span> <= <span class="name">new_empty_y</span> < <span class="name">grid_y_count</span> and
+        <span class="literal">0</span> <= <span class="name">new_empty_x</span> < <span class="name">grid_x_count</span>
+    ):
+        <span class="name">changed</span> = (<span class="name">grid</span>[<span class="name">empty_y</span>][<span class="name">empty_x</span>], <span class="name">grid</span>[<span class="name">new_empty_y</span>][<span class="name">new_empty_x</span>])
+        <span class="name">grid</span>[<span class="name">new_empty_y</span>][<span class="name">new_empty_x</span>], <span class="name">grid</span>[<span class="name">empty_y</span>][<span class="name">empty_x</span>] = <span class="name">changed</span>
+
+for <span class="name">move_number</span> in <span class="call">range</span>(<span class="literal">1000</span>):
+    <span class="highlight"><span class="call">move</span>(<span class="call">random.choice</span>((<span class="literal">'down'</span>, <span class="literal">'up'</span>, <span class="literal">'right'</span>, <span class="literal">'left'</span>)))</span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    if <span class="name">key</span> == <span class="name">keys.DOWN</span>:
+        <span class="highlight"><span class="call">move</span>(<span class="literal">'down'</span>)</span>
+    elif <span class="name">key</span> == <span class="name">keys.UP</span>:
+        <span class="highlight"><span class="call">move</span>(<span class="literal">'up'</span>)</span>
+    elif <span class="name">key</span> == <span class="name">keys.RIGHT</span>:
+        <span class="highlight"><span class="call">move</span>(<span class="literal">'right'</span>)</span>
+    elif <span class="name">key</span> == <span class="name">keys.LEFT</span>:
+        <span class="highlight"><span class="call">move</span>(<span class="literal">'left'</span>)</span>
+</pre></div>
+<h3>Making the bottom-right position empty</h3>
+<p>So that the empty space always starts in the bottom-right corner, the pieces are moved left and up repeatedly. The number of pieces on an axis minus 1 is the maximum number of moves it would take to move the space from one side to the other.</p>
+<p><a class="fullcodelink" target="_blank" href="11.html">Full code at this point</a></p><div class="pre"><pre class="code">for <span class="name">move_number</span> in <span class="call">range</span>(<span class="literal">1000</span>):
+    <span class="call">move</span>(<span class="call">random.choice</span>((<span class="literal">'down'</span>, <span class="literal">'up'</span>, <span class="literal">'right'</span>, <span class="literal">'left'</span>)))
+
+<span class="highlight">for <span class="name">move_number</span> in <span class="call">range</span>(<span class="name">grid_x_count</span> - <span class="literal">1</span>):</span>
+<span class="highlight">    <span class="call">move</span>(<span class="literal">'left'</span>)</span>
+
+<span class="highlight">for <span class="name">move_number</span> in <span class="call">range</span>(<span class="name">grid_y_count</span> - <span class="literal">1</span>):</span>
+<span class="highlight">    <span class="call">move</span>(<span class="literal">'up'</span>)</span>
+</pre></div>
+<img src="9.png">
+<h3>Resetting the game</h3>
+<p>A function is made which sets the initial state of the game.</p>
+<p>This function is called before the game begins and when the <b>r</b> key is pressed.</p>
+<p><a class="fullcodelink" target="_blank" href="12.html">Full code at this point</a></p><div class="pre"><pre class="code">import <span class="name">random</span>
+
+<span class="name">grid_x_count</span> = <span class="literal">4</span>
+<span class="name">grid_y_count</span> = <span class="literal">4</span>
+
+def <span class="name">move</span>(<span class="name">direction</span>):
+    <span class="comment"># etc.</span>
+
+<span class="highlight">def <span class="name">reset</span>():</span>
+    <span class="highlight">global <span class="name">grid</span></span>
+
+    <span class="name">grid</span> = []
+
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        <span class="call">grid.append</span>([])
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+            <span class="name">grid</span>[<span class="name">y</span>].<span class="call">append</span>(<span class="name">y</span> * <span class="name">grid_x_count</span> + <span class="name">x</span> + <span class="literal">1</span>)
+
+    for <span class="name">move_number</span> in <span class="call">range</span>(<span class="literal">1000</span>):
+        <span class="call">move</span>(<span class="call">random.choice</span>((<span class="literal">'down'</span>, <span class="literal">'up'</span>, <span class="literal">'right'</span>, <span class="literal">'left'</span>)))
+
+    for <span class="name">move_number</span> in <span class="call">range</span>(<span class="name">grid_x_count</span> - <span class="literal">1</span>):
+        <span class="call">move</span>(<span class="literal">'left'</span>)
+
+    for <span class="name">move_number</span> in <span class="call">range</span>(<span class="name">grid_y_count</span> - <span class="literal">1</span>):
+        <span class="call">move</span>(<span class="literal">'up'</span>)
+
+<span class="highlight"><span class="call">reset</span>()</span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    <span class="comment"># etc.</span>
+
+    elif <span class="name">key</span> == <span class="name">keys.R</span>:
+        <span class="call">reset</span>()
+</pre></div>
+<h3>Check if complete</h3>
+<p>After a move is made, the pieces are looped through, and if none of the pieces are not equal to the number they were initially given (i.e. they are all in their sorted positions), then the game is reset.</p>
+<p><a class="fullcodelink" target="_blank" href="13.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    <span class="comment"># etc.</span>
+
+    <span class="name">complete</span> = <span class="literal">True</span>
+
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] != <span class="name">y</span> * <span class="name">grid_x_count</span> + <span class="name">x</span> + <span class="literal">1</span>:
+                <span class="name">complete</span> = <span class="literal">False</span>
+
+    if <span class="name">complete</span>:
+        <span class="call">reset</span>()
+</pre></div>
+<h3>Simplifying code</h3>
+<p>The code for calculating the initial value of a piece is reused, so it is made into a function.</p>
+<p><a class="fullcodelink" target="_blank" href="14.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">get_initial_value</span>(<span class="name">x</span>, <span class="name">y</span>):
+    return <span class="name">y</span> * <span class="name">grid_x_count</span> + <span class="name">x</span> + <span class="literal">1</span>
+
+def <span class="name">reset</span>():
+    global <span class="name">grid</span>
+
+    <span class="name">grid</span> = []
+
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        <span class="call">grid.append</span>([])
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+            <span class="name">grid</span>[<span class="name">y</span>].<span class="call">append</span>(<span class="highlight"><span class="call">get_initial_value</span>(<span class="name">x</span>, <span class="name">y</span>)</span>)
+
+    <span class="comment"># etc.</span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    <span class="comment"># etc.</span>
+
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] != <span class="highlight"><span class="call">get_initial_value</span>(<span class="name">x</span>, <span class="name">y</span>)</span>:
+                <span class="name">complete</span> = <span class="literal">False</span>
+
+    <span class="comment"># etc.</span>
+</pre></div>
+<h3>Reshuffle if complete after shuffling</h3>
+<p>If the pieces are still in their initial order after shuffling, the shuffling process happens again.</p>
+<p>The code for checking if the pieces are in their initial order is reused, so it is made into a function.</p>
+<p><a class="fullcodelink" target="_blank" href="15.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="highlight">def <span class="name">is_complete</span>():</span>
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] != <span class="call">get_initial_value</span>(<span class="name">x</span>, <span class="name">y</span>):
+                <span class="highlight">return</span> <span class="literal">False</span>
+
+    <span class="highlight">return <span class="literal">True</span></span>
+
+def <span class="name">reset</span>():
+    global <span class="name">grid</span>
+
+    <span class="name">grid</span> = []
+
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        <span class="call">grid.append</span>([])
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+            <span class="name">grid</span>[<span class="name">y</span>].<span class="call">append</span>(<span class="call">get_initial_value</span>(<span class="name">x</span>, <span class="name">y</span>))
+
+    <span class="highlight">while <span class="literal">True</span>:</span>
+        for <span class="name">move_number</span> in <span class="call">range</span>(<span class="literal">1000</span>):
+            <span class="call">move</span>(<span class="call">random.choice</span>((<span class="literal">'down'</span>, <span class="literal">'up'</span>, <span class="literal">'right'</span>, <span class="literal">'left'</span>)))
+
+        for <span class="name">move_number</span> in <span class="call">range</span>(<span class="name">grid_x_count</span> - <span class="literal">1</span>):
+            <span class="call">move</span>(<span class="literal">'left'</span>)
+
+        for <span class="name">move_number</span> in <span class="call">range</span>(<span class="name">grid_y_count</span> - <span class="literal">1</span>):
+            <span class="call">move</span>(<span class="literal">'up'</span>)
+
+        <span class="highlight">if not <span class="call">is_complete</span>():</span>
+        <span class="highlight">    break</span>
+
+<span class="call">reset</span>()
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    if <span class="name">key</span> == <span class="name">keys.DOWN</span>:
+        <span class="call">move</span>(<span class="literal">'down'</span>)
+    elif <span class="name">key</span> == <span class="name">keys.UP</span>:
+        <span class="call">move</span>(<span class="literal">'up'</span>)
+    elif <span class="name">key</span> == <span class="name">keys.RIGHT</span>:
+        <span class="call">move</span>(<span class="literal">'right'</span>)
+    elif <span class="name">key</span> == <span class="name">keys.LEFT</span>:
+        <span class="call">move</span>(<span class="literal">'left'</span>)
+    elif <span class="name">key</span> == <span class="name">keys.R</span>:
+        <span class="call">reset</span>()
+
+    if <span class="highlight"><span class="call">is_complete</span>()</span>:
+        <span class="call">reset</span>()
+</pre></div>
+</div></body></html>

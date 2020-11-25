@@ -1,0 +1,547 @@
+<html><head><title>Repeat Tutorial for Python and Pygame Zero 1.2</title>
+<link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet">
+<style>
+body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    body {
+    background: #fff;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+a {
+    color: #059dc5;
+    text-decoration: none;
+    font-weight: 700;
+}
+a:hover {
+    text-decoration: underline;
+}
+h1 {
+    font-size: 60px;
+    margin: 0;
+}
+h2 {
+    font-size: 30px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #de53b3;
+    margin-bottom: 0;
+    display: inline-block;
+}
+h3 {
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #734590;
+    max-width: 695px;
+}
+td {
+    padding-right: 10px
+}
+pre {
+    margin-top: 0;
+    min-width: 695px;
+    margin-bottom: 10px;
+}
+.pre {
+    display: table;
+    margin-top: 16px;
+}
+table {
+    margin-top: 16px;
+}
+img {
+    display: block;
+    margin: 14px 0;
+}
+td img {
+    margin: 0;
+}
+.inlinecode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    color: #555;
+}
+.code {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    background: #fff;
+    color: #555;
+    padding: 12px;
+}
+.console {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 16px;
+    background: #333;
+    border-radius: 8px;
+    border: 1px solid #777;
+    color: #eee;
+}
+h2 + h3 {
+    margin-top: 20px;
+}
+.download {
+    font-size: 24px;
+    font-weight: 700;
+}
+.subheading {
+    font-size: 24px;
+    margin-top: 0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<p><a href="../../">Home page</a> > <a href="../">Pygame Zero tutorials</a></p><h1>Repeat</h1><p class="subheading">A tutorial for Python and Pygame Zero 1.2</p><p>Please send any feedback to <a href="mailto:simple.game.tutorials@gmail.com">simple.game.tutorials@gmail.com</a></p><p><a href="repeat.py" class="download">Download repeat.py</a></p>
+<img src="1.png">
+<h2>Rules</h2>
+<p>Watch as a sequence of numbers flash.</p>
+<p>Repeat the sequence using the number keys.</p>
+<p>If you successfully repeat the sequence, a new number is added and the sequence flashes again</p>
+<h2>Coding</h2>
+<h3>Sequence</h3>
+<p>The sequence list is created. For now it contains a test sequence of numbers between 1 and 4.</p>
+<p><a class="fullcodelink" target="_blank" href="1.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="name">sequence</span> = [<span class="literal">4</span>, <span class="literal">3</span>, <span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">2</span>, <span class="literal">3</span>] <span class="comment"># Temporary</span>
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    <span class="call">screen.draw.text</span>(<span class="literal">', '</span>.<span class="call">join</span>(<span class="call">map</span>(<span class="name">str</span>, <span class="name">sequence</span>)), (<span class="literal">0</span>, <span class="literal">0</span>))
+</pre></div>
+<img src="2.png">
+<h3>Current position in sequence</h3>
+<p>The current sequence position starts at 1.</p>
+<p>If the number in the sequence at the current position is pressed, then 1 is added to the current position.</p>
+<p>This will error once the current position is beyond the length of the sequence list.</p>
+<p><a class="fullcodelink" target="_blank" href="2.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="name">sequence</span> = [<span class="literal">4</span>, <span class="literal">3</span>, <span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">2</span>, <span class="literal">3</span>] <span class="comment"># Temporary</span>
+<span class="highlight"><span class="name">current</span> = <span class="literal">0</span></span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    global <span class="name">current</span>
+
+    if <span class="name">key</span> in (<span class="name">keys.K_1</span>, <span class="name">keys.K_2</span>, <span class="name">keys.K_3</span>, <span class="name">keys.K_4</span>):
+        if <span class="name">key</span> == <span class="name">keys.K_1</span>:
+            <span class="name">number</span> = <span class="literal">1</span>
+        elif <span class="name">key</span> == <span class="name">keys.K_2</span>:
+            <span class="name">number</span> = <span class="literal">2</span>
+        elif <span class="name">key</span> == <span class="name">keys.K_3</span>:
+            <span class="name">number</span> = <span class="literal">3</span>
+        elif <span class="name">key</span> == <span class="name">keys.K_4</span>:
+            <span class="name">number</span> = <span class="literal">4</span>
+
+        if <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>]:
+            <span class="name">current</span> += <span class="literal">1</span>
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    <span class="call">screen.draw.text</span>(<span class="literal">', '</span>.<span class="call">join</span>(<span class="call">map</span>(<span class="name">str</span>, <span class="name">sequence</span>)), (<span class="literal">0</span>, <span class="literal">0</span>))
+    <span class="highlight"><span class="call">screen.draw.text</span>(<span class="call">str</span>(<span class="name">current</span> + <span class="literal">1</span>) + <span class="literal">'/'</span> + <span class="call">str</span>(<span class="call">len</span>(<span class="name">sequence</span>)), (<span class="literal">0</span>, <span class="literal">20</span>))</span>
+    <span class="highlight"><span class="call">screen.draw.text</span>(<span class="literal">'sequence[current]: '</span> + <span class="call">str</span>(<span class="name">sequence</span>[<span class="name">current</span>]), (<span class="literal">0</span>, <span class="literal">40</span>))</span>
+</pre></div>
+<img src="3.png">
+<h3>Resetting current position</h3>
+<p>When the current position goes beyond the sequence length, it is reset to 0.</p>
+<p><a class="fullcodelink" target="_blank" href="3.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    global <span class="name">current</span>
+
+    if <span class="name">key</span> in (<span class="name">keys.K_1</span>, <span class="name">keys.K_2</span>, <span class="name">keys.K_3</span>, <span class="name">keys.K_4</span>):
+        <span class="comment"># etc.</span>
+
+        if <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>]:
+            <span class="name">current</span> += <span class="literal">1</span>
+            <span class="highlight">if <span class="name">current</span> == <span class="call">len</span>(<span class="name">sequence</span>):</span>
+            <span class="highlight">    <span class="name">current</span> = <span class="literal">0</span></span>
+</pre></div>
+<h3>Adding to sequence</h3>
+<p>When the current position is reset, a random number between 1 and 4 is added to the sequence.</p>
+<p>The <b>random</b> module is imported so that <span class="inlinecode"><span class="name">random.randint</span></span> can be used.</p>
+<p><a class="fullcodelink" target="_blank" href="4.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    <span class="comment"># etc.</span>
+
+            if <span class="name">current</span> == <span class="call">len</span>(<span class="name">sequence</span>):
+                <span class="name">current</span> = <span class="literal">0</span>
+                <span class="highlight"><span class="call">sequence.append</span>(<span class="call">random.randint</span>(<span class="literal">1</span>, <span class="literal">4</span>))</span>
+</pre></div>
+<h3>Starting sequence with a single number</h3>
+<p>The sequence is now created with a single random number.</p>
+<p>Because the code for adding a random number to the sequence is reused, it is made into a function.</p>
+<p><a class="fullcodelink" target="_blank" href="5.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="name">sequence</span> = <span class="highlight">[]</span>
+
+def <span class="name">add_to_sequence</span>():
+    <span class="call">sequence.append</span>(<span class="call">random.randint</span>(<span class="literal">1</span>, <span class="literal">4</span>))
+
+<span class="call">add_to_sequence</span>()
+
+<span class="comment"># etc.</span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    <span class="comment"># etc.</span>
+
+            if <span class="name">current</span> == <span class="call">len</span>(<span class="name">sequence</span>):
+                <span class="name">current</span> = <span class="literal">0</span>
+                <span class="highlight"><span class="call">add_to_sequence</span>()</span>
+</pre></div>
+<h3>Resetting the game</h3>
+<p>A function is made which sets the initial state of the game.</p>
+<p>This function is called before the game begins and when an incorrect number key is pressed.</p>
+<p><a class="fullcodelink" target="_blank" href="6.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">add_to_sequence</span>():
+    <span class="call">sequence.append</span>(<span class="call">random.randint</span>(<span class="literal">1</span>, <span class="literal">4</span>))
+
+<span class="highlight">def <span class="name">reset</span>():</span>
+    <span class="highlight">global <span class="name">sequence</span></span>
+    <span class="highlight">global <span class="name">current</span></span>
+
+    <span class="name">sequence</span> = []
+    <span class="call">add_to_sequence</span>()
+    <span class="name">current</span> = <span class="literal">0</span>
+
+<span class="highlight"><span class="call">reset</span>()</span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    global <span class="name">current</span>
+
+    if <span class="name">key</span> in (<span class="name">keys.K_1</span>, <span class="name">keys.K_2</span>, <span class="name">keys.K_3</span>, <span class="name">keys.K_4</span>):
+
+        <span class="comment"># etc.</span>
+
+        if <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>]:
+            <span class="name">current</span> += <span class="literal">1</span>
+            if <span class="name">current</span> == <span class="call">len</span>(<span class="name">sequence</span>):
+                <span class="name">current</span> = <span class="literal">0</span>
+                <span class="call">add_to_sequence</span>()
+        <span class="highlight">else:</span>
+        <span class="highlight">    <span class="call">reset</span>()</span>
+</pre></div>
+<h3>Drawing first square</h3>
+<p>The first square is drawn with a dark red square and a white number.</p>
+<p><a class="fullcodelink" target="_blank" href="7.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    <span class="highlight"><span class="name">square_size</span> = <span class="literal">50</span></span>
+
+    <span class="highlight"><span class="call">screen.draw.filled_rect</span>(</span>
+    <span class="highlight">    <span class="call">Rect</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="name">square_size</span>, <span class="name">square_size</span>),</span>
+    <span class="highlight">    <span class="name">color</span>=(<span class="literal">50</span>, <span class="literal">0</span>, <span class="literal">0</span>)</span>
+    <span class="highlight">)</span>
+    <span class="highlight"><span class="call">screen.draw.text</span>(<span class="literal">'1'</span>, (<span class="literal">19</span>, <span class="literal">18</span>))</span>
+
+    <span class="call">screen.draw.text</span>(<span class="call">str</span>(<span class="name">current</span> + <span class="literal">1</span>) + <span class="literal">'/'</span> + <span class="call">str</span>(<span class="call">len</span>(<span class="name">sequence</span>)), (<span class="highlight"><span class="literal">20</span></span>, <span class="highlight"><span class="literal">60</span></span>))
+    <span class="call">screen.draw.text</span>(<span class="literal">'sequence[current]: '</span> + <span class="call">str</span>(<span class="name">sequence</span>[<span class="name">current</span>]), (<span class="highlight"><span class="literal">20</span></span>, <span class="highlight"><span class="literal">100</span></span>))
+    <span class="call">screen.draw.text</span>(<span class="literal">', '</span>.<span class="call">join</span>(<span class="call">map</span>(<span class="name">str</span>, <span class="name">sequence</span>)), (<span class="highlight"><span class="literal">20</span></span>, <span class="highlight"><span class="literal">140</span></span>))
+</pre></div>
+<img src="4.png">
+<h3>Drawing all squares</h3>
+<p>The rest of the squares are drawn similarly.</p>
+<p><a class="fullcodelink" target="_blank" href="8.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    <span class="name">square_size</span> = <span class="literal">50</span>
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="name">square_size</span>, <span class="name">square_size</span>),
+        <span class="name">color</span>=(<span class="literal">50</span>, <span class="literal">0</span>, <span class="literal">0</span>)
+    )
+    <span class="call">screen.draw.text</span>(<span class="literal">'1'</span>, (<span class="literal">19</span>, <span class="literal">18</span>))
+
+    <span class="highlight"><span class="call">screen.draw.filled_rect</span>(</span>
+    <span class="highlight">    <span class="call">Rect</span>(<span class="name">square_size</span>, <span class="literal">0</span>, <span class="name">square_size</span>, <span class="name">square_size</span>),</span>
+    <span class="highlight">    <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">50</span>, <span class="literal">0</span>)</span>
+    <span class="highlight">)</span>
+    <span class="highlight"><span class="call">screen.draw.text</span>(<span class="literal">'2'</span>, (<span class="name">square_size</span> + <span class="literal">21</span>, <span class="literal">18</span>))</span>
+
+    <span class="highlight"><span class="call">screen.draw.filled_rect</span>(</span>
+    <span class="highlight">    <span class="call">Rect</span>(<span class="name">square_size</span> * <span class="literal">2</span>, <span class="literal">0</span>, <span class="name">square_size</span>, <span class="name">square_size</span>),</span>
+    <span class="highlight">    <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">50</span>)</span>
+    <span class="highlight">)</span>
+    <span class="highlight"><span class="call">screen.draw.text</span>(<span class="literal">'3'</span>, (<span class="name">square_size</span> * <span class="literal">2</span> + <span class="literal">21</span>, <span class="literal">18</span>))</span>
+
+    <span class="highlight"><span class="call">screen.draw.filled_rect</span>(</span>
+    <span class="highlight">    <span class="call">Rect</span>(<span class="name">square_size</span> * <span class="literal">3</span>, <span class="literal">0</span>, <span class="name">square_size</span>, <span class="name">square_size</span>),</span>
+    <span class="highlight">    <span class="name">color</span>=(<span class="literal">50</span>, <span class="literal">50</span>, <span class="literal">0</span>)</span>
+    <span class="highlight">)</span>
+    <span class="highlight"><span class="call">screen.draw.text</span>(<span class="literal">'4'</span>, (<span class="name">square_size</span> * <span class="literal">3</span> + <span class="literal">21</span>, <span class="literal">18</span>))</span>
+
+    <span class="comment"># etc.</span>
+</pre></div>
+<img src="5.png">
+<h3>Simplifying code</h3>
+<p>The code for drawing each square is similar, so it is made into a function.</p>
+<p><a class="fullcodelink" target="_blank" href="9.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    <span class="highlight">def <span class="name">draw_square</span>(<span class="name">number</span>, <span class="name">color</span>):</span>
+        <span class="name">square_size</span> = <span class="literal">50</span>
+        <span class="call">screen.draw.filled_rect</span>(
+            <span class="call">Rect</span>(<span class="name">square_size</span> * <span class="highlight">(<span class="name">number</span> - <span class="literal">1</span>)</span>, <span class="literal">0</span>, <span class="name">square_size</span>, <span class="name">square_size</span>),
+            <span class="name">color</span>=<span class="highlight"><span class="name">color</span></span>
+        )
+        <span class="call">screen.draw.text</span>(<span class="highlight"><span class="call">str</span>(<span class="name">number</span>)</span>, (<span class="name">square_size</span> * <span class="highlight">(<span class="name">number</span> - <span class="literal">1</span>)</span> + <span class="literal">21</span>, <span class="literal">18</span>))
+
+    <span class="highlight"><span class="call">draw_square</span>(<span class="literal">1</span>, (<span class="literal">50</span>, <span class="literal">0</span>, <span class="literal">0</span>))</span>
+    <span class="highlight"><span class="call">draw_square</span>(<span class="literal">2</span>, (<span class="literal">0</span>, <span class="literal">50</span>, <span class="literal">0</span>))</span>
+    <span class="highlight"><span class="call">draw_square</span>(<span class="literal">3</span>, (<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">50</span>))</span>
+    <span class="highlight"><span class="call">draw_square</span>(<span class="literal">4</span>, (<span class="literal">50</span>, <span class="literal">50</span>, <span class="literal">0</span>))</span>
+
+    <span class="comment"># etc.</span>
+</pre></div>
+<h3>Timer</h3>
+<p>Numbers will flash every second.</p>
+<p>A timer variable starts at 0 and increases by <span class="inlinecode"><span class="name">dt</span></span> each frame.</p>
+<p>When the timer is at or above 1 it is reset to 0.</p>
+<p>For now, 'tick' is printed every time the numbers will flash.</p>
+<p><a class="fullcodelink" target="_blank" href="10.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">reset</span>():
+    <span class="comment"># etc.</span>
+    global <span class="name">timer</span>
+
+    <span class="comment"># etc.</span>
+    <span class="name">timer</span> = <span class="literal">0</span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">timer</span>
+
+    <span class="name">timer</span> += <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="literal">1</span>:
+        <span class="name">timer</span> = <span class="literal">0</span>
+        <span class="comment"># Temporary</span>
+        <span class="call">print</span>(<span class="literal">'tick'</span>)
+</pre></div>
+<h3>Flashing squares</h3>
+<p>The current sequence position is reused to flash each square in the sequence.</p>
+<p>The timer is used to advance the current sequence position.</p>
+<p>For now, the square corresponding to the number at the current sequence position is drawn using its color, while the other squares are drawn in black.</p>
+<p>The test sequence from before is used again.</p>
+<p>This will error once <span class="inlinecode"><span class="name">current</span></span> goes beyond the length of <span class="inlinecode"><span class="name">sequence</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="11.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">reset</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="name">sequence</span> = <span class="highlight">[<span class="literal">4</span>, <span class="literal">3</span>, <span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">2</span>, <span class="literal">3</span>] <span class="comment"># Temporary</span></span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">timer</span>
+    <span class="highlight">global <span class="name">current</span></span>
+
+    <span class="name">timer</span> += <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="literal">1</span>:
+        <span class="name">timer</span> = <span class="literal">0</span>
+        <span class="highlight"><span class="name">current</span> += <span class="literal">1</span></span>
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    def <span class="name">draw_square</span>(<span class="name">number</span>, <span class="name">color</span>):
+        <span class="highlight">if <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>]:</span>
+        <span class="highlight">    <span class="name">square_color</span> = <span class="name">color</span></span>
+        <span class="highlight">else:</span>
+        <span class="highlight">    <span class="name">square_color</span> = (<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)</span>
+
+        <span class="name">square_size</span> = <span class="literal">50</span>
+        <span class="call">screen.draw.filled_rect</span>(
+            <span class="call">Rect</span>(<span class="name">square_size</span> * (<span class="name">number</span> - <span class="literal">1</span>), <span class="literal">0</span>, <span class="name">square_size</span>, <span class="name">square_size</span>),
+            <span class="name">color</span>=<span class="highlight"><span class="name">square_color</span></span>
+        )
+        <span class="call">screen.draw.text</span>(<span class="call">str</span>(<span class="name">number</span>), (<span class="name">square_size</span> * (<span class="name">number</span> - <span class="literal">1</span>) + <span class="literal">21</span>, <span class="literal">18</span>))
+
+    <span class="comment"># etc.</span>
+</pre></div>
+<img src="6.png">
+<h3>Flashing color</h3>
+<p>The squares are given a highlighted color for flashing.</p>
+<p><a class="fullcodelink" target="_blank" href="12.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    def <span class="name">draw_square</span>(<span class="name">number</span>, <span class="name">color</span><span class="highlight">, <span class="name">color_flashing</span></span>):
+
+        if <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>]:
+            <span class="name">square_color</span> = <span class="highlight"><span class="name">color_flashing</span></span>
+        else:
+            <span class="name">square_color</span> = <span class="highlight"><span class="name">color</span></span>
+
+        <span class="name">square_size</span> = <span class="literal">50</span>
+        <span class="call">screen.draw.filled_rect</span>(
+            <span class="call">Rect</span>(<span class="name">square_size</span> * (<span class="name">number</span> - <span class="literal">1</span>), <span class="literal">0</span>, <span class="name">square_size</span>, <span class="name">square_size</span>),
+            <span class="name">color</span>=<span class="name">square_color</span>
+        )
+        <span class="call">screen.draw.text</span>(<span class="call">str</span>(<span class="name">number</span>), (<span class="name">square_size</span> * (<span class="name">number</span> - <span class="literal">1</span>) + <span class="literal">21</span>, <span class="literal">18</span>))
+
+    <span class="call">draw_square</span>(<span class="literal">1</span>, (<span class="literal">50</span>, <span class="literal">0</span>, <span class="literal">0</span>)<span class="highlight">, (<span class="literal">255</span>, <span class="literal">0</span>, <span class="literal">0</span>)</span>)
+    <span class="call">draw_square</span>(<span class="literal">2</span>, (<span class="literal">0</span>, <span class="literal">50</span>, <span class="literal">0</span>)<span class="highlight">, (<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">0</span>)</span>)
+    <span class="call">draw_square</span>(<span class="literal">3</span>, (<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">50</span>)<span class="highlight">, (<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">255</span>)</span>)
+    <span class="call">draw_square</span>(<span class="literal">4</span>, (<span class="literal">50</span>, <span class="literal">50</span>, <span class="literal">0</span>)<span class="highlight">, (<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">0</span>)</span>)
+
+    <span class="comment"># etc.</span>
+</pre></div>
+<img src="7.png">
+<h3>Watch and repeat</h3>
+<p>A variable is created which indicates whether the squares are flashing (<span class="inlinecode"><span class="literal">'watch'</span></span>) or whether the player is inputing numbers (<span class="inlinecode"><span class="literal">'repeat'</span></span>).</p>
+<p>The state starts as <span class="inlinecode"><span class="literal">'watch'</span></span> and changes to <span class="inlinecode"><span class="literal">'repeat'</span></span> after the flashing sequence has ended.</p>
+<p>The keyboard input code is only run if the state is <span class="inlinecode"><span class="literal">'repeat'</span></span>.</p>
+<p>Once the sequence has been successfully entered, the state changes back to <span class="inlinecode"><span class="literal">'watch'</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="13.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">reset</span>():
+    global <span class="name">state</span>
+
+    <span class="comment"># etc.</span>
+
+    <span class="name">state</span> = <span class="literal">'watch'</span> <span class="comment"># 'watch', 'repeat'</span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">timer</span>
+    global <span class="name">current</span>
+    <span class="highlight">global <span class="name">state</span></span>
+
+    <span class="highlight">if <span class="name">state</span> == <span class="literal">'watch'</span>:</span>
+        <span class="name">timer</span> += <span class="name">dt</span>
+        if <span class="name">timer</span> >= <span class="literal">1</span>:
+            <span class="name">timer</span> = <span class="literal">0</span>
+            <span class="name">current</span> += <span class="literal">1</span>
+            <span class="highlight">if <span class="name">current</span> == <span class="call">len</span>(<span class="name">sequence</span>):</span>
+            <span class="highlight">    <span class="name">state</span> = <span class="literal">'repeat'</span></span>
+            <span class="highlight">    <span class="name">current</span> = <span class="literal">0</span></span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    global <span class="name">current</span>
+    <span class="highlight">global <span class="name">state</span></span>
+
+    <span class="highlight">if <span class="name">state</span> == <span class="literal">'repeat'</span>:</span>
+        if <span class="name">key</span> in (<span class="name">keys.K_1</span>, <span class="name">keys.K_2</span>, <span class="name">keys.K_3</span>, <span class="name">keys.K_4</span>):
+
+            if <span class="name">key</span> == <span class="name">keys.K_1</span>:
+                <span class="name">number</span> = <span class="literal">1</span>
+            elif <span class="name">key</span> == <span class="name">keys.K_2</span>:
+                <span class="name">number</span> = <span class="literal">2</span>
+            elif <span class="name">key</span> == <span class="name">keys.K_3</span>:
+                <span class="name">number</span> = <span class="literal">3</span>
+            elif <span class="name">key</span> == <span class="name">keys.K_4</span>:
+                <span class="name">number</span> = <span class="literal">4</span>
+
+            if <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>]:
+                <span class="name">current</span> += <span class="literal">1</span>
+                if <span class="name">current</span> == <span class="call">len</span>(<span class="name">sequence</span>):
+                    <span class="name">current</span> = <span class="literal">0</span>
+                    <span class="call">add_to_sequence</span>()
+                    <span class="highlight"><span class="name">state</span> = <span class="literal">'watch'</span></span>
+            else:
+                <span class="call">reset</span>()
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    def <span class="name">draw_square</span>(<span class="name">number</span>, <span class="name">color</span>, <span class="name">color_flashing</span>):
+
+        if <span class="highlight"><span class="name">state</span> == <span class="literal">'watch'</span> and</span> <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>]:
+            <span class="name">square_color</span> = <span class="name">color_flashing</span>
+        else:
+            <span class="name">square_color</span> = <span class="name">color</span>
+
+    <span class="comment"># etc.</span>
+
+    <span class="highlight"><span class="call">screen.draw.text</span>(<span class="literal">'state: '</span> + <span class="name">state</span>, (<span class="literal">20</span>, <span class="literal">180</span>))</span>
+</pre></div>
+<img src="8.png">
+<h3>Momentary flashing</h3>
+<p>A boolean variable is used to indicate whether to set the highlighted color or not.</p>
+<p>It starts off as <span class="inlinecode"><span class="literal">False</span></span>, gets toggled to <span class="inlinecode"><span class="literal">True</span></span> when the timer ticks, and gets toggled back to <span class="inlinecode"><span class="literal">False</span></span> when the timer ticks again.</p>
+<p>The timer limit is changed to tick twice as fast.</p>
+<p><a class="fullcodelink" target="_blank" href="14.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">reset</span>():
+    <span class="comment"># etc.</span>
+    global <span class="name">flashing</span>
+
+    <span class="comment"># etc.</span>
+    <span class="highlight"><span class="name">flashing</span> = <span class="literal">False</span></span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">timer</span>
+    global <span class="name">current</span>
+    global <span class="name">state</span>
+    <span class="highlight">global <span class="name">flashing</span></span>
+
+    if <span class="name">state</span> == <span class="literal">'watch'</span>:
+        <span class="name">timer</span> += <span class="name">dt</span>
+        if <span class="name">timer</span> >= <span class="highlight"><span class="literal">0.5</span></span>:
+            <span class="name">timer</span> = <span class="literal">0</span>
+            <span class="highlight"><span class="name">flashing</span> = not <span class="name">flashing</span></span>
+            <span class="highlight">if not <span class="name">flashing</span>:</span>
+                <span class="name">current</span> += <span class="literal">1</span>
+                if <span class="name">current</span> == <span class="call">len</span>(<span class="name">sequence</span>):
+                    <span class="name">state</span> = <span class="literal">'repeat'</span>
+                    <span class="name">current</span> = <span class="literal">0</span>
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    def <span class="name">draw_square</span>(<span class="name">number</span>, <span class="name">color</span>, <span class="name">color_flashing</span>):
+
+        if <span class="name">state</span> == <span class="literal">'watch'</span> <span class="highlight">and <span class="name">flashing</span></span> and <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>]:
+            <span class="name">square_color</span> = <span class="name">color_flashing</span>
+        else:
+            <span class="name">square_color</span> = <span class="name">color</span>
+
+    <span class="comment"># etc.</span>
+
+    <span class="highlight"><span class="call">screen.draw.text</span>(<span class="literal">'flashing: '</span> + <span class="call">str</span>(<span class="name">flashing</span>), (<span class="literal">20</span>, <span class="literal">220</span>))</span>
+</pre></div>
+<h3>Game over state</h3>
+<p>If the wrong key is pressed, instead of resetting the game immediately, the state is set to <span class="inlinecode"><span class="literal">'gameover'</span></span>. When a key is pressed in the <span class="inlinecode"><span class="literal">'gameover'</span></span> state, the game is then reset.</p>
+<p><a class="fullcodelink" target="_blank" href="15.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    global <span class="name">current</span>
+    global <span class="name">state</span>
+
+    if <span class="name">state</span> == <span class="literal">'repeat'</span>:
+        if <span class="name">key</span> in (<span class="name">keys.K_1</span>, <span class="name">keys.K_2</span>, <span class="name">keys.K_3</span>, <span class="name">keys.K_4</span>):
+            <span class="comment"># etc.</span>
+
+            if <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>]:
+                <span class="comment"># etc.</span>
+            else:
+                <span class="highlight"><span class="name">state</span> = <span class="literal">'gameover'</span></span>
+    <span class="highlight">elif <span class="name">state</span> == <span class="literal">'gameover'</span>:</span>
+        <span class="call">reset</span>()
+</pre></div>
+<h3>Displaying text based on state</h3>
+<p>The current sequence position and the length of the sequence is only displayed if the game is in the <span class="inlinecode"><span class="literal">'repeat'</span></span> state, and a game over message is shown if the game is in the <span class="inlinecode"><span class="literal">'gameover'</span></span> state.</p>
+<p><a class="fullcodelink" target="_blank" href="16.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="highlight">if <span class="name">state</span> == <span class="literal">'repeat'</span>:</span>
+        <span class="call">screen.draw.text</span>(<span class="call">str</span>(<span class="name">current</span> + <span class="literal">1</span>) + <span class="literal">'/'</span> + <span class="call">str</span>(<span class="call">len</span>(<span class="name">sequence</span>)), (<span class="literal">20</span>, <span class="literal">60</span>))
+    <span class="highlight">elif <span class="name">state</span> == <span class="literal">'gameover'</span>:</span>
+    <span class="highlight">    <span class="call">screen.draw.text</span>(<span class="literal">'Game over!'</span>, (<span class="literal">20</span>, <span class="literal">60</span>))</span>
+
+    <span class="highlight"><span class="comment"># Removed: screen.draw.text('sequence[current]: ' + str(sequence[current]), (20, 100))</span></span>
+    <span class="highlight"><span class="comment"># Removed: screen.draw.text(', '.join(map(str, sequence)), (20, 140))</span></span>
+    <span class="highlight"><span class="comment"># Removed: screen.draw.text('state: ' + state, (20, 180))</span></span>
+    <span class="highlight"><span class="comment"># Removed: screen.draw.text('flashing: ' + str(flashing), (20, 220))</span></span>
+</pre></div>
+<img src="9.png">
+</div></body></html>
