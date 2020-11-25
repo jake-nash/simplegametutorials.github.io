@@ -1,0 +1,836 @@
+<html><head><title>Bird Tutorial for Python and Pygame Zero 1.2</title>
+<link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet">
+<style>
+body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    body {
+    background: #fff;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+a {
+    color: #059dc5;
+    text-decoration: none;
+    font-weight: 700;
+}
+a:hover {
+    text-decoration: underline;
+}
+h1 {
+    font-size: 60px;
+    margin: 0;
+}
+h2 {
+    font-size: 30px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #de53b3;
+    margin-bottom: 0;
+    display: inline-block;
+}
+h3 {
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #734590;
+    max-width: 695px;
+}
+td {
+    padding-right: 10px
+}
+pre {
+    margin-top: 0;
+    min-width: 695px;
+    margin-bottom: 10px;
+}
+.pre {
+    display: table;
+    margin-top: 16px;
+}
+table {
+    margin-top: 16px;
+}
+img {
+    display: block;
+    margin: 14px 0;
+}
+td img {
+    margin: 0;
+}
+.inlinecode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    color: #555;
+}
+.code {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    background: #fff;
+    color: #555;
+    padding: 12px;
+}
+.console {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 16px;
+    background: #333;
+    border-radius: 8px;
+    border: 1px solid #777;
+    color: #eee;
+}
+h2 + h3 {
+    margin-top: 20px;
+}
+.download {
+    font-size: 24px;
+    font-weight: 700;
+}
+.subheading {
+    font-size: 24px;
+    margin-top: 0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<p><a href="../../">Home page</a> > <a href="../">Pygame Zero tutorials</a></p><h1>Bird</h1><p class="subheading">A tutorial for Python and Pygame Zero 1.2</p><p>Please send any feedback to <a href="mailto:simple.game.tutorials@gmail.com">simple.game.tutorials@gmail.com</a></p><p><a href="bird.py" class="download">Download bird.py</a></p>
+<img src="1.png">
+<h2>Rules</h2>
+<p>Fly through the spaces between the pipes by flapping.</p>
+<p>A point is scored for every pipe passed.</p>
+<h3>Controls</h3>
+<table>
+<tr><td><b>Any key</b></td><td>Flap</td></tr>
+</table>
+<h2>Overview</h2>
+<p>The bird doesn't actually move forward; it stays still on the X axis while the pipes move to the left.</p>
+<p>The bird is drawn as a yellow rectangle, and each pipe is drawn as two green rectangles.</p>
+<p>The bird's Y position moves down by a certain speed each frame. Each frame this speed is increased to simulate gravity.</p>
+<p>When a key is pressed, the bird's speed is set to a high number in the upward direction.</p>
+<p>The pipes share the same width, and the same space height between the segments.</p>
+<img src="2.png">
+<p>Each pipe has its own X position, and Y position the space starts at.</p>
+<img src="3.png">
+<p>Since there are only two pipes in the playing area at one time, the information for only two pipes needs to stored. Once a pipe goes out of the playing area, it gets a new space position and its X position is reset to the right edge of the playing area.</p>
+<p>To see if the bird has collided with a pipe's two segments, three things need to be checked for each segment.</p>
+<p>The bird has collided with the top segment if...</p>
+<ul>
+<li>The left edge of the bird is to the left of the right edge of the pipe, and...</li>
+<li>The right edge of the bird is to the right of the left edge of the pipe, and...</li>
+<li>The top edge of the bird is above the bottom edge of the pipe segment</li>
+</ul>
+<img src="4.png">
+<img src="5.png">
+<img src="6.png">
+<img src="7.png">
+<p>The bird has collided with the bottom segment if...</p>
+<ul>
+<li>The left edge of the bird is to the left of the right edge of the pipe, and...</li>
+<li>The right edge of the bird is to the right of the left edge of the pipe, and...</li>
+<li>The bottom edge of the bird is below the top edge of the pipe segment</li>
+</ul>
+<img src="8.png">
+<img src="9.png">
+<h2>Coding</h2>
+<h3>Drawing the background</h3>
+<p>A blue rectangle is drawn for the background.</p>
+<p><a class="fullcodelink" target="_blank" href="1.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(
+            (<span class="literal">0</span>, <span class="literal">0</span>),
+            (<span class="literal">300</span>, <span class="literal">388</span>)
+        ),
+        <span class="name">color</span>=(<span class="literal">35</span>, <span class="literal">92</span>, <span class="literal">118</span>)
+    )
+</pre></div>
+<img src="10.png">
+<h3>Drawing the bird</h3>
+<p>A yellow rectangle is drawn for the bird.</p>
+<p><a class="fullcodelink" target="_blank" href="2.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(
+            (<span class="literal">62</span>, <span class="literal">200</span>),
+            (<span class="literal">30</span>, <span class="literal">25</span>)
+        ),
+        <span class="name">color</span>=(<span class="literal">224</span>, <span class="literal">214</span>, <span class="literal">68</span>)
+    )
+</pre></div>
+<img src="11.png">
+<h3>Moving the bird</h3>
+<p>The bird's Y position is made into a variable, and every frame it increases by 30 multiplied by <span class="inlinecode"><span class="name">dt</span></span>, making the bird move down 30 pixels per second.</p>
+<p><a class="fullcodelink" target="_blank" href="3.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="name">bird_y</span> = <span class="literal">200</span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">bird_y</span>
+
+    <span class="name">bird_y</span> += <span class="literal">30</span> * <span class="name">dt</span>
+
+def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(
+            (<span class="literal">62</span>, <span class="highlight"><span class="name">bird_y</span></span>),
+            (<span class="literal">30</span>, <span class="literal">25</span>)
+        ),
+        <span class="name">color</span>=(<span class="literal">224</span>, <span class="literal">214</span>, <span class="literal">68</span>)
+    )
+</pre></div>
+<img src="12.png">
+<h3>Gravity</h3>
+<p>Instead of moving at a constant speed, the number added to the bird's Y position also increases over time.</p>
+<p>The bird's speed is made into a variable which starts at 0, and every frame it increases by 516 multiplied by <span class="inlinecode"><span class="name">dt</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="4.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="name">bird_y</span> = <span class="literal">200</span>
+<span class="highlight"><span class="name">bird_y_speed</span> = <span class="literal">0</span></span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">bird_y</span>
+    <span class="highlight">global <span class="name">bird_y_speed</span></span>
+
+    <span class="highlight"><span class="name">bird_y_speed</span> += <span class="literal">516</span> * <span class="name">dt</span></span>
+    <span class="name">bird_y</span> += <span class="highlight"><span class="name">bird_y_speed</span></span> * <span class="name">dt</span>
+</pre></div>
+<h3>Flapping</h3>
+<p>Pressing any key sets the bird's speed to a negative number so that it moves upwards.</p>
+<p><a class="fullcodelink" target="_blank" href="5.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">on_key_down</span>():
+    global <span class="name">bird_y_speed</span>
+
+    <span class="name">bird_y_speed</span> = -<span class="literal">165</span>
+</pre></div>
+<h3>Preventing flapping when above the playing area</h3>
+<p>So that the bird can't fly completely above the playing area, flapping is only possible if the top edge of the bird is not above the playing area.</p>
+<p><a class="fullcodelink" target="_blank" href="6.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">on_key_down</span>():
+    global <span class="name">bird_y_speed</span>
+
+    <span class="highlight">if <span class="name">bird_y</span> > <span class="literal">0</span>:</span>
+        <span class="name">bird_y_speed</span> = -<span class="literal">165</span>
+</pre></div>
+<h3>Drawing a pipe</h3>
+<p>For now, a solid rectangle is drawn for the pipe, with its left edge touching the playing area's right edge.</p>
+<p>The width and height of the playing area are reused from drawing the background, so they are made into variables.</p>
+<p><a class="fullcodelink" target="_blank" href="7.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
+
+<span class="name">playing_area_width</span> = <span class="literal">300</span>
+<span class="name">playing_area_height</span> = <span class="literal">388</span>
+
+def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(
+            (<span class="literal">0</span>, <span class="literal">0</span>),
+            (<span class="highlight"><span class="name">playing_area_width</span></span>, <span class="highlight"><span class="name">playing_area_height</span></span>)
+        ),
+        <span class="name">color</span>=(<span class="literal">35</span>, <span class="literal">92</span>, <span class="literal">118</span>)
+    )
+
+    <span class="comment"># etc.</span>
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(
+            (<span class="name">playing_area_width</span>, <span class="literal">0</span>),
+            (<span class="literal">54</span>, <span class="name">playing_area_height</span>)
+        ),
+        <span class="name">color</span>=(<span class="literal">94</span>, <span class="literal">201</span>, <span class="literal">72</span>)
+    )
+</pre></div>
+<img src="13.png">
+<h3>Drawing two pipe segments</h3>
+<p>Instead of drawing one rectangle, two rectangles are drawn for the upper and lower segments.</p>
+<p>The top rectangle's height is set to where the space between the two segments starts. For now, this is 150.</p>
+<p>The bottom rectangle starts at the Y position of the top rectangle's height plus the amount of space between them (which is 100).</p>
+<p>The bottom rectangle's height is the playing area's height, minus the height of the top rectangle and the space.</p>
+<p>The pipe width is the same for both segments, so it is made into a variable.</p>
+<p><a class="fullcodelink" target="_blank" href="8.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="name">pipe_width</span> = <span class="literal">54</span>
+    <span class="name">pipe_space_height</span> = <span class="literal">100</span>
+    <span class="name">pipe_space_y</span> = <span class="literal">150</span>
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(
+            (<span class="name">playing_area_width</span>, <span class="literal">0</span>),
+            (<span class="highlight"><span class="name">pipe_width</span></span>, <span class="highlight"><span class="name">pipe_space_y</span></span>)
+        ),
+        <span class="name">color</span>=(<span class="literal">94</span>, <span class="literal">201</span>, <span class="literal">72</span>)
+    )
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(
+            (<span class="name">playing_area_width</span>, <span class="name">pipe_space_y</span> + <span class="name">pipe_space_height</span>),
+            (<span class="name">pipe_width</span>, <span class="name">playing_area_height</span> - <span class="name">pipe_space_y</span> - <span class="name">pipe_space_height</span>)
+        ),
+        <span class="name">color</span>=(<span class="literal">94</span>, <span class="literal">201</span>, <span class="literal">72</span>)
+    )
+</pre></div>
+<img src="14.png">
+<h3>Randomizing the space position</h3>
+<p>The pipe's space position is set to a random number between 0 (the top of the playing area) and the playing area height minus the space height (so that the bottom of the space would be touching the bottom of the playing area).</p>
+<p>The <b>random</b> module is imported so that <span class="inlinecode"><span class="name">random.randint</span></span> can be used.</p>
+<p>The pipe's space position should be set only once, so it is moved to be global. Setting the pipe's space position requires the space's height, so it is also moved to be global.</p>
+<p>To test this, the code for setting the pipe's space position is copied into <span class="inlinecode"><span class="name">on_key_down</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="9.html">Full code at this point</a></p><div class="pre"><pre class="code">import <span class="name">random</span>
+
+<span class="comment"># etc.</span>
+
+<span class="name">pipe_space_height</span> = <span class="literal">100</span>
+<span class="name">pipe_space_y</span> = <span class="call">random.randint</span>(<span class="literal">0</span>, <span class="name">playing_area_height</span> - <span class="name">pipe_space_height</span>)
+
+def <span class="name">on_key_down</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="comment"># Temporary</span>
+    global <span class="name">pipe_space_y</span>
+    <span class="name">pipe_space_y</span> = <span class="call">random.randint</span>(<span class="literal">0</span>, <span class="name">playing_area_height</span> - <span class="name">pipe_space_height</span>)
+
+def <span class="name">draw</span>():
+    <span class="comment"># Moved: pipe_space_y = 150</span>
+    <span class="comment"># Moved: pipe_space_height = 100</span>
+</pre></div>
+<img src="15.png">
+<h3>The space's minimum distance from top/bottom</h3>
+<p>So that there is some distance between the top/bottom of the playing area and the space, a minimum number is added/subtracted from the random minimum/maximum values.</p>
+<p><a class="fullcodelink" target="_blank" href="10.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
+
+<span class="name">pipe_space_y_min</span> = <span class="literal">54</span>
+<span class="name">pipe_space_y</span> = <span class="call">random.randint</span>(
+    <span class="highlight"><span class="name">pipe_space_y_min</span></span>,
+    <span class="name">playing_area_height</span> - <span class="name">pipe_space_height</span> <span class="highlight">- <span class="name">pipe_space_y_min</span></span>
+)
+
+def <span class="name">on_key_down</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="comment"># Temporary</span>
+    global <span class="name">pipe_space_y</span>
+    <span class="name">pipe_space_y</span> = <span class="call">random.randint</span>(
+        <span class="highlight"><span class="name">pipe_space_y_min</span></span>,
+        <span class="name">playing_area_height</span> - <span class="name">pipe_space_height</span> <span class="highlight">- <span class="name">pipe_space_y_min</span></span>
+    )
+</pre></div>
+<img src="16.png">
+<h3>Moving the pipe</h3>
+<p>The pipe's X position is made into a variable, and is moved left 60 pixels per second.</p>
+<p><a class="fullcodelink" target="_blank" href="11.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
+
+<span class="name">pipe_x</span> = <span class="name">playing_area_width</span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
+    global <span class="name">pipe_x</span>
+
+    <span class="comment"># etc.</span>
+
+    <span class="name">pipe_x</span> -= <span class="literal">60</span> * <span class="name">dt</span>
+
+def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(
+            (<span class="highlight"><span class="name">pipe_x</span></span>, <span class="literal">0</span>),
+            (<span class="name">pipe_width</span>, <span class="name">pipe_space_y</span>)
+        ),
+        <span class="name">color</span>=(<span class="literal">94</span>, <span class="literal">201</span>, <span class="literal">72</span>)
+    )
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(
+            (<span class="highlight"><span class="name">pipe_x</span></span>, <span class="name">pipe_space_y</span> + <span class="name">pipe_space_height</span>),
+            (<span class="name">pipe_width</span>, <span class="name">playing_area_height</span> - <span class="name">pipe_space_y</span> - <span class="name">pipe_space_height</span>)
+        ),
+        <span class="name">color</span>=(<span class="literal">94</span>, <span class="literal">201</span>, <span class="literal">72</span>)
+    )
+</pre></div>
+<img src="17.png">
+<h3>Resetting the pipe</h3>
+<p>When the pipe goes out of the playing area, its X position is reset and it gets a new random space position.</p>
+<p>Determining if the pipe has gone out of the playing area requires knowing the pipe's width, which is reused from drawing the pipe, so the pipe's width is moved to be global.</p>
+<p>Setting the initial X position of the pipe and its random space position is reused, so a function is made.</p>
+<p><a class="fullcodelink" target="_blank" href="12.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
+
+<span class="name">bird_y</span> = <span class="literal">200</span>
+<span class="name">bird_y_speed</span> = <span class="literal">0</span>
+
+<span class="name">playing_area_width</span> = <span class="literal">300</span>
+<span class="name">playing_area_height</span> = <span class="literal">388</span>
+
+<span class="name">pipe_space_height</span> = <span class="literal">100</span>
+<span class="highlight"><span class="name">pipe_width</span> = <span class="literal">54</span></span>
+
+<span class="highlight">def <span class="name">reset_pipe</span>():</span>
+    <span class="highlight">global <span class="name">pipe_space_y</span></span>
+    <span class="highlight">global <span class="name">pipe_x</span></span>
+
+    <span class="name">pipe_space_y_min</span> = <span class="literal">54</span>
+    <span class="name">pipe_space_y</span> = <span class="call">random.randint</span>(
+        <span class="name">pipe_space_y_min</span>,
+        <span class="name">playing_area_height</span> - <span class="name">pipe_space_height</span> - <span class="name">pipe_space_y_min</span>
+    )
+
+    <span class="name">pipe_x</span> = <span class="name">playing_area_width</span>
+
+<span class="highlight"><span class="call">reset_pipe</span>()</span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
+
+    if (<span class="name">pipe_x</span> + <span class="name">pipe_width</span>) < <span class="literal">0</span>:
+        <span class="call">reset_pipe</span>()
+
+def <span class="name">draw</span>():
+    <span class="comment"># Moved: pipe_width = 54</span>
+</pre></div>
+<h3>Colliding with the top pipe segment</h3>
+<p>The bird is colliding with the top pipe segment if...</p>
+<ul>
+<li>the left edge of the bird is to the left of the right edge of the pipe (i.e. the bird is not completely past the pipe on the right side), and...</li>
+<li>the right edge of the bird is to the left of the pipe (i.e. the bird is not completely to the left of the pipe), and...</li>
+<li>the top edge of the bird is above the bottom edge of the pipe segment (i.e. the bird is not completely below the pipe segment)</li>
+</ul>
+<p>For now, <span class="inlinecode"><span class="name">reset_pipe</span></span> is called when the bird and pipe collide.</p>
+<p>The bird's X position and width are reused from drawing the bird, so they are made into variables.</p>
+<p><a class="fullcodelink" target="_blank" href="13.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
+
+<span class="name">bird_x</span> = <span class="literal">62</span>
+<span class="name">bird_width</span> = <span class="literal">30</span>
+
+<span class="comment"># etc.</span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
+
+    if (
+        <span class="comment"># Left edge of bird is to the left of the right edge of pipe</span>
+        <span class="name">bird_x</span> < (<span class="name">pipe_x</span> + <span class="name">pipe_width</span>)
+        and
+        <span class="comment"># Right edge of bird is to the right of the left edge of pipe</span>
+        (<span class="name">bird_x</span> + <span class="name">bird_width</span>) > <span class="name">pipe_x</span>
+        and
+        <span class="comment"># Top edge of bird is above the bottom edge of first pipe segment</span>
+        <span class="name">bird_y</span> < <span class="name">pipe_space_y</span>
+    ):
+        <span class="comment"># Temporary</span>
+        <span class="call">reset_pipe</span>()
+
+def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(
+            (<span class="highlight"><span class="name">bird_x</span></span>, <span class="name">bird_y</span>),
+            (<span class="highlight"><span class="name">bird_width</span></span>, <span class="literal">25</span>)
+        ),
+        <span class="name">color</span>=(<span class="literal">224</span>, <span class="literal">214</span>, <span class="literal">68</span>)
+    )
+
+    <span class="comment"># etc.</span>
+</pre></div>
+<h3>Colliding with the bottom pipe segment</h3>
+<p>The bird is colliding with the bottom pipe segment if...</p>
+<ul>
+<li>the bird is overlapping the pipe on the X axis (as checked for with the top pipe segment), and...</li>
+<li>the bottom edge of the bird is above the top edge of the pipe segment (i.e. the bird is not completely above the pipe segment)</li>
+</ul>
+<p>The bird's height is reused from drawing the bird, so it is made into a variable.</p>
+<p><a class="fullcodelink" target="_blank" href="14.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
+
+<span class="name">bird_height</span> = <span class="literal">25</span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
+
+    if (
+        <span class="comment"># Left edge of bird is to the left of the right edge of pipe</span>
+        <span class="name">bird_x</span> < (<span class="name">pipe_x</span> + <span class="name">pipe_width</span>)
+        and
+        <span class="comment"># Right edge of bird is to the right of the left edge of pipe</span>
+        (<span class="name">bird_x</span> + <span class="name">bird_width</span>) > <span class="name">pipe_x</span>
+        and <span class="highlight">(</span>
+            <span class="comment"># Top edge of bird is above the bottom edge of first pipe segment</span>
+            <span class="name">bird_y</span> < <span class="name">pipe_space_y</span>
+            <span class="highlight">or</span>
+            <span class="highlight"><span class="comment"># Bottom edge of bird is below the top edge of second pipe segment</span></span>
+            <span class="highlight">(<span class="name">bird_y</span> + <span class="name">bird_height</span>) > (<span class="name">pipe_space_y</span> + <span class="name">pipe_space_height</span>)</span>
+        <span class="highlight">)</span>
+    ):
+        <span class="comment"># Temporary</span>
+        <span class="call">reset_pipe</span>()
+
+def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(
+            (<span class="name">bird_x</span>, <span class="name">bird_y</span>),
+            (<span class="name">bird_width</span>, <span class="highlight"><span class="name">bird_height</span></span>)
+        ),
+        <span class="name">color</span>=(<span class="literal">224</span>, <span class="literal">214</span>, <span class="literal">68</span>)
+    )
+</pre></div>
+<h3>Drawing two pipes</h3>
+<p>Each pipe has its own X position and space position.</p>
+<p>For now, these are manually set for each pipe.</p>
+<p>The pipe drawing code is turned into a function which takes a pipe's X position and space position.</p>
+<p><a class="fullcodelink" target="_blank" href="15.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
+
+<span class="name">pipe_1_x</span> = <span class="literal">100</span>
+<span class="name">pipe_1_space_y</span> = <span class="literal">100</span>
+
+<span class="name">pipe_2_x</span> = <span class="literal">200</span>
+<span class="name">pipe_2_space_y</span> = <span class="literal">200</span>
+
+def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="highlight">def <span class="name">draw_pipe</span>(<span class="name">pipe_x</span>, <span class="name">pipe_space_y</span>):</span>
+        <span class="call">screen.draw.filled_rect</span>(
+            <span class="call">Rect</span>(
+                (<span class="name">pipe_x</span>, <span class="literal">0</span>),
+                (<span class="name">pipe_width</span>, <span class="name">pipe_space_y</span>)
+            ),
+            <span class="name">color</span>=(<span class="literal">94</span>, <span class="literal">201</span>, <span class="literal">72</span>)
+        )
+
+        <span class="call">screen.draw.filled_rect</span>(
+            <span class="call">Rect</span>(
+                (<span class="name">pipe_x</span>, <span class="name">pipe_space_y</span> + <span class="name">pipe_space_height</span>),
+                (<span class="name">pipe_width</span>, <span class="name">playing_area_height</span> - <span class="name">pipe_space_y</span> - <span class="name">pipe_space_height</span>)
+            ),
+            <span class="name">color</span>=(<span class="literal">94</span>, <span class="literal">201</span>, <span class="literal">72</span>)
+        )
+
+    <span class="highlight"><span class="call">draw_pipe</span>(<span class="name">pipe_1_x</span>, <span class="name">pipe_1_space_y</span>)</span>
+    <span class="highlight"><span class="call">draw_pipe</span>(<span class="name">pipe_2_x</span>, <span class="name">pipe_2_space_y</span>)</span>
+</pre></div>
+<img src="18.png">
+<h3>Randomizing space position for two pipes</h3>
+<p>Because each pipe has an individual X position, setting the X position is removed from the <span class="inlinecode"><span class="name">reset_pipe</span></span> function, leaving only the random space position. The function is renamed to <span class="inlinecode"><span class="name">new_pipe_space_y</span></span> to reflect this.</p>
+<p>Instead of creating a global <span class="inlinecode"><span class="name">pipe_space_y</span></span> variable, the function returns a new space position.</p>
+<p>Because the variables <span class="inlinecode"><span class="name">pipe_x</span></span>, <span class="inlinecode"><span class="name">pipe_space_y</span></span> and <span class="inlinecode"><span class="name">reset_pipe</span></span> no longer exist, the parts of the <span class="inlinecode"><span class="name">update</span></span> function which use them are commented out.</p>
+<p>To test the random space positions, the pipes get new space positions when a key is pressed.</p>
+<p><a class="fullcodelink" target="_blank" href="16.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="highlight"><span class="name">new_pipe_space_y</span></span>():
+    <span class="comment"># Removed: global pipe_space_y</span>
+    <span class="comment"># Removed: global pipe_x</span>
+
+    <span class="name">pipe_space_y_min</span> = <span class="literal">54</span>
+    <span class="name">pipe_space_y</span> = <span class="call">random.randint</span>(
+        <span class="name">pipe_space_y_min</span>,
+        <span class="name">playing_area_height</span> - <span class="name">pipe_space_height</span> - <span class="name">pipe_space_y_min</span>
+    )
+
+    <span class="comment"># Removed: pipe_x = playing_area_width</span>
+
+    <span class="highlight">return <span class="name">pipe_space_y</span></span>
+
+<span class="comment"># Removed: reset_pipe()</span>
+
+<span class="name">pipe_1_x</span> = <span class="literal">100</span>
+<span class="name">pipe_1_space_y</span> = <span class="highlight"><span class="call">new_pipe_space_y</span>()</span>
+
+<span class="name">pipe_2_x</span> = <span class="literal">200</span>
+<span class="name">pipe_2_space_y</span> = <span class="highlight"><span class="call">new_pipe_space_y</span>()</span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">bird_y</span>
+    global <span class="name">bird_y_speed</span>
+    <span class="comment"># Removed: global pipe_x</span>
+
+    <span class="name">bird_y_speed</span> += <span class="literal">516</span> * <span class="name">dt</span>
+    <span class="name">bird_y</span> += <span class="name">bird_y_speed</span> * <span class="name">dt</span>
+
+<span class="comment">##    pipe_x -= 60 * dt</span>
+<span class="comment">##</span>
+<span class="comment">##    if (pipe_x + pipe_width) < 0:</span>
+<span class="comment">##        reset_pipe()</span>
+<span class="comment">##</span>
+<span class="comment">##    if (</span>
+<span class="comment">##        # Left edge of bird is to the left of the right edge of pipe</span>
+<span class="comment">##        bird_x < (pipe_x + pipe_width)</span>
+<span class="comment">##        and</span>
+<span class="comment">##        # Right edge of bird is to the right of the left edge of pipe</span>
+<span class="comment">##        (bird_x + bird_width) > pipe_x</span>
+<span class="comment">##        and (</span>
+<span class="comment">##            # Top edge of bird is above the bottom edge of first pipe segment</span>
+<span class="comment">##            bird_y < pipe_space_y</span>
+<span class="comment">##            or</span>
+<span class="comment">##            # Bottom edge of bird is below the top edge of second pipe segment</span>
+<span class="comment">##            (bird_y + bird_height) > (pipe_space_y + pipe_space_height)</span>
+<span class="comment">##        )</span>
+<span class="comment">##    ):</span>
+<span class="comment">##        # Temporary</span>
+<span class="comment">##        reset_pipe()</span>
+
+def <span class="name">on_key_down</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="comment"># Temporary</span>
+    global <span class="name">pipe_1_space_y</span>
+    global <span class="name">pipe_2_space_y</span>
+    <span class="name">pipe_1_space_y</span> = <span class="call">new_pipe_space_y</span>()
+    <span class="name">pipe_2_space_y</span> = <span class="call">new_pipe_space_y</span>()
+</pre></div>
+<img src="19.png">
+<h3>Moving two pipes</h3>
+<p>The code which moves the pipe is uncommented and turned into a function which takes a pipe's X position and space position, and returns the updated positions.</p>
+<p>When a pipe moves out of the playing area, its position is set to be at the right of the playing area.</p>
+<p><a class="fullcodelink" target="_blank" href="17.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">bird_y</span>
+    global <span class="name">bird_y_speed</span>
+    <span class="highlight">global <span class="name">pipe_1_x</span></span>
+    <span class="highlight">global <span class="name">pipe_2_x</span></span>
+    <span class="highlight">global <span class="name">pipe_1_space_y</span></span>
+    <span class="highlight">global <span class="name">pipe_2_space_y</span></span>
+
+    <span class="name">bird_y_speed</span> += <span class="literal">516</span> * <span class="name">dt</span>
+    <span class="name">bird_y</span> += <span class="name">bird_y_speed</span> * <span class="name">dt</span>
+
+    <span class="highlight">def <span class="name">move_pipe</span>(<span class="name">pipe_x</span>, <span class="name">pipe_space_y</span>):</span>
+        <span class="name">pipe_x</span> -= <span class="literal">60</span> * <span class="name">dt</span>
+
+        if (<span class="name">pipe_x</span> + <span class="name">pipe_width</span>) < <span class="literal">0</span>:
+            <span class="highlight"><span class="name">pipe_x</span> = <span class="name">playing_area_width</span></span>
+            <span class="highlight"><span class="name">pipe_space_y</span> = <span class="call">new_pipe_space_y</span>()</span>
+
+        <span class="highlight">return <span class="name">pipe_x</span>, <span class="name">pipe_space_y</span></span>
+
+    <span class="highlight"><span class="name">pipe_1_x</span>, <span class="name">pipe_1_space_y</span> = <span class="call">move_pipe</span>(<span class="name">pipe_1_x</span>, <span class="name">pipe_1_space_y</span>)</span>
+    <span class="highlight"><span class="name">pipe_2_x</span>, <span class="name">pipe_2_space_y</span> = <span class="call">move_pipe</span>(<span class="name">pipe_2_x</span>, <span class="name">pipe_2_space_y</span>)</span>
+
+<span class="comment">##    if (</span>
+<span class="comment">##        # Left edge of bird is to the left of the right edge of pipe</span>
+<span class="comment">##        bird_x < (pipe_x + pipe_width)</span>
+<span class="comment">##        and</span>
+<span class="comment">##        # Right edge of bird is to the right of the left edge of pipe</span>
+<span class="comment">##        (bird_x + bird_width) > pipe_x</span>
+<span class="comment">##        and (</span>
+<span class="comment">##            # Top edge of bird is above the bottom edge of first pipe segment</span>
+<span class="comment">##            bird_y < pipe_space_y</span>
+<span class="comment">##            or</span>
+<span class="comment">##            # Bottom edge of bird is below the top edge of second pipe segment</span>
+<span class="comment">##            (bird_y + bird_height) > (pipe_space_y + pipe_space_height)</span>
+<span class="comment">##        )</span>
+<span class="comment">##    ):</span>
+<span class="comment">##        # Temporary</span>
+<span class="comment">##        reset_pipe()</span>
+</pre></div>
+<img src="20.png">
+<h3>Initial X position for pipes</h3>
+<p>The first pipe's initial X position is set to the width of the playing area (i.e. the pipe's left edge is touching the right edge of the playing area).</p>
+<p>The second pipe's initial X position is set so that there is an even space between it and the other pipe on either side.</p>
+<p>The total distance that a pipe travels from the of the right of the playing area to left is the width of the playing area plus the width of the pipe.</p>
+<p>The second pipe's initial X position is set to the playing area width plus half the total distance, so that the two pipes are spaced evenly apart.</p>
+<p><a class="fullcodelink" target="_blank" href="18.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
+
+<span class="name">pipe_1_x</span> = <span class="highlight"><span class="name">playing_area_width</span></span>
+<span class="name">pipe_1_space_y</span> = <span class="call">new_pipe_space_y</span>()
+
+<span class="name">pipe_2_x</span> = <span class="highlight"><span class="name">playing_area_width</span> + ((<span class="name">playing_area_width</span> + <span class="name">pipe_width</span>) / <span class="literal">2</span>)</span>
+<span class="name">pipe_2_space_y</span> = <span class="call">new_pipe_space_y</span>()
+</pre></div>
+<img src="21.png">
+<h3>Bird colliding with pipe</h3>
+<p>The code for the checking if the bird and pipe have collided is uncommented and turned into a function which takes a pipe's X position and space position and returns a boolean value.</p>
+<p>The function is called for both pipes.</p>
+<p>For now, when the bird collides with a pipe, the position of both pipes are reset.</p>
+<p><a class="fullcodelink" target="_blank" href="19.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
+
+    <span class="highlight">def <span class="name">is_bird_colliding_with_pipe</span>(<span class="name">pipe_x</span>, <span class="name">pipe_space_y</span>):</span>
+        <span class="highlight">return</span> (
+            <span class="comment"># Left edge of bird is to the left of the right edge of pipe</span>
+            <span class="name">bird_x</span> < (<span class="name">pipe_x</span> + <span class="name">pipe_width</span>)
+            and
+            <span class="comment"># Right edge of bird is to the right of the left edge of pipe</span>
+            (<span class="name">bird_x</span> + <span class="name">bird_width</span>) > <span class="name">pipe_x</span>
+            and (
+                <span class="comment"># Top edge of bird is above the bottom edge of first pipe segment</span>
+                <span class="name">bird_y</span> < <span class="name">pipe_space_y</span>
+                or
+                <span class="comment"># Bottom edge of bird is below the top edge of second pipe segment</span>
+                (<span class="name">bird_y</span> + <span class="name">bird_height</span>) > (<span class="name">pipe_space_y</span> + <span class="name">pipe_space_height</span>)
+            )
+        )
+
+    <span class="highlight">if (</span>
+    <span class="highlight">    <span class="call">is_bird_colliding_with_pipe</span>(<span class="name">pipe_1_x</span>, <span class="name">pipe_1_space_y</span>)</span>
+    <span class="highlight">    or <span class="call">is_bird_colliding_with_pipe</span>(<span class="name">pipe_2_x</span>, <span class="name">pipe_2_space_y</span>)</span>
+    <span class="highlight">):</span>
+        <span class="highlight"><span class="name">pipe_1_x</span> = <span class="name">playing_area_width</span></span>
+        <span class="highlight"><span class="name">pipe_2_x</span> = <span class="name">playing_area_width</span> + ((<span class="name">playing_area_width</span> + <span class="name">pipe_width</span>) / <span class="literal">2</span>)</span>
+</pre></div>
+<h3>Resetting the game</h3>
+<p>A function is made which sets the initial state of the game.</p>
+<p>This function is called before the game begins and when the bird collides with a pipe.</p>
+<p><a class="fullcodelink" target="_blank" href="20.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="name">bird_x</span> = <span class="literal">62</span>
+<span class="name">bird_width</span> = <span class="literal">30</span>
+<span class="name">bird_height</span> = <span class="literal">25</span>
+
+<span class="name">playing_area_width</span> = <span class="literal">300</span>
+<span class="name">playing_area_height</span> = <span class="literal">388</span>
+
+<span class="name">pipe_space_height</span> = <span class="literal">100</span>
+<span class="name">pipe_width</span> = <span class="literal">54</span>
+
+def <span class="name">new_pipe_space_y</span>():
+    <span class="name">pipe_space_y_min</span> = <span class="literal">54</span>
+    <span class="name">pipe_space_y</span> = <span class="call">random.randint</span>(
+        <span class="name">pipe_space_y_min</span>,
+        <span class="name">playing_area_height</span> - <span class="name">pipe_space_height</span> - <span class="name">pipe_space_y_min</span>
+    )
+
+    return <span class="name">pipe_space_y</span>
+
+<span class="highlight">def <span class="name">reset</span>():</span>
+    <span class="highlight">global <span class="name">bird_y</span></span>
+    <span class="highlight">global <span class="name">bird_y_speed</span></span>
+    <span class="highlight">global <span class="name">pipe_1_x</span></span>
+    <span class="highlight">global <span class="name">pipe_1_space_y</span></span>
+    <span class="highlight">global <span class="name">pipe_2_x</span></span>
+    <span class="highlight">global <span class="name">pipe_2_space_y</span></span>
+
+    <span class="name">bird_y</span> = <span class="literal">200</span>
+    <span class="name">bird_y_speed</span> = <span class="literal">0</span>
+
+    <span class="name">pipe_1_x</span> = <span class="name">playing_area_width</span>
+    <span class="name">pipe_1_space_y</span> = <span class="call">new_pipe_space_y</span>()
+
+    <span class="name">pipe_2_x</span> = <span class="name">playing_area_width</span> + ((<span class="name">playing_area_width</span> + <span class="name">pipe_width</span>) / <span class="literal">2</span>)
+    <span class="name">pipe_2_space_y</span> = <span class="call">new_pipe_space_y</span>()
+
+<span class="highlight"><span class="call">reset</span>()</span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
+
+    if (
+        <span class="call">is_bird_colliding_with_pipe</span>(<span class="name">pipe_1_x</span>, <span class="name">pipe_1_space_y</span>)
+        or <span class="call">is_bird_colliding_with_pipe</span>(<span class="name">pipe_2_x</span>, <span class="name">pipe_2_space_y</span>)
+    ):
+        <span class="highlight"><span class="call">reset</span>()</span>
+</pre></div>
+<h3>Bird falling out of the playing area</h3>
+<p>The game is also reset if the bird has fallen out of the playing area (i.e. the bird's top edge is below the bottom edge of the playing area).</p>
+<p><a class="fullcodelink" target="_blank" href="21.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
+
+    if (
+        <span class="call">is_bird_colliding_with_pipe</span>(<span class="name">pipe_1_x</span>, <span class="name">pipe_1_space_y</span>)
+        or <span class="call">is_bird_colliding_with_pipe</span>(<span class="name">pipe_2_x</span>, <span class="name">pipe_2_space_y</span>)
+        <span class="highlight">or <span class="name">bird_y</span> > <span class="name">playing_area_height</span></span>
+    ):
+        <span class="call">reset</span>()
+</pre></div>
+<h3>Drawing the score</h3>
+<p>The score is initially set to 0 and is drawn.</p>
+<p><a class="fullcodelink" target="_blank" href="22.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">reset</span>():
+    <span class="comment"># etc.</span>
+    global <span class="name">score</span>
+
+    <span class="comment"># etc.</span>
+
+    <span class="name">score</span> = <span class="literal">0</span>
+
+def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="call">screen.draw.text</span>(<span class="call">str</span>(<span class="name">score</span>), (<span class="literal">15</span>, <span class="literal">15</span>))
+</pre></div>
+<img src="22.png">
+<h3>Updating the score after passing the first pipe</h3>
+<p>If the bird's left edge is to the right of the pipe's right edge, then 1 is added to the score.</p>
+<p>Currently, this happens every frame instead of just once, so the score will increase too much, and only the first pipe is checked.</p>
+<p><a class="fullcodelink" target="_blank" href="23.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
+    global <span class="name">score</span>
+
+    <span class="comment"># etc.</span>
+
+    if <span class="name">bird_x</span> > (<span class="name">pipe_1_x</span> + <span class="name">pipe_width</span>):
+        <span class="name">score</span> += <span class="literal">1</span>
+</pre></div>
+<img src="23.png">
+<h3>Updating the score once for both pipes</h3>
+<p>A number representing which pipe is upcoming is stored in a variable and the bird is checked to see if it has passed a pipe only when that particular pipe is the upcoming pipe.</p>
+<p>When it has passed it, the upcoming pipe is set to the other pipe.</p>
+<p><a class="fullcodelink" target="_blank" href="24.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">reset</span>():
+    global <span class="name">upcoming_pipe</span>
+    <span class="comment"># etc.</span>
+
+    <span class="name">upcoming_pipe</span> = <span class="literal">1</span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">upcoming_pipe</span>
+    <span class="comment"># etc.</span>
+
+    if <span class="highlight">(</span>
+        <span class="highlight"><span class="name">upcoming_pipe</span> == <span class="literal">1</span></span>
+        <span class="highlight">and</span> <span class="name">bird_x</span> > (<span class="name">pipe_1_x</span> + <span class="name">pipe_width</span>)
+    <span class="highlight">)</span>:
+        <span class="name">score</span> += <span class="literal">1</span>
+        <span class="highlight"><span class="name">upcoming_pipe</span> = <span class="literal">2</span></span>
+
+    if <span class="highlight">(</span>
+        <span class="highlight"><span class="name">upcoming_pipe</span> == <span class="literal">2</span></span>
+        <span class="highlight">and</span> <span class="name">bird_x</span> > (<span class="highlight"><span class="name">pipe_2_x</span></span> + <span class="name">pipe_width</span>)
+    <span class="highlight">)</span>:
+        <span class="name">score</span> += <span class="literal">1</span>
+        <span class="highlight"><span class="name">upcoming_pipe</span> = <span class="literal">1</span></span>
+</pre></div>
+<img src="24.png">
+<h3>Simplifying code</h3>
+<p>The only differences between updating the score for the first and second pipes are the currently upcoming pipe, the pipe's X position, and the next upcoming pipe.</p>
+<p>A function is made with these values as parameters.</p>
+<p><a class="fullcodelink" target="_blank" href="25.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
+
+    <span class="highlight">def <span class="name">update_score_and_closest_pipe</span>(<span class="name">this_pipe</span>, <span class="name">pipe_x</span>, <span class="name">other_pipe</span>):</span>
+        <span class="highlight">global <span class="name">upcoming_pipe</span></span>
+        <span class="highlight">global <span class="name">score</span></span>
+
+        if (
+            <span class="name">upcoming_pipe</span> == <span class="highlight"><span class="name">this_pipe</span></span>
+            and <span class="name">bird_x</span> > (<span class="highlight"><span class="name">pipe_x</span></span> + <span class="name">pipe_width</span>)
+        ):
+            <span class="name">score</span> += <span class="literal">1</span>
+            <span class="name">upcoming_pipe</span> = <span class="highlight"><span class="name">other_pipe</span></span>
+
+    <span class="highlight"><span class="call">update_score_and_closest_pipe</span>(<span class="literal">1</span>, <span class="name">pipe_1_x</span>, <span class="literal">2</span>)</span>
+    <span class="highlight"><span class="call">update_score_and_closest_pipe</span>(<span class="literal">2</span>, <span class="name">pipe_2_x</span>, <span class="literal">1</span>)</span>
+</pre></div>
+</div></body></html>

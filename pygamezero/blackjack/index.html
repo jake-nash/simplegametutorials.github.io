@@ -1,0 +1,983 @@
+<html><head><title>Blackjack Tutorial for Python and Pygame Zero 1.2</title>
+<link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet">
+<style>
+body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    body {
+    background: #fff;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+a {
+    color: #059dc5;
+    text-decoration: none;
+    font-weight: 700;
+}
+a:hover {
+    text-decoration: underline;
+}
+h1 {
+    font-size: 60px;
+    margin: 0;
+}
+h2 {
+    font-size: 30px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #de53b3;
+    margin-bottom: 0;
+    display: inline-block;
+}
+h3 {
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 45px;
+    color: #fff;
+    background: #734590;
+    max-width: 695px;
+}
+td {
+    padding-right: 10px
+}
+pre {
+    margin-top: 0;
+    min-width: 695px;
+    margin-bottom: 10px;
+}
+.pre {
+    display: table;
+    margin-top: 16px;
+}
+table {
+    margin-top: 16px;
+}
+img {
+    display: block;
+    margin: 14px 0;
+}
+td img {
+    margin: 0;
+}
+.inlinecode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    color: #555;
+}
+.code {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    background: #fff;
+    color: #555;
+    padding: 12px;
+}
+.console {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 16px;
+    background: #333;
+    border-radius: 8px;
+    border: 1px solid #777;
+    color: #eee;
+}
+h2 + h3 {
+    margin-top: 20px;
+}
+.download {
+    font-size: 24px;
+    font-weight: 700;
+}
+.subheading {
+    font-size: 24px;
+    margin-top: 0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<p><a href="../../">Home page</a> > <a href="../">Pygame Zero tutorials</a></p><h1>Blackjack</h1><p class="subheading">A tutorial for Python and Pygame Zero 1.2</p><p>Please send any feedback to <a href="mailto:simple.game.tutorials@gmail.com">simple.game.tutorials@gmail.com</a></p><p><a href="blackjack.zip" class="download">Download blackjack.zip</a></p>
+<img src="1.png">
+<h2>Rules</h2>
+<p>The dealer and player are dealt two cards each. The dealer's first card is hidden from the player.</p>
+<p>The player can hit (i.e. take another card) or stand (i.e. stop taking cards).</p>
+<p>If the total value of the player's hand goes over 21, then they have gone bust.</p>
+<p>Face cards (king, queen and jack) have a value of 10, and aces have a value of 11 unless this would make the total value of the hand go above 21, in which case they have a value of 1.</p>
+<p>After the player has stood or gone bust, the dealer takes cards until the total of their hand is 17 or over.</p>
+<p>The round is then over, and the hand with the highest total (if the total is 21 or under) wins the round.</p>
+<h3>Controls</h3>
+<table>
+<tr><td><b>Left click</b></td><td>Click on hit or stand button</td></tr>
+</table>
+<h2>Overview</h2>
+<p>Each card is represented by a dictionary containing a string representing its suit, and a number representing its rank. Jacks, queens and kings are represented by the numbers 11, 12 and 13.</p>
+<p>The deck is represented by a list which initially contains one of every card.</p>
+<img src="2.png">
+<p>The player's and dealer's hands are represented by lists, and cards are removed from the deck at random positions and appended to their hands when they take cards.</p>
+<h2>Coding</h2>
+<h3>The deck of cards</h3>
+<p>Each card is represented by a dictionary containing a string representing its suit, and a number representing its rank. Jacks, queens and kings are represented by the numbers 11, 12 and 13.</p>
+<p>A list for the deck is created containing one of every card.</p>
+<p><a class="fullcodelink" target="_blank" href="1.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="name">deck</span> = []
+for <span class="name">suit</span> in (<span class="literal">'club'</span>, <span class="literal">'diamond'</span>, <span class="literal">'heart'</span>, <span class="literal">'spade'</span>):
+    for <span class="name">rank</span> in <span class="call">range</span>(<span class="literal">1</span>, <span class="literal">14</span>):
+        <span class="call">deck.append</span>({<span class="literal">'suit'</span>: <span class="name">suit</span>, <span class="literal">'rank'</span>: <span class="name">rank</span>})
+        <span class="comment"># Temporary</span>
+        <span class="call">print</span>(<span class="literal">'suit: '</span> + <span class="name">suit</span> + <span class="literal">', rank: '</span> + <span class="call">str</span>(<span class="name">rank</span>))
+
+<span class="comment"># Temporary</span>
+<span class="call">print</span>(<span class="literal">'Total number of cards in deck: '</span> + <span class="call">str</span>(<span class="call">len</span>(<span class="name">deck</span>)))
+</pre></div>
+<div class="pre"><pre class="console">
+suit: club, rank: 1
+suit: club, rank: 2
+suit: club, rank: 3
+suit: club, rank: 4
+suit: club, rank: 5
+suit: club, rank: 6
+suit: club, rank: 7
+suit: club, rank: 8
+suit: club, rank: 9
+suit: club, rank: 10
+suit: club, rank: 11
+suit: club, rank: 12
+suit: club, rank: 13
+suit: diamond, rank: 1
+suit: diamond, rank: 2
+suit: diamond, rank: 3
+suit: diamond, rank: 4
+suit: diamond, rank: 5
+suit: diamond, rank: 6
+suit: diamond, rank: 7
+suit: diamond, rank: 8
+suit: diamond, rank: 9
+suit: diamond, rank: 10
+suit: diamond, rank: 11
+suit: diamond, rank: 12
+suit: diamond, rank: 13
+suit: heart, rank: 1
+suit: heart, rank: 2
+suit: heart, rank: 3
+suit: heart, rank: 4
+suit: heart, rank: 5
+suit: heart, rank: 6
+suit: heart, rank: 7
+suit: heart, rank: 8
+suit: heart, rank: 9
+suit: heart, rank: 10
+suit: heart, rank: 11
+suit: heart, rank: 12
+suit: heart, rank: 13
+suit: spade, rank: 1
+suit: spade, rank: 2
+suit: spade, rank: 3
+suit: spade, rank: 4
+suit: spade, rank: 5
+suit: spade, rank: 6
+suit: spade, rank: 7
+suit: spade, rank: 8
+suit: spade, rank: 9
+suit: spade, rank: 10
+suit: spade, rank: 11
+suit: spade, rank: 12
+suit: spade, rank: 13
+Total number of cards in deck: 52
+</pre></div>
+<h3>Dealing the player's hand</h3>
+<p>A list for the player's hand is created.</p>
+<p>A card is removed from the deck list at a random index between 1 and the number of cards in the deck. This card is appended to the player's hand.</p>
+<p>This happens again for the player's second card.</p>
+<p>The <b>random</b> module is imported so that <span class="inlinecode"><span class="name">random.randrage</span></span> can be used.</p>
+<p><a class="fullcodelink" target="_blank" href="2.html">Full code at this point</a></p><div class="pre"><pre class="code">import <span class="name">random</span>
+
+<span class="comment"># etc.</span>
+
+<span class="name">player_hand</span> = []
+<span class="call">player_hand.append</span>(<span class="call">deck.pop</span>(<span class="call">random.randrange</span>(<span class="call">len</span>(<span class="name">deck</span>))))
+<span class="call">player_hand.append</span>(<span class="call">deck.pop</span>(<span class="call">random.randrange</span>(<span class="call">len</span>(<span class="name">deck</span>))))
+
+<span class="comment"># Temporary</span>
+<span class="call">print</span>(<span class="literal">'Player hand:'</span>)
+for <span class="name">card</span> in <span class="name">player_hand</span>:
+    <span class="call">print</span>(<span class="literal">'suit: '</span> + <span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">', rank: '</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]))
+
+<span class="comment"># Temporary</span>
+<span class="call">print</span>(<span class="literal">'Total number of cards in deck: '</span> + <span class="call">str</span>(<span class="call">len</span>(<span class="name">deck</span>)))
+</pre></div>
+<div class="pre"><pre class="console">
+Player hand:
+suit: heart, rank: 1
+suit: spade, rank: 12
+Total number of cards in deck: 50
+</pre></div>
+<h3>Displaying the state of the game</h3>
+<p>For now, information about the state of the game will be displayed as text.</p>
+<p>A list is created for the output strings, and is concatenated and drawn to the screen.</p>
+<p><a class="fullcodelink" target="_blank" href="3.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    <span class="name">output</span> = []
+
+    <span class="call">output.append</span>(<span class="literal">'Player hand:'</span>)
+    for <span class="name">card</span> in <span class="name">player_hand</span>:
+        <span class="call">output.append</span>(<span class="literal">'suit: '</span> + <span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">', rank: '</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]))
+
+    <span class="call">screen.draw.text</span>(<span class="literal">'\n'</span>.<span class="call">join</span>(<span class="name">output</span>), (<span class="literal">15</span>, <span class="literal">15</span>))
+</pre></div>
+<img src="3.png">
+<h3>Dealing the dealer's hand</h3>
+<p>A list is created for the dealer's hand and two random cards from the deck are appended to it.</p>
+<p><a class="fullcodelink" target="_blank" href="4.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
+
+<span class="name">player_hand</span> = []
+<span class="call">player_hand.append</span>(<span class="call">deck.pop</span>(<span class="call">random.randrange</span>(<span class="call">len</span>(<span class="name">deck</span>))))
+<span class="call">player_hand.append</span>(<span class="call">deck.pop</span>(<span class="call">random.randrange</span>(<span class="call">len</span>(<span class="name">deck</span>))))
+
+<span class="highlight"><span class="name">dealer_hand</span> = []</span>
+<span class="highlight"><span class="call">dealer_hand.append</span>(<span class="call">deck.pop</span>(<span class="call">random.randrange</span>(<span class="call">len</span>(<span class="name">deck</span>))))</span>
+<span class="highlight"><span class="call">dealer_hand.append</span>(<span class="call">deck.pop</span>(<span class="call">random.randrange</span>(<span class="call">len</span>(<span class="name">deck</span>))))</span>
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    <span class="name">output</span> = []
+
+    <span class="call">output.append</span>(<span class="literal">'Player hand:'</span>)
+    for <span class="name">card</span> in <span class="name">player_hand</span>:
+        <span class="call">output.append</span>(<span class="literal">'suit: '</span> + <span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">', rank: '</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]))
+
+    <span class="highlight"><span class="call">output.append</span>(<span class="literal">''</span>)</span>
+
+    <span class="highlight"><span class="call">output.append</span>(<span class="literal">'Dealer hand:'</span>)</span>
+    <span class="highlight">for <span class="name">card</span> in <span class="name">dealer_hand</span>:</span>
+    <span class="highlight">    <span class="call">output.append</span>(<span class="literal">'suit: '</span> + <span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">', rank: '</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]))</span>
+
+    <span class="call">screen.draw.text</span>(<span class="literal">'\n'</span>.<span class="call">join</span>(<span class="name">output</span>), (<span class="literal">15</span>, <span class="literal">15</span>))
+</pre></div>
+<img src="4.png">
+<h3>Simplifying code</h3>
+<p>The only difference between the code for appending a card to the player's hand and appending a card to the dealer's hand is the hand to append the card to, so a function is made with the hand as a parameter.</p>
+<p><a class="fullcodelink" target="_blank" href="5.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="highlight">def <span class="name">take_card</span>(<span class="name">hand</span>):</span>
+    <span class="highlight"><span class="name">hand.append</span></span>(<span class="call">deck.pop</span>(<span class="call">random.randrange</span>(<span class="call">len</span>(<span class="name">deck</span>))))
+
+<span class="name">player_hand</span> = []
+<span class="highlight"><span class="call">take_card</span>(<span class="name">player_hand</span>)</span>
+<span class="highlight"><span class="call">take_card</span>(<span class="name">player_hand</span>)</span>
+
+<span class="name">dealer_hand</span> = []
+<span class="highlight"><span class="call">take_card</span>(<span class="name">dealer_hand</span>)</span>
+<span class="highlight"><span class="call">take_card</span>(<span class="name">dealer_hand</span>)</span>
+</pre></div>
+<h3>Hitting</h3>
+<p>For now, the keyboard is used for input instead of on-screen buttons.</p>
+<p>When the <b>h</b> key is pressed, the player takes a card from the deck.</p>
+<p><a class="fullcodelink" target="_blank" href="6.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    if <span class="name">key</span> == <span class="name">keys.H</span>:
+        <span class="call">take_card</span>(<span class="name">player_hand</span>)
+</pre></div>
+<img src="5.png">
+<h3>Getting the total value of a hand</h3>
+<p>For each hand, the rank of each card is added together to get the total value of the hand.</p>
+<p>Currently this does not account for face cards having a value of 10 or for the value of aces sometimes being 11.</p>
+<p><a class="fullcodelink" target="_blank" href="7.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    def <span class="name">get_total</span>(<span class="name">hand</span>):
+        <span class="name">total</span> = <span class="literal">0</span>
+
+        for <span class="name">card</span> in <span class="name">hand</span>:
+            <span class="name">total</span> += <span class="name">card</span>[<span class="literal">'rank'</span>]
+
+        return <span class="name">total</span>
+
+    <span class="comment"># etc.</span>
+
+    <span class="call">output.append</span>(<span class="literal">'Total: '</span> + <span class="call">str</span>(<span class="call">get_total</span>(<span class="name">player_hand</span>)))
+
+    <span class="comment"># etc.</span>
+
+    <span class="call">output.append</span>(<span class="literal">'Total: '</span> + <span class="call">str</span>(<span class="call">get_total</span>(<span class="name">dealer_hand</span>)))
+
+    <span class="comment"># etc.</span>
+</pre></div>
+<img src="6.png">
+<h3>Total accounting for face cards</h3>
+<p>If a card's rank is higher than 10 (i.e. 11, 12 or 13), then it is a face card and its value is 10.</p>
+<p><a class="fullcodelink" target="_blank" href="8.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    def <span class="name">get_total</span>(<span class="name">hand</span>):
+        <span class="name">total</span> = <span class="literal">0</span>
+
+        for <span class="name">card</span> in <span class="name">hand</span>:
+            <span class="highlight">if <span class="name">card</span>[<span class="literal">'rank'</span>] > <span class="literal">10</span>:</span>
+            <span class="highlight">    <span class="name">total</span> += <span class="literal">10</span></span>
+            <span class="highlight">else:</span>
+                <span class="name">total</span> += <span class="name">card</span>[<span class="literal">'rank'</span>]
+
+        return <span class="name">total</span>
+
+    <span class="comment"># etc.</span>
+</pre></div>
+<img src="7.png">
+<h3>Total accounting for ace</h3>
+<p>Aces have a value of 11 instead of 1 unless the value of the hand would go over 21.</p>
+<p>First, the values of all of the cards in the hand are added together, counting aces as 1 instead of 11.</p>
+<p>Then, if the hand has an ace and the total value of the hand is 11 or less, 10 is added to the total (10 is added instead of 11 because 1 has already been added to it). If the total value of the hand was 12 (or more), then an ace counting as 11 would make the value of the hand 22 (or more).</p>
+<p><a class="fullcodelink" target="_blank" href="9.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    def <span class="name">get_total</span>(<span class="name">hand</span>):
+        <span class="name">total</span> = <span class="literal">0</span>
+        <span class="highlight"><span class="name">has_ace</span> = <span class="literal">False</span></span>
+
+        for <span class="name">card</span> in <span class="name">hand</span>:
+            if <span class="name">card</span>[<span class="literal">'rank'</span>] > <span class="literal">10</span>:
+                <span class="name">total</span> += <span class="literal">10</span>
+            else:
+                <span class="name">total</span> += <span class="name">card</span>[<span class="literal">'rank'</span>]
+
+            <span class="highlight">if <span class="name">card</span>[<span class="literal">'rank'</span>] == <span class="literal">1</span>:</span>
+            <span class="highlight">    <span class="name">has_ace</span> = <span class="literal">True</span></span>
+
+        <span class="highlight">if <span class="name">has_ace</span> and <span class="name">total</span> <= <span class="literal">11</span>:</span>
+        <span class="highlight">    <span class="name">total</span> += <span class="literal">10</span></span>
+
+        return <span class="name">total</span>
+
+    <span class="comment"># etc.</span>
+</pre></div>
+<img src="8.png">
+<h3>Standing</h3>
+<p>When the <b>s</b> key is pressed, the player stands and the round is over.</p>
+<p>The player can hit only when the round is not over.</p>
+<p><a class="fullcodelink" target="_blank" href="10.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
+
+<span class="name">round_over</span> = <span class="literal">False</span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    <span class="highlight">global <span class="name">round_over</span></span>
+
+    if <span class="name">key</span> == <span class="name">keys.H</span> <span class="highlight">and not <span class="name">round_over</span></span>:
+        <span class="call">take_card</span>(<span class="name">player_hand</span>)
+    <span class="highlight">elif <span class="name">key</span> == <span class="name">keys.S</span>:</span>
+    <span class="highlight">    <span class="name">round_over</span> = <span class="literal">True</span></span>
+</pre></div>
+<h3>Displaying the winner</h3>
+<p>When the round is over, the total of the player's hand is compared to the total of the dealer's hand and the winner is displayed.</p>
+<p>Currently this does not account for busts (i.e. hands with a value of over 21).</p>
+<p><a class="fullcodelink" target="_blank" href="11.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    if <span class="name">round_over</span>:
+        <span class="call">output.append</span>(<span class="literal">''</span>)
+
+        if <span class="call">get_total</span>(<span class="name">player_hand</span>) > <span class="call">get_total</span>(<span class="name">dealer_hand</span>):
+            <span class="call">output.append</span>(<span class="literal">'Player wins'</span>)
+        elif <span class="call">get_total</span>(<span class="name">dealer_hand</span>) > <span class="call">get_total</span>(<span class="name">player_hand</span>):
+            <span class="call">output.append</span>(<span class="literal">'Dealer wins'</span>)
+        else:
+            <span class="call">output.append</span>(<span class="literal">'Draw'</span>)
+
+    <span class="comment"># etc.</span>
+</pre></div>
+<img src="9.png">
+<h3>Winner accounting for bust</h3>
+<p>The player or dealer wins if they haven't gone bust, and...</p>
+<ul>
+<li>their opponent has gone bust, or...</li>
+<li>their hand has a greater total than that of their opponent.</li>
+</ul>
+<p><a class="fullcodelink" target="_blank" href="12.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    if <span class="name">round_over</span>:
+        <span class="call">output.append</span>(<span class="literal">''</span>)
+
+        if <span class="highlight">(</span>
+        <span class="highlight">    <span class="call">get_total</span>(<span class="name">player_hand</span>) <= <span class="literal">21</span></span>
+        <span class="highlight">    and (</span>
+        <span class="highlight">        <span class="call">get_total</span>(<span class="name">dealer_hand</span>) > <span class="literal">21</span></span>
+        <span class="highlight">        or</span> <span class="call">get_total</span>(<span class="name">player_hand</span>) > <span class="call">get_total</span>(<span class="name">dealer_hand</span>)
+        <span class="highlight">    )</span>
+        <span class="highlight">)</span>:
+            <span class="call">output.append</span>(<span class="literal">'Player wins'</span>)
+        elif <span class="highlight">(</span>
+        <span class="highlight">    <span class="call">get_total</span>(<span class="name">dealer_hand</span>) <= <span class="literal">21</span></span>
+        <span class="highlight">    and (</span>
+        <span class="highlight">        <span class="call">get_total</span>(<span class="name">player_hand</span>) > <span class="literal">21</span></span>
+        <span class="highlight">        or</span> <span class="call">get_total</span>(<span class="name">dealer_hand</span>) > <span class="call">get_total</span>(<span class="name">player_hand</span>)
+        <span class="highlight">    )</span>
+        <span class="highlight">)</span>:
+            <span class="call">output.append</span>(<span class="literal">'Dealer wins'</span>)
+        else:
+            <span class="call">output.append</span>(<span class="literal">'Draw'</span>)
+
+        <span class="comment"># etc.</span>
+</pre></div>
+<img src="10.png">
+<h3>Simplifying code</h3>
+<p>The only differences in the code determining if a hand has won is the hand in question and the opponent's hand, so a function is made.</p>
+<p><a class="fullcodelink" target="_blank" href="13.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    if <span class="name">round_over</span>:
+        <span class="call">output.append</span>(<span class="literal">''</span>)
+
+        <span class="highlight">def <span class="name">has_hand_won</span>(<span class="name">this_hand</span>, <span class="name">other_hand</span>):</span>
+            <span class="highlight">return</span> (
+                <span class="call">get_total</span>(<span class="highlight"><span class="name">this_hand</span></span>) <= <span class="literal">21</span>
+                and (
+                    <span class="call">get_total</span>(<span class="highlight"><span class="name">other_hand</span></span>) > <span class="literal">21</span>
+                    or <span class="call">get_total</span>(<span class="highlight"><span class="name">this_hand</span></span>) > <span class="call">get_total</span>(<span class="highlight"><span class="name">other_hand</span></span>)
+                )
+            )
+
+        if <span class="highlight"><span class="call">has_hand_won</span>(<span class="name">player_hand</span>, <span class="name">dealer_hand</span>)</span>:
+            <span class="call">output.append</span>(<span class="literal">'Player wins'</span>)
+        elif <span class="highlight"><span class="call">has_hand_won</span>(<span class="name">dealer_hand</span>, <span class="name">player_hand</span>)</span>:
+            <span class="call">output.append</span>(<span class="literal">'Dealer wins'</span>)
+        else:
+            <span class="call">output.append</span>(<span class="literal">'Draw'</span>)
+</pre></div>
+<h3>Resetting the game</h3>
+<p>A function is made which sets the initial state of the game.</p>
+<p>This function is called before the game begins and when a key is pressed after the round is over.</p>
+<p><a class="fullcodelink" target="_blank" href="14.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="highlight">def <span class="name">reset</span>():</span>
+    <span class="highlight">global <span class="name">deck</span></span>
+    <span class="highlight">global <span class="name">player_hand</span></span>
+    <span class="highlight">global <span class="name">dealer_hand</span></span>
+    <span class="highlight">global <span class="name">round_over</span></span>
+
+    <span class="name">deck</span> = []
+    for <span class="name">suit</span> in (<span class="literal">'club'</span>, <span class="literal">'diamond'</span>, <span class="literal">'heart'</span>, <span class="literal">'spade'</span>):
+        for <span class="name">rank</span> in <span class="call">range</span>(<span class="literal">1</span>, <span class="literal">14</span>):
+            <span class="call">deck.append</span>({<span class="literal">'suit'</span>: <span class="name">suit</span>, <span class="literal">'rank'</span>: <span class="name">rank</span>})
+
+    <span class="name">player_hand</span> = []
+    <span class="call">take_card</span>(<span class="name">player_hand</span>)
+    <span class="call">take_card</span>(<span class="name">player_hand</span>)
+
+    <span class="name">dealer_hand</span> = []
+    <span class="call">take_card</span>(<span class="name">dealer_hand</span>)
+    <span class="call">take_card</span>(<span class="name">dealer_hand</span>)
+
+    <span class="name">round_over</span> = <span class="literal">False</span>
+
+<span class="highlight"><span class="call">reset</span>()</span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    global <span class="name">round_over</span>
+
+    <span class="highlight">if not <span class="name">round_over</span>:</span>
+        <span class="highlight">if <span class="name">key</span> == <span class="name">keys.H</span>:</span>
+            <span class="call">take_card</span>(<span class="name">player_hand</span>)
+        elif <span class="name">key</span> == <span class="name">keys.S</span>:
+            <span class="name">round_over</span> = <span class="literal">True</span>
+    <span class="highlight">else:</span>
+    <span class="highlight">    <span class="call">reset</span>()</span>
+</pre></div>
+<h3>End round on bust or 21</h3>
+<p>If the player has gone bust or the value of their hand is already 21, the round is automatically over.</p>
+<p>Since this requires getting the total value of a hand, <span class="inlinecode"><span class="name">get_total</span></span> is moved to be global.</p>
+<p><a class="fullcodelink" target="_blank" href="15.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># Moved</span>
+def <span class="name">get_total</span>(<span class="name">hand</span>):
+    <span class="comment"># etc.</span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    global <span class="name">round_over</span>
+
+    if not <span class="name">round_over</span>:
+        if <span class="name">key</span> == <span class="name">keys.H</span>:
+            <span class="call">take_card</span>(<span class="name">player_hand</span>)
+            <span class="highlight">if <span class="call">get_total</span>(<span class="name">player_hand</span>) >= <span class="literal">21</span>:</span>
+            <span class="highlight">    <span class="name">round_over</span> = <span class="literal">True</span></span>
+        elif <span class="name">key</span> == <span class="name">keys.S</span>:
+            <span class="name">round_over</span> = <span class="literal">True</span>
+    else:
+        <span class="call">reset</span>()
+</pre></div>
+<h3>Dealer hitting</h3>
+<p>If the player has stood, gone bust or has 21, the dealer takes cards while the value of their hand is less than 17.</p>
+<p><a class="fullcodelink" target="_blank" href="16.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    global <span class="name">round_over</span>
+
+    if not <span class="name">round_over</span>:
+        if <span class="name">key</span> == <span class="name">keys.H</span>:
+            <span class="call">take_card</span>(<span class="name">player_hand</span>)
+            if <span class="call">get_total</span>(<span class="name">player_hand</span>) >= <span class="literal">21</span>:
+                <span class="name">round_over</span> = <span class="literal">True</span>
+        elif <span class="name">key</span> == <span class="name">keys.S</span>:
+            <span class="name">round_over</span> = <span class="literal">True</span>
+
+        <span class="highlight">if <span class="name">round_over</span>:</span>
+        <span class="highlight">    while <span class="call">get_total</span>(<span class="name">dealer_hand</span>) < <span class="literal">17</span>:</span>
+        <span class="highlight">        <span class="call">take_card</span>(<span class="name">dealer_hand</span>)</span>
+    else:
+        <span class="call">reset</span>()
+</pre></div>
+<img src="11.png">
+<h3>Hiding the dealer's first card</h3>
+<p>Until the round is over, the dealer's first card (i.e. the first item of the dealer's hand list) is hidden.</p>
+<p><a class="fullcodelink" target="_blank" href="17.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="call">output.append</span>(<span class="literal">'Dealer hand:'</span>)
+    for <span class="highlight"><span class="name">card_index</span>,</span> <span class="name">card</span> in <span class="highlight"><span class="call">enumerate</span>(</span><span class="name">dealer_hand</span><span class="highlight">)</span>:
+        <span class="highlight">if not <span class="name">round_over</span> and <span class="name">card_index</span> == <span class="literal">0</span>:</span>
+        <span class="highlight">    <span class="call">output.append</span>(<span class="literal">'(Card hidden)'</span>)</span>
+        <span class="highlight">else:</span>
+            <span class="call">output.append</span>(<span class="literal">'suit: '</span> + <span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">', rank: '</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]))
+
+    <span class="comment"># etc.</span>
+</pre></div>
+<img src="12.png">
+<h3>Hiding the dealer's total</h3>
+<p>Until the round is over, the total of the dealer's hand is hidden.</p>
+<p><a class="fullcodelink" target="_blank" href="18.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="highlight">if <span class="name">round_over</span>:</span>
+        <span class="call">output.append</span>(<span class="literal">'Total: '</span> + <span class="call">str</span>(<span class="call">get_total</span>(<span class="name">dealer_hand</span>)))
+    <span class="highlight">else:</span>
+    <span class="highlight">    <span class="call">output.append</span>(<span class="literal">'Total: ?'</span>)</span>
+
+    <span class="comment"># etc.</span>
+</pre></div>
+<img src="13.png">
+<h3>Drawing the player's hand</h3>
+<p>The code which displays the text is commented out.</p>
+<p>The cards in the player's hand are looped through and the corresponding card image is drawn for each one.</p>
+<p>The background is changed to be white.</p>
+<p><a class="fullcodelink" target="_blank" href="19.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="highlight"><span class="literal">255</span></span>, <span class="highlight"><span class="literal">255</span></span>, <span class="highlight"><span class="literal">255</span></span>))
+
+    <span class="comment"># etc.</span>
+
+    <span class="comment"># Removed: screen.draw.text('\n'.join(output), (15, 15))</span>
+
+    for <span class="name">card_index</span>, <span class="name">card</span> in <span class="call">enumerate</span>(<span class="name">player_hand</span>):
+        <span class="call">screen.blit</span>(<span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">'_'</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]),
+            (<span class="name">card_index</span> * <span class="literal">60</span>, <span class="literal">0</span>))
+</pre></div>
+<img src="14.png">
+<h3>Drawing the dealer's hand</h3>
+<p>The dealer's hand is drawn.</p>
+<p>The dealer's hand and the player's hand use the same space between the cards, and the same offset on the X axis, so variables are made for them.</p>
+<p><a class="fullcodelink" target="_blank" href="20.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="highlight"><span class="name">card_spacing</span> = <span class="literal">60</span></span>
+    <span class="highlight"><span class="name">margin_x</span> = <span class="literal">10</span></span>
+
+    <span class="highlight">for <span class="name">card_index</span>, <span class="name">card</span> in <span class="call">enumerate</span>(<span class="name">dealer_hand</span>):</span>
+    <span class="highlight">    <span class="call">screen.blit</span>(<span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">'_'</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]),</span>
+    <span class="highlight">        (<span class="name">card_index</span> * <span class="name">card_spacing</span> + <span class="name">margin_x</span>, <span class="literal">10</span>))</span>
+
+    for <span class="name">card_index</span>, <span class="name">card</span> in <span class="call">enumerate</span>(<span class="name">player_hand</span>):
+        <span class="call">screen.blit</span>(<span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">'_'</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]),
+            (<span class="name">card_index</span> * <span class="highlight"><span class="name">card_spacing</span> + <span class="name">margin_x</span></span>, <span class="highlight"><span class="literal">140</span></span>))
+</pre></div>
+<img src="15.png">
+<h3>Hiding the dealer's first card</h3>
+<p>Until the round is over, the dealer's first card is hidden. Instead of drawing a blank card, the face down card image is used.</p>
+<p>The image name of the dealer's card is made into a variable, and is set to the face down card if the round is not over and it's the first card in the hand.</p>
+<p><a class="fullcodelink" target="_blank" href="21.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    for <span class="name">card_index</span>, <span class="name">card</span> in <span class="call">enumerate</span>(<span class="name">dealer_hand</span>):
+        <span class="highlight"><span class="name">image</span> =</span> <span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">'_'</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>])
+        <span class="highlight">if not <span class="name">round_over</span> and <span class="name">card_index</span> == <span class="literal">0</span>:</span>
+        <span class="highlight">    <span class="name">image</span> = <span class="literal">'card_face_down'</span></span>
+        <span class="call">screen.blit</span>(<span class="highlight"><span class="name">image</span></span>, (<span class="name">card_index</span> * <span class="name">card_spacing</span> + <span class="name">margin_x</span>, <span class="literal">30</span>))
+
+    for <span class="name">card_index</span>, <span class="name">card</span> in <span class="call">enumerate</span>(<span class="name">player_hand</span>):
+        <span class="call">screen.blit</span>(<span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">'_'</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]),
+            (<span class="name">card_index</span> * <span class="name">card_spacing</span> + <span class="name">margin_x</span>, <span class="literal">140</span>))
+</pre></div>
+<img src="16.png">
+<h3>Displaying totals</h3>
+<p>The total of each hand are drawn.</p>
+<p>The dealer's total is drawn only when the round is over.</p>
+<p><a class="fullcodelink" target="_blank" href="22.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    if <span class="name">round_over</span>:
+        <span class="call">screen.draw.text</span>(<span class="literal">'Total: '</span> + <span class="call">str</span>(<span class="call">get_total</span>(<span class="name">dealer_hand</span>)),
+            (<span class="name">margin_x</span>, <span class="literal">10</span>), <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+    else:
+        <span class="call">screen.draw.text</span>(<span class="literal">'Total: ?'</span>, (<span class="name">margin_x</span>, <span class="literal">10</span>), <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    <span class="call">screen.draw.text</span>(<span class="literal">'Total: '</span> + <span class="call">str</span>(<span class="call">get_total</span>(<span class="name">player_hand</span>)),
+        (<span class="name">margin_x</span>, <span class="literal">120</span>), <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+</pre></div>
+<img src="17.png">
+<h3>Displaying winner</h3>
+<p>When the round is over, the result of the game is drawn.</p>
+<p><a class="fullcodelink" target="_blank" href="23.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    if <span class="name">round_over</span>:
+        def <span class="name">has_hand_won</span>(<span class="name">this_hand</span>, <span class="name">other_hand</span>):
+            return (
+                <span class="call">get_total</span>(<span class="name">this_hand</span>) <= <span class="literal">21</span>
+                and (
+                    <span class="call">get_total</span>(<span class="name">other_hand</span>) > <span class="literal">21</span>
+                    or <span class="call">get_total</span>(<span class="name">this_hand</span>) > <span class="call">get_total</span>(<span class="name">other_hand</span>)
+                )
+            )
+
+        <span class="highlight">def <span class="name">draw_winner</span>(<span class="name">message</span>):</span>
+        <span class="highlight">    <span class="call">screen.draw.text</span>(<span class="name">message</span>, (<span class="name">margin_x</span>, <span class="literal">268</span>), <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))</span>
+
+        if <span class="call">has_hand_won</span>(<span class="name">player_hand</span>, <span class="name">dealer_hand</span>):
+            <span class="highlight"><span class="call">draw_winner</span>(<span class="literal">'Player wins'</span>)</span>
+        elif <span class="call">has_hand_won</span>(<span class="name">dealer_hand</span>, <span class="name">player_hand</span>):
+            <span class="highlight"><span class="call">draw_winner</span>(<span class="literal">'Dealer wins'</span>)</span>
+        else:
+            <span class="highlight"><span class="call">draw_winner</span>(<span class="literal">'Draw'</span>)</span>
+</pre></div>
+<img src="18.png">
+<h3>Removing text output code</h3>
+<p>The code relating to text output is removed.</p>
+<p><a class="fullcodelink" target="_blank" href="24.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>))
+
+    <span class="highlight"><span class="comment"># Removed:</span></span>
+    <span class="highlight"><span class="comment"># output = []</span></span>
+
+    <span class="highlight"><span class="comment"># output.append('Player hand:')</span></span>
+    <span class="highlight"><span class="comment"># for card in player_hand:</span></span>
+    <span class="highlight"><span class="comment">#     output.append('suit: ' + card['suit'] + ', rank: ' + str(card['rank']))</span></span>
+    <span class="highlight"><span class="comment"># output.append('Total: ' + str(get_total(player_hand)))</span></span>
+
+    <span class="highlight"><span class="comment"># output.append('')</span></span>
+
+    <span class="highlight"><span class="comment"># output.append('Dealer hand:')</span></span>
+    <span class="highlight"><span class="comment"># for card_index, card in enumerate(dealer_hand):</span></span>
+    <span class="highlight"><span class="comment">#     if not round_over and card_index == 0:</span></span>
+    <span class="highlight"><span class="comment">#         output.append('(Card hidden)')</span></span>
+    <span class="highlight"><span class="comment">#     else:</span></span>
+    <span class="highlight"><span class="comment">#         output.append('suit: ' + card['suit'] + ', rank: ' + str(card['rank']))</span></span>
+
+    <span class="highlight"><span class="comment"># if round_over:</span></span>
+    <span class="highlight"><span class="comment">#     output.append('Total: ' + str(get_total(dealer_hand)))</span></span>
+    <span class="highlight"><span class="comment"># else:</span></span>
+    <span class="highlight"><span class="comment">#     output.append('Total: ?')</span></span>
+
+    <span class="highlight"><span class="comment"># if round_over:</span></span>
+    <span class="highlight"><span class="comment">#     output.append('')</span></span>
+
+    <span class="highlight"><span class="comment">#     def has_hand_won(this_hand, other_hand):</span></span>
+    <span class="highlight"><span class="comment">#         return (</span></span>
+    <span class="highlight"><span class="comment">#             get_total(this_hand) <= 21</span></span>
+    <span class="highlight"><span class="comment">#             and (</span></span>
+    <span class="highlight"><span class="comment">#                 get_total(other_hand) > 21</span></span>
+    <span class="highlight"><span class="comment">#                 or get_total(this_hand) > get_total(other_hand)</span></span>
+    <span class="highlight"><span class="comment">#             )</span></span>
+    <span class="highlight"><span class="comment">#         )</span></span>
+
+    <span class="highlight"><span class="comment">#     if has_hand_won(player_hand, dealer_hand):</span></span>
+    <span class="highlight"><span class="comment">#         output.append('Player wins')</span></span>
+    <span class="highlight"><span class="comment">#     elif has_hand_won(dealer_hand, player_hand):</span></span>
+    <span class="highlight"><span class="comment">#         output.append('Dealer wins')</span></span>
+    <span class="highlight"><span class="comment">#     else:</span></span>
+    <span class="highlight"><span class="comment">#         output.append('Draw')</span></span>
+
+    <span class="comment"># etc.</span>
+</pre></div>
+<h3>Drawing hit and stand buttons</h3>
+<p>The hit and stand buttons are drawn as rectangles with text on top.</p>
+<p><a class="fullcodelink" target="_blank" href="25.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="call">screen.draw.filled_rect</span>(<span class="call">Rect</span>(<span class="literal">10</span>, <span class="literal">230</span>, <span class="literal">53</span>, <span class="literal">25</span>), <span class="name">color</span>=(<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>))
+    <span class="call">screen.draw.text</span>(<span class="literal">'Hit!'</span>, (<span class="literal">23</span>, <span class="literal">236</span>))
+
+    <span class="call">screen.draw.filled_rect</span>(<span class="call">Rect</span>(<span class="literal">70</span>, <span class="literal">230</span>, <span class="literal">53</span>, <span class="literal">25</span>), <span class="name">color</span>=(<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>))
+    <span class="call">screen.draw.text</span>(<span class="literal">'Stand'</span>, (<span class="literal">74</span>, <span class="literal">236</span>))
+</pre></div>
+<img src="19.png">
+<h3>Drawing play again button</h3>
+<p>The "play again" button is drawn occupying the same position as the other buttons, since it will only be visible when the round is over.</p>
+<p><a class="fullcodelink" target="_blank" href="26.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+<span class="comment">##    screen.draw.filled_rect(Rect(10, 230, 53, 25), color=(255, 127, 57))</span>
+<span class="comment">##    screen.draw.text('Hit!', (23, 236))</span>
+<span class="comment">##</span>
+<span class="comment">##    screen.draw.filled_rect(Rect(70, 230, 53, 25), color=(255, 127, 57))</span>
+<span class="comment">##    screen.draw.text('Stand', (74, 236))</span>
+
+    <span class="call">screen.draw.filled_rect</span>(<span class="call">Rect</span>(<span class="literal">10</span>, <span class="literal">230</span>, <span class="literal">113</span>, <span class="literal">25</span>), <span class="name">color</span>=(<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>))
+    <span class="call">screen.draw.text</span>(<span class="literal">'Play again'</span>, (<span class="literal">27</span>, <span class="literal">236</span>))
+</pre></div>
+<img src="20.png">
+<h3>Basing text position on button position</h3>
+<p>The X and Y positions of the button text is based on the X and Y positions of the buttons plus an offset.</p>
+<p>Each button's X position is used twice, so they are made into variables.</p>
+<p>The same Y position is used by all buttons, so it is made into a variable.</p>
+<p><a class="fullcodelink" target="_blank" href="27.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="highlight"><span class="name">button_y</span> = <span class="literal">230</span></span>
+
+    <span class="highlight"><span class="name">button_hit_x</span> = <span class="literal">10</span></span>
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(<span class="highlight"><span class="name">button_hit_x</span></span>, <span class="highlight"><span class="name">button_y</span></span>, <span class="literal">53</span>, <span class="literal">25</span>),
+        <span class="name">color</span>=(<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>)
+    )
+    <span class="call">screen.draw.text</span>(<span class="literal">'Hit!'</span>, (<span class="highlight"><span class="name">button_hit_x</span> + <span class="literal">13</span></span>, <span class="highlight"><span class="name">button_y</span> + <span class="literal">6</span></span>))
+
+    <span class="highlight"><span class="name">button_stand_x</span> = <span class="literal">70</span></span>
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(<span class="highlight"><span class="name">button_stand_x</span></span>, <span class="highlight"><span class="name">button_y</span></span>, <span class="literal">53</span>, <span class="literal">25</span>),
+        <span class="name">color</span>=(<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>)
+    )
+    <span class="call">screen.draw.text</span>(<span class="literal">'Stand'</span>, (<span class="highlight"><span class="name">button_stand_x</span> + <span class="literal">4</span></span>, <span class="highlight"><span class="name">button_y</span> + <span class="literal">6</span></span>))
+
+<span class="comment">##    <span class="highlight">button_play_again_x = 10</span></span>
+<span class="comment">##    screen.draw.filled_rect(</span>
+<span class="comment">##        Rect(<span class="highlight">button_play_again_x</span>, <span class="highlight">button_y</span>, 113, 25),</span>
+<span class="comment">##        color=(255, 127, 57)</span>
+<span class="comment">##    )</span>
+<span class="comment">##    screen.draw.text('Play again', (<span class="highlight">button_play_again_x + 17</span>, <span class="highlight">button_y + 6</span>))</span>
+</pre></div>
+<h3>Simplifying code</h3>
+<p>The only difference between the code for drawing each button is the button's text, X position, width, and text offset on the X axis. A function is made with these as parameters.</p>
+<p><a class="fullcodelink" target="_blank" href="28.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="highlight">def <span class="name">draw_button</span>(<span class="name">text</span>, <span class="name">button_x</span>, <span class="name">button_width</span>, <span class="name">text_offset_x</span>):</span>
+        <span class="name">button_y</span> = <span class="literal">230</span>
+        <span class="call">screen.draw.filled_rect</span>(
+            <span class="call">Rect</span>(<span class="highlight"><span class="name">button_x</span></span>, <span class="name">button_y</span>, <span class="highlight"><span class="name">button_width</span></span>, <span class="literal">25</span>),
+            <span class="name">color</span>=(<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>)
+        )
+        <span class="call">screen.draw.text</span>(<span class="highlight"><span class="name">text</span></span>, (<span class="highlight"><span class="name">button_x</span></span> + <span class="highlight"><span class="name">text_offset_x</span></span>, <span class="name">button_y</span> + <span class="literal">6</span>))
+
+    <span class="highlight"><span class="call">draw_button</span>(<span class="literal">'Hit!'</span>, <span class="literal">10</span>, <span class="literal">53</span>, <span class="literal">13</span>)</span>
+    <span class="highlight"><span class="call">draw_button</span>(<span class="literal">'Stand'</span>, <span class="literal">70</span>, <span class="literal">53</span>, <span class="literal">4</span>)</span>
+    <span class="highlight"><span class="comment"># draw_button('Play again', 10, 113, 17)</span></span>
+</pre></div>
+<h3>Highlighting button when cursor is over it</h3>
+<p>The color of the rectangle changes when the mouse cursor is over it.</p>
+<p>The cursor is over the button if...</p>
+<ul>
+<li>the mouse's X position is to the right of the button's left edge</li>
+<li>the mouse's X position is to the left of the button's right edge (i.e less than the position of the button plus the width of the button)</li>
+<li>the mouse's Y position is below the button's top edge</li>
+<li>the mouse's Y position is above the button's bottom edge (i.e. less than the position of the button plus the height of the button)</li>
+</ul>
+<p>The button height is reused from drawing the button, so a variable is made.</p>
+<p>The <b>pygame</b> module is imported so that <span class="inlinecode"><span class="name">pygame.mouse.get_pos</span></span> can be used.</p>
+<p>An empty <span class="inlinecode"><span class="name">update</span></span> function is created so that the <span class="inlinecode"><span class="name">draw</span></span> function will update on every frame.</p>
+<p><a class="fullcodelink" target="_blank" href="29.html">Full code at this point</a></p><div class="pre"><pre class="code">import <span class="name">pygame</span>
+
+def <span class="name">update</span>():
+    <span class="name">pass</span>
+
+def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    def <span class="name">draw_button</span>(<span class="name">text</span>, <span class="name">button_x</span>, <span class="name">button_width</span>, <span class="name">text_offset_x</span>):
+        <span class="name">button_y</span> = <span class="literal">230</span>
+        <span class="highlight"><span class="name">button_height</span> = <span class="literal">25</span></span>
+
+        <span class="highlight"><span class="name">mouse_x</span>, <span class="name">mouse_y</span> = <span class="call">pygame.mouse.get_pos</span>()</span>
+
+        <span class="highlight">if (</span>
+        <span class="highlight">    <span class="name">mouse_x</span> >= <span class="name">button_x</span></span>
+        <span class="highlight">    and <span class="name">mouse_x</span> < <span class="name">button_x</span> + <span class="name">button_width</span></span>
+        <span class="highlight">    and <span class="name">mouse_y</span> >= <span class="name">button_y</span></span>
+        <span class="highlight">    and <span class="name">mouse_y</span> < <span class="name">button_y</span> + <span class="name">button_height</span></span>
+        <span class="highlight">):</span>
+        <span class="highlight">    <span class="name">color</span> = (<span class="literal">255</span>, <span class="literal">202</span>, <span class="literal">75</span>)</span>
+        <span class="highlight">else:</span>
+        <span class="highlight">    <span class="name">color</span> = (<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>)</span>
+
+        <span class="call">screen.draw.filled_rect</span>(
+            <span class="call">Rect</span>(<span class="name">button_x</span>, <span class="name">button_y</span>, <span class="name">button_width</span>, <span class="highlight"><span class="name">button_height</span></span>),
+            <span class="name">color</span>=<span class="highlight"><span class="name">color</span></span>
+        )
+        <span class="call">screen.draw.text</span>(<span class="name">text</span>, (<span class="name">button_x</span> + <span class="name">text_offset_x</span>, <span class="name">button_y</span> + <span class="literal">6</span>))
+</pre></div>
+<img src="21.png">
+<h3>Clicking buttons</h3>
+<p>If a mouse button is released and the mouse is over a button, then the button has been clicked, and (for now) the name of the button is printed.</p>
+<p>Checking if the mouse is over a button is reused from drawing the button, so it is made into a function.</p>
+<p><a class="fullcodelink" target="_blank" href="30.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="highlight">def <span class="name">is_mouse_in_button</span>(<span class="name">button_x</span>, <span class="name">button_width</span>):</span>
+    <span class="name">button_y</span> = <span class="literal">230</span>
+    <span class="name">button_height</span> = <span class="literal">25</span>
+
+    <span class="name">mouse_x</span>, <span class="name">mouse_y</span> = <span class="call">pygame.mouse.get_pos</span>()
+
+    <span class="highlight">return</span> (
+        <span class="name">mouse_x</span> >= <span class="name">button_x</span>
+        and <span class="name">mouse_x</span> < <span class="name">button_x</span> + <span class="name">button_width</span>
+        and <span class="name">mouse_y</span> >= <span class="name">button_y</span>
+        and <span class="name">mouse_y</span> < <span class="name">button_y</span> + <span class="name">button_height</span>
+    )
+
+def <span class="name">on_mouse_up</span>():
+    if <span class="call">is_mouse_in_button</span>(<span class="literal">10</span>, <span class="literal">53</span>):
+        <span class="call">print</span>(<span class="literal">'Hit!'</span>)
+    elif <span class="call">is_mouse_in_button</span>(<span class="literal">70</span>, <span class="literal">53</span>):
+        <span class="call">print</span>(<span class="literal">'Stand'</span>)
+    <span class="comment"># elif is_mouse_in_button(10, 113):</span>
+    <span class="comment">#     print('Play again')</span>
+
+def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    def <span class="name">draw_button</span>(<span class="name">text</span>, <span class="name">button_x</span>, <span class="name">button_width</span>, <span class="name">text_offset_x</span>):
+        <span class="name">button_y</span> = <span class="literal">230</span>
+        <span class="name">button_height</span> = <span class="literal">25</span>
+
+        <span class="comment"># Removed: mouse_x, mouse_y = pygame.mouse.get_pos()</span>
+
+        if <span class="highlight"><span class="call">is_mouse_in_button</span>(<span class="name">button_x</span>, <span class="name">button_width</span>)</span>:
+            <span class="name">color</span> = (<span class="literal">255</span>, <span class="literal">202</span>, <span class="literal">75</span>)
+        else:
+            <span class="name">color</span> = (<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>)
+
+        <span class="comment"># etc.</span>
+</pre></div>
+<h3>Button dictionaries</h3>
+<p>So that the information for each button is stored in one place, a dictionary is created for each button.</p>
+<p><a class="fullcodelink" target="_blank" href="31.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="name">button_y</span> = <span class="literal">230</span>
+<span class="name">button_height</span> = <span class="literal">25</span>
+<span class="name">text_offset_y</span> = <span class="literal">6</span>
+
+<span class="name">button_hit</span> = {
+    <span class="literal">'x'</span>: <span class="literal">10</span>,
+    <span class="literal">'y'</span>: <span class="name">button_y</span>,
+    <span class="literal">'width'</span>: <span class="literal">53</span>,
+    <span class="literal">'height'</span>: <span class="literal">25</span>,
+    <span class="literal">'text'</span>: <span class="literal">'Hit!'</span>,
+    <span class="literal">'text_offset_x'</span>: <span class="literal">13</span>,
+    <span class="literal">'text_offset_y'</span>: <span class="name">text_offset_y</span>,
+}
+
+<span class="name">button_stand</span> = {
+    <span class="literal">'x'</span>: <span class="literal">70</span>,
+    <span class="literal">'y'</span>: <span class="name">button_y</span>,
+    <span class="literal">'width'</span>: <span class="literal">53</span>,
+    <span class="literal">'height'</span>: <span class="literal">25</span>,
+    <span class="literal">'text'</span>: <span class="literal">'Stand'</span>,
+    <span class="literal">'text_offset_x'</span>: <span class="literal">4</span>,
+    <span class="literal">'text_offset_y'</span>: <span class="name">text_offset_y</span>,
+}
+
+<span class="name">button_play_again</span> = {
+    <span class="literal">'x'</span>: <span class="literal">10</span>,
+    <span class="literal">'y'</span>: <span class="name">button_y</span>,
+    <span class="literal">'width'</span>: <span class="literal">113</span>,
+    <span class="literal">'height'</span>: <span class="literal">25</span>,
+    <span class="literal">'text'</span>: <span class="literal">'Play again'</span>,
+    <span class="literal">'text_offset_x'</span>: <span class="literal">17</span>,
+    <span class="literal">'text_offset_y'</span>: <span class="name">text_offset_y</span>,
+}
+
+def <span class="name">is_mouse_in_button</span>(<span class="highlight"><span class="name">button</span></span>):
+    <span class="name">mouse_x</span>, <span class="name">mouse_y</span> = <span class="call">pygame.mouse.get_pos</span>()
+
+    return (
+        <span class="name">mouse_x</span> >= <span class="highlight"><span class="name">button</span>[<span class="literal">'x'</span>]</span>
+        and <span class="name">mouse_x</span> < <span class="highlight"><span class="name">button</span>[<span class="literal">'x'</span>]</span> + <span class="highlight"><span class="name">button</span>[<span class="literal">'width'</span>]</span>
+        and <span class="name">mouse_y</span> >= <span class="highlight"><span class="name">button</span>[<span class="literal">'y'</span>]</span>
+        and <span class="name">mouse_y</span> < <span class="highlight"><span class="name">button</span>[<span class="literal">'y'</span>]</span> + <span class="highlight"><span class="name">button</span>[<span class="literal">'height'</span>]</span>
+    )
+
+def <span class="name">on_mouse_up</span>():
+    if <span class="call">is_mouse_in_button</span>(<span class="highlight"><span class="name">button_hit</span></span>):
+        <span class="call">print</span>(<span class="literal">'Hit!'</span>)
+    elif <span class="call">is_mouse_in_button</span>(<span class="highlight"><span class="name">button_stand</span></span>):
+        <span class="call">print</span>(<span class="literal">'Stand'</span>)
+    <span class="comment"># elif is_mouse_in_button(<span class="highlight">button_play_again</span>):</span>
+    <span class="comment">#     print('Play again')</span>
+
+def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    def <span class="name">draw_button</span>(<span class="highlight"><span class="name">button</span></span>):
+        <span class="comment"># Removed: button_y = 230</span>
+        <span class="comment"># Removed: button_height = 25</span>
+
+        if <span class="call">is_mouse_in_button</span>(<span class="highlight"><span class="name">button</span></span>):
+            <span class="name">color</span> = (<span class="literal">255</span>, <span class="literal">202</span>, <span class="literal">75</span>)
+        else:
+            <span class="name">color</span> = (<span class="literal">255</span>, <span class="literal">127</span>, <span class="literal">57</span>)
+
+        <span class="call">screen.draw.filled_rect</span>(
+            <span class="call">Rect</span>(<span class="highlight"><span class="name">button</span>[<span class="literal">'x'</span>]</span>, <span class="highlight"><span class="name">button</span>[<span class="literal">'y'</span>]</span>, <span class="highlight"><span class="name">button</span>[<span class="literal">'width'</span>]</span>, <span class="highlight"><span class="name">button</span>[<span class="literal">'height'</span>]</span>),
+            <span class="name">color</span>=<span class="name">color</span>
+        )
+        <span class="call">screen.draw.text</span>(
+            <span class="highlight"><span class="name">button</span>[<span class="literal">'text'</span>]</span>,
+            (<span class="highlight"><span class="name">button</span>[<span class="literal">'x'</span>]</span> + <span class="highlight"><span class="name">button</span>[<span class="literal">'text_offset_x'</span>]</span>,
+            <span class="highlight"><span class="name">button</span>[<span class="literal">'y'</span>]</span> + <span class="highlight"><span class="name">button</span>[<span class="literal">'text_offset_y'</span>]</span>)
+        )
+
+    <span class="call">draw_button</span>(<span class="highlight"><span class="name">button_hit</span></span>)
+    <span class="call">draw_button</span>(<span class="highlight"><span class="name">button_stand</span></span>)
+    <span class="comment"># draw_button(<span class="highlight">button_play_again</span>)</span>
+</pre></div>
+<h3>Showing play again button after round is over</h3>
+<p>The hit and stand buttons are shown while the round is in progress, and the play again button is shown when the round is over.</p>
+<p><a class="fullcodelink" target="_blank" href="32.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="highlight">if not <span class="name">round_over</span>:</span>
+        <span class="call">draw_button</span>(<span class="name">button_hit</span>)
+        <span class="call">draw_button</span>(<span class="name">button_stand</span>)
+    <span class="highlight">else:</span>
+        <span class="call">draw_button</span>(<span class="name">button_play_again</span>)
+</pre></div>
+<h3>Using buttons</h3>
+<p>The code from <span class="inlinecode"><span class="name">on_key_down</span></span> is moved to <span class="inlinecode"><span class="name">on_mouse_up</span></span>, and instead of using the keys it uses the on-screen buttons.</p>
+<p><a class="fullcodelink" target="_blank" href="33.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="highlight"><span class="name">on_mouse_up</span></span>():
+    global <span class="name">round_over</span>
+
+    if not <span class="name">round_over</span>:
+        if <span class="highlight"><span class="call">is_mouse_in_button</span>(<span class="name">button_hit</span>)</span>:
+            <span class="call">take_card</span>(<span class="name">player_hand</span>)
+            if <span class="call">get_total</span>(<span class="name">player_hand</span>) >= <span class="literal">21</span>:
+                <span class="name">round_over</span> = <span class="literal">True</span>
+        elif <span class="highlight"><span class="call">is_mouse_in_button</span>(<span class="name">button_stand</span>)</span>:
+            <span class="name">round_over</span> = <span class="literal">True</span>
+
+        if <span class="name">round_over</span>:
+            while <span class="call">get_total</span>(<span class="name">dealer_hand</span>) < <span class="literal">17</span>:
+                <span class="call">take_card</span>(<span class="name">dealer_hand</span>)
+    <span class="highlight">elif <span class="call">is_mouse_in_button</span>(<span class="name">button_play_again</span>):</span>
+        <span class="call">reset</span>()
+</pre></div>
+</div></body></html>
