@@ -1,0 +1,120 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">function <span class="name">love.load</span>()
+    <span class="name">deck</span> = {}
+    for <span class="name">suitIndex</span>, <span class="name">suit</span> in <span class="call">ipairs</span>({<span class="literal">'club'</span>, <span class="literal">'diamond'</span>, <span class="literal">'heart'</span>, <span class="literal">'spade'</span>}) do
+        for <span class="name">rank</span> = <span class="literal">1</span>, <span class="literal">13</span> do
+            <span class="call">table.insert</span>(<span class="name">deck</span>, {<span class="name">suit</span> = <span class="name">suit</span>, <span class="name">rank</span> = <span class="name">rank</span>})
+        end
+    end
+
+    function <span class="name">takeCard</span>(<span class="name">hand</span>)
+        <span class="call">table.insert</span>(<span class="name">hand</span>, <span class="call">table.remove</span>(<span class="name">deck</span>, <span class="call">love.math.random</span>(#<span class="name">deck</span>)))
+    end
+
+    <span class="name">playerHand</span> = {}
+    <span class="call">takeCard</span>(<span class="name">playerHand</span>)
+    <span class="call">takeCard</span>(<span class="name">playerHand</span>)
+
+    <span class="name">dealerHand</span> = {}
+    <span class="call">takeCard</span>(<span class="name">dealerHand</span>)
+    <span class="call">takeCard</span>(<span class="name">dealerHand</span>)
+
+    <span class="name">roundOver</span> = <span class="literal">false</span>
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">key</span> == <span class="literal">'h'</span> and not <span class="name">roundOver</span> then
+        <span class="call">takeCard</span>(<span class="name">playerHand</span>)
+    elseif <span class="name">key</span> == <span class="literal">'s'</span> then
+        <span class="name">roundOver</span> = <span class="literal">true</span>
+    end
+end
+
+function <span class="name">love.draw</span>()
+    local function <span class="name">getTotal</span>(<span class="name">hand</span>)
+        local <span class="name">total</span> = <span class="literal">0</span>
+        local <span class="name">hasAce</span> = <span class="literal">false</span>
+
+        for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">hand</span>) do
+            if <span class="name">card.rank</span> > <span class="literal">10</span> then
+                <span class="name">total</span> = <span class="name">total</span> + <span class="literal">10</span>
+            else
+                <span class="name">total</span> = <span class="name">total</span> + <span class="name">card.rank</span>
+            end
+
+            if <span class="name">card.rank</span> == <span class="literal">1</span> then
+                <span class="name">hasAce</span> = <span class="literal">true</span>
+            end
+        end
+
+        if <span class="name">hasAce</span> and <span class="name">total</span> <= <span class="literal">11</span> then
+            <span class="name">total</span> = <span class="name">total</span> + <span class="literal">10</span>
+        end
+
+        return <span class="name">total</span>
+    end
+
+    local <span class="name">output</span> = {}
+
+    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Player hand:'</span>)
+    for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">playerHand</span>) do
+        <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'suit: '</span>..<span class="name">card.suit</span>..<span class="literal">', rank: '</span>..<span class="name">card.rank</span>)
+    end
+    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Total: '</span>..<span class="call">getTotal</span>(<span class="name">playerHand</span>))
+
+    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">''</span>)
+
+    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Dealer hand:'</span>)
+    for <span class="name">cardIndex</span>, <span class="name">card</span> in <span class="call">ipairs</span>(<span class="name">dealerHand</span>) do
+        <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'suit: '</span>..<span class="name">card.suit</span>..<span class="literal">', rank: '</span>..<span class="name">card.rank</span>)
+    end
+    <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Total: '</span>..<span class="call">getTotal</span>(<span class="name">dealerHand</span>))
+
+    if <span class="name">roundOver</span> then
+        <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">''</span>)
+
+        <span class="highlight">local function <span class="name">hasHandWon</span>(<span class="name">thisHand</span>, <span class="name">otherHand</span>)</span>
+            return <span class="call">getTotal</span>(<span class="highlight"><span class="name">thisHand</span></span>) <= <span class="literal">21</span>
+            and (
+                <span class="call">getTotal</span>(<span class="highlight"><span class="name">otherHand</span></span>) > <span class="literal">21</span>
+                or <span class="call">getTotal</span>(<span class="highlight"><span class="name">thisHand</span></span>) > <span class="call">getTotal</span>(<span class="highlight"><span class="name">otherHand</span></span>)
+            )
+        <span class="highlight">end</span>
+
+        if <span class="highlight"><span class="call">hasHandWon</span>(<span class="name">playerHand</span>, <span class="name">dealerHand</span>)</span> then
+            <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Player wins'</span>)
+        elseif <span class="highlight"><span class="call">hasHandWon</span>(<span class="name">dealerHand</span>, <span class="name">playerHand</span>)</span> then
+            <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Dealer wins'</span>)
+        else
+            <span class="call">table.insert</span>(<span class="name">output</span>, <span class="literal">'Draw'</span>)
+        end
+    end
+
+    <span class="call">love.graphics.print</span>(<span class="call">table.concat</span>(<span class="name">output</span>, <span class="literal">'\n'</span>), <span class="literal">15</span>, <span class="literal">15</span>)
+end</pre></div></body></html>

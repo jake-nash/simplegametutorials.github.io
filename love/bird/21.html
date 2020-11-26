@@ -1,0 +1,137 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">function <span class="name">love.load</span>()
+    <span class="name">birdY</span> = <span class="literal">200</span>
+    <span class="name">birdYSpeed</span> = <span class="literal">0</span>
+
+    <span class="name">birdX</span> = <span class="literal">62</span>
+    <span class="name">birdWidth</span> = <span class="literal">30</span>
+    <span class="name">birdHeight</span> = <span class="literal">25</span>
+
+    <span class="name">playingAreaWidth</span> = <span class="literal">300</span>
+    <span class="name">playingAreaHeight</span> = <span class="literal">388</span>
+
+    <span class="name">pipeSpaceHeight</span> = <span class="literal">100</span>
+    <span class="name">pipeWidth</span> = <span class="literal">54</span>
+
+    function <span class="name">newPipeSpaceY</span>()
+        local <span class="name">pipeSpaceYMin</span> = <span class="literal">54</span>
+        local <span class="name">pipeSpaceY</span> = <span class="call">love.math.random</span>(
+            <span class="name">pipeSpaceYMin</span>,
+            <span class="name">playingAreaHeight</span> - <span class="name">pipeSpaceHeight</span> - <span class="name">pipeSpaceYMin</span>
+        )
+        return <span class="name">pipeSpaceY</span>
+    end
+
+    <span class="name">pipe1X</span> = <span class="name">playingAreaWidth</span>
+    <span class="name">pipe1SpaceY</span> = <span class="call">newPipeSpaceY</span>()
+
+    <span class="name">pipe2X</span> = <span class="name">playingAreaWidth</span> + ((<span class="name">playingAreaWidth</span> + <span class="name">pipeWidth</span>) / <span class="literal">2</span>)
+    <span class="name">pipe2SpaceY</span> = <span class="call">newPipeSpaceY</span>()
+
+    <span class="highlight"><span class="name">score</span> = <span class="literal">0</span></span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    <span class="name">birdYSpeed</span> = <span class="name">birdYSpeed</span> + (<span class="literal">516</span> * <span class="name">dt</span>)
+    <span class="name">birdY</span> = <span class="name">birdY</span> + (<span class="name">birdYSpeed</span> * <span class="name">dt</span>)
+
+    local function <span class="name">movePipe</span>(<span class="name">pipeX</span>, <span class="name">pipeSpaceY</span>)
+        <span class="name">pipeX</span> = <span class="name">pipeX</span> - (<span class="literal">60</span> * <span class="name">dt</span>)
+
+        if (<span class="name">pipeX</span> + <span class="name">pipeWidth</span>) < <span class="literal">0</span> then
+            <span class="name">pipeX</span> = <span class="name">playingAreaWidth</span>
+            <span class="name">pipeSpaceY</span> = <span class="call">newPipeSpaceY</span>()
+        end
+
+        return <span class="name">pipeX</span>, <span class="name">pipeSpaceY</span>
+    end
+
+    <span class="name">pipe1X</span>, <span class="name">pipe1SpaceY</span> = <span class="call">movePipe</span>(<span class="name">pipe1X</span>, <span class="name">pipe1SpaceY</span>)
+    <span class="name">pipe2X</span>, <span class="name">pipe2SpaceY</span> = <span class="call">movePipe</span>(<span class="name">pipe2X</span>, <span class="name">pipe2SpaceY</span>)
+
+    function <span class="name">isBirdCollidingWithPipe</span>(<span class="name">pipeX</span>, <span class="name">pipeSpaceY</span>)
+        return
+        <span class="comment">-- Left edge of bird is to the left of the right edge of pipe</span>
+        <span class="name">birdX</span> < (<span class="name">pipeX</span> + <span class="name">pipeWidth</span>)
+        and
+         <span class="comment">-- Right edge of bird is to the right of the left edge of pipe</span>
+        (<span class="name">birdX</span> + <span class="name">birdWidth</span>) > <span class="name">pipeX</span>
+        and (
+            <span class="comment">-- Top edge of bird is above the bottom edge of first pipe segment</span>
+            <span class="name">birdY</span> < <span class="name">pipeSpaceY</span>
+            or
+            <span class="comment">-- Bottom edge of bird is below the top edge of second pipe segment</span>
+            (<span class="name">birdY</span> + <span class="name">birdHeight</span>) > (<span class="name">pipeSpaceY</span> + <span class="name">pipeSpaceHeight</span>)
+        )
+    end
+
+    if <span class="call">isBirdCollidingWithPipe</span>(<span class="name">pipe1X</span>, <span class="name">pipe1SpaceY</span>)
+    or <span class="call">isBirdCollidingWithPipe</span>(<span class="name">pipe2X</span>, <span class="name">pipe2SpaceY</span>)
+    or <span class="name">birdY</span> > <span class="name">playingAreaHeight</span> then
+        <span class="call">love.load</span>()
+    end
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">birdY</span> > <span class="literal">0</span> then
+        <span class="name">birdYSpeed</span> = -<span class="literal">165</span>
+    end
+end
+
+function <span class="name">love.draw</span>()
+    <span class="call">love.graphics.setColor</span>(<span class="literal">.14</span>, <span class="literal">.36</span>, <span class="literal">.46</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="literal">0</span>, <span class="literal">0</span>, <span class="name">playingAreaWidth</span>, <span class="name">playingAreaHeight</span>)
+
+    <span class="call">love.graphics.setColor</span>(<span class="literal">.87</span>, <span class="literal">.84</span>, <span class="literal">.27</span>)
+    <span class="call">love.graphics.rectangle</span>(<span class="literal">'fill'</span>, <span class="name">birdX</span>, <span class="name">birdY</span>, <span class="name">birdWidth</span>, <span class="name">birdHeight</span>)
+
+    local function <span class="name">drawPipe</span>(<span class="name">pipeX</span>, <span class="name">pipeSpaceY</span>)
+        <span class="call">love.graphics.setColor</span>(<span class="literal">.37</span>, <span class="literal">.82</span>, <span class="literal">.28</span>)
+        <span class="call">love.graphics.rectangle</span>(
+            <span class="literal">'fill'</span>,
+            <span class="name">pipeX</span>,
+            <span class="literal">0</span>,
+            <span class="name">pipeWidth</span>,
+            <span class="name">pipeSpaceY</span>
+        )
+        <span class="call">love.graphics.rectangle</span>(
+            <span class="literal">'fill'</span>,
+            <span class="name">pipeX</span>,
+            <span class="name">pipeSpaceY</span> + <span class="name">pipeSpaceHeight</span>,
+            <span class="name">pipeWidth</span>,
+            <span class="name">playingAreaHeight</span> - <span class="name">pipeSpaceY</span> - <span class="name">pipeSpaceHeight</span>
+        )
+    end
+
+    <span class="call">drawPipe</span>(<span class="name">pipe1X</span>, <span class="name">pipe1SpaceY</span>)
+    <span class="call">drawPipe</span>(<span class="name">pipe2X</span>, <span class="name">pipe2SpaceY</span>)
+
+    <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)</span>
+    <span class="highlight"><span class="call">love.graphics.print</span>(<span class="name">score</span>, <span class="literal">15</span>, <span class="literal">15</span>)</span>
+end</pre></div></body></html>

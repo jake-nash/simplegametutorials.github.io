@@ -1,0 +1,92 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">function <span class="name">love.load</span>()
+    <span class="name">arenaWidth</span> = <span class="literal">800</span>
+    <span class="name">arenaHeight</span> = <span class="literal">600</span>
+
+    <span class="name">shipX</span> = <span class="name">arenaWidth</span> / <span class="literal">2</span>
+    <span class="name">shipY</span> = <span class="name">arenaHeight</span> / <span class="literal">2</span>
+    <span class="name">shipAngle</span> = <span class="literal">0</span>
+    <span class="name">shipSpeedX</span> = <span class="literal">0</span>
+    <span class="name">shipSpeedY</span> = <span class="literal">0</span>
+end
+
+function <span class="name">love.update</span>(<span class="name">dt</span>)
+    local <span class="name">turnSpeed</span> = <span class="literal">10</span>
+
+    if <span class="call">love.keyboard.isDown</span>(<span class="literal">'right'</span>) then
+         <span class="name">shipAngle</span> = <span class="name">shipAngle</span> + <span class="name">turnSpeed</span> * <span class="name">dt</span>
+    end
+
+    if <span class="call">love.keyboard.isDown</span>(<span class="literal">'left'</span>) then
+        <span class="name">shipAngle</span> = <span class="name">shipAngle</span> - <span class="name">turnSpeed</span> * <span class="name">dt</span>
+    end
+
+    <span class="name">shipAngle</span> = <span class="name">shipAngle</span> % (<span class="literal">2</span> * <span class="name">math.pi</span>)
+
+    if <span class="call">love.keyboard.isDown</span>(<span class="literal">'up'</span>) then
+        local <span class="name">shipSpeed</span> = <span class="literal">100</span>
+        <span class="name">shipSpeedX</span> = <span class="name">shipSpeedX</span> + <span class="call">math.cos</span>(<span class="name">shipAngle</span>) * <span class="name">shipSpeed</span> * <span class="name">dt</span>
+        <span class="name">shipSpeedY</span> = <span class="name">shipSpeedY</span> + <span class="call">math.sin</span>(<span class="name">shipAngle</span>) * <span class="name">shipSpeed</span> * <span class="name">dt</span>
+    end
+
+    <span class="name">shipX</span> = (<span class="name">shipX</span> + <span class="name">shipSpeedX</span> * <span class="name">dt</span>) % <span class="name">arenaWidth</span>
+    <span class="name">shipY</span> = (<span class="name">shipY</span> + <span class="name">shipSpeedY</span> * <span class="name">dt</span>) % <span class="name">arenaHeight</span>
+end
+
+function <span class="name">love.draw</span>()
+    <span class="highlight">for <span class="name">y</span> = -<span class="literal">1</span>, <span class="literal">1</span> do</span>
+        <span class="highlight">for <span class="name">x</span> = -<span class="literal">1</span>, <span class="literal">1</span> do</span>
+            <span class="highlight"><span class="call">love.graphics.origin</span>()</span>
+            <span class="highlight"><span class="call">love.graphics.translate</span>(<span class="name">x</span> * <span class="name">arenaWidth</span>, <span class="name">y</span> * <span class="name">arenaHeight</span>)</span>
+
+            <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">1</span>)
+            <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">shipX</span>, <span class="name">shipY</span>, <span class="literal">30</span>)
+
+            local <span class="name">shipCircleDistance</span> = <span class="literal">20</span>
+            <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+            <span class="call">love.graphics.circle</span>(
+                <span class="literal">'fill'</span>,
+                <span class="name">shipX</span> + <span class="call">math.cos</span>(<span class="name">shipAngle</span>) * <span class="name">shipCircleDistance</span>,
+                <span class="name">shipY</span> + <span class="call">math.sin</span>(<span class="name">shipAngle</span>) * <span class="name">shipCircleDistance</span>,
+                <span class="literal">5</span>
+            )
+        <span class="highlight">end</span>
+    <span class="highlight">end</span>
+
+    <span class="comment">-- Temporary</span>
+    <span class="highlight"><span class="call">love.graphics.origin</span>()</span>
+    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+    <span class="call">love.graphics.print</span>(<span class="call">table.concat</span>({
+        <span class="literal">'shipAngle: '</span>..<span class="name">shipAngle</span>,
+        <span class="literal">'shipX: '</span>..<span class="name">shipX</span>,
+        <span class="literal">'shipY: '</span>..<span class="name">shipY</span>,
+        <span class="literal">'shipSpeedX: '</span>..<span class="name">shipSpeedX</span>,
+        <span class="literal">'shipSpeedY: '</span>..<span class="name">shipSpeedY</span>,
+    }, <span class="literal">'\n'</span>))
+end</pre></div></body></html>
