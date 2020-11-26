@@ -1,0 +1,98 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">import <span class="name">random</span>
+
+def <span class="name">add_to_sequence</span>():
+    <span class="call">sequence.append</span>(<span class="call">random.randint</span>(<span class="literal">1</span>, <span class="literal">4</span>))
+
+def <span class="name">reset</span>():
+    global <span class="name">sequence</span>
+    global <span class="name">current</span>
+    global <span class="name">timer</span>
+
+    <span class="name">sequence</span> = <span class="highlight">[<span class="literal">4</span>, <span class="literal">3</span>, <span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">2</span>, <span class="literal">3</span>] <span class="comment"># Temporary</span></span>
+    <span class="call">add_to_sequence</span>()
+    <span class="name">current</span> = <span class="literal">0</span>
+    <span class="name">timer</span> = <span class="literal">0</span>
+
+<span class="call">reset</span>()
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">timer</span>
+    <span class="highlight">global <span class="name">current</span></span>
+
+    <span class="name">timer</span> += <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="literal">1</span>:
+        <span class="name">timer</span> = <span class="literal">0</span>
+        <span class="highlight"><span class="name">current</span> += <span class="literal">1</span></span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    global <span class="name">current</span>
+
+    if <span class="name">key</span> in (<span class="name">keys.K_1</span>, <span class="name">keys.K_2</span>, <span class="name">keys.K_3</span>, <span class="name">keys.K_4</span>):
+        if <span class="name">key</span> == <span class="name">keys.K_1</span>:
+            <span class="name">number</span> = <span class="literal">1</span>
+        elif <span class="name">key</span> == <span class="name">keys.K_2</span>:
+            <span class="name">number</span> = <span class="literal">2</span>
+        elif <span class="name">key</span> == <span class="name">keys.K_3</span>:
+            <span class="name">number</span> = <span class="literal">3</span>
+        elif <span class="name">key</span> == <span class="name">keys.K_4</span>:
+            <span class="name">number</span> = <span class="literal">4</span>
+
+        if <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>]:
+            <span class="name">current</span> += <span class="literal">1</span>
+            if <span class="name">current</span> == <span class="call">len</span>(<span class="name">sequence</span>):
+                <span class="name">current</span> = <span class="literal">0</span>
+                <span class="call">add_to_sequence</span>()
+        else:
+            <span class="call">reset</span>()
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    def <span class="name">draw_square</span>(<span class="name">number</span>, <span class="name">color</span>):
+        <span class="highlight">if <span class="name">number</span> == <span class="name">sequence</span>[<span class="name">current</span>]:</span>
+        <span class="highlight">    <span class="name">square_color</span> = <span class="name">color</span></span>
+        <span class="highlight">else:</span>
+        <span class="highlight">    <span class="name">square_color</span> = (<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>)</span>
+
+        <span class="name">square_size</span> = <span class="literal">50</span>
+        <span class="call">screen.draw.filled_rect</span>(
+            <span class="call">Rect</span>(<span class="name">square_size</span> * (<span class="name">number</span> - <span class="literal">1</span>), <span class="literal">0</span>, <span class="name">square_size</span>, <span class="name">square_size</span>),
+            <span class="name">color</span>=<span class="highlight"><span class="name">square_color</span></span>
+        )
+        <span class="call">screen.draw.text</span>(<span class="call">str</span>(<span class="name">number</span>), (<span class="name">square_size</span> * (<span class="name">number</span> - <span class="literal">1</span>) + <span class="literal">21</span>, <span class="literal">18</span>))
+
+    <span class="call">draw_square</span>(<span class="literal">1</span>, (<span class="literal">50</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+    <span class="call">draw_square</span>(<span class="literal">2</span>, (<span class="literal">0</span>, <span class="literal">50</span>, <span class="literal">0</span>))
+    <span class="call">draw_square</span>(<span class="literal">3</span>, (<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">50</span>))
+    <span class="call">draw_square</span>(<span class="literal">4</span>, (<span class="literal">50</span>, <span class="literal">50</span>, <span class="literal">0</span>))
+
+    <span class="call">screen.draw.text</span>(<span class="call">str</span>(<span class="name">current</span> + <span class="literal">1</span>) + <span class="literal">'/'</span> + <span class="call">str</span>(<span class="call">len</span>(<span class="name">sequence</span>)), (<span class="literal">20</span>, <span class="literal">60</span>))
+    <span class="call">screen.draw.text</span>(<span class="literal">'sequence[current]: '</span> + <span class="call">str</span>(<span class="name">sequence</span>[<span class="name">current</span>]), (<span class="literal">20</span>, <span class="literal">100</span>))
+    <span class="call">screen.draw.text</span>(<span class="literal">', '</span>.<span class="call">join</span>(<span class="call">map</span>(<span class="name">str</span>, <span class="name">sequence</span>)), (<span class="literal">20</span>, <span class="literal">140</span>))</pre></div></body></html>

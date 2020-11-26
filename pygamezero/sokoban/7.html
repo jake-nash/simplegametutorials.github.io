@@ -1,0 +1,101 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode"><span class="name">level</span> = [
+<span class="highlight">    [<span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>],</span>
+<span class="highlight">    [<span class="literal">'#'</span>, <span class="literal">'@'</span>, <span class="literal">' '</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>],</span>
+<span class="highlight">    [<span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'$'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>],</span>
+<span class="highlight">    [<span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'$'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>],</span>
+<span class="highlight">    [<span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'$'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>],</span>
+<span class="highlight">    [<span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'$'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>],</span>
+<span class="highlight">    [<span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'*'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>],</span>
+<span class="highlight">    [<span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'*'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>],</span>
+<span class="highlight">    [<span class="literal">'#'</span>, <span class="literal">' '</span>, <span class="literal">'*'</span>, <span class="literal">' '</span>, <span class="literal">'#'</span>],</span>
+<span class="highlight">    [<span class="literal">'#'</span>, <span class="literal">'.'</span>, <span class="literal">'*'</span>, <span class="literal">'.'</span>, <span class="literal">'#'</span>],</span>
+<span class="highlight">    [<span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>, <span class="literal">'#'</span>],</span>
+]
+
+<span class="name">player</span> = <span class="literal">'@'</span>
+<span class="name">player_on_storage</span> = <span class="literal">'+'</span>
+<span class="name">box</span> = <span class="literal">'$'</span>
+<span class="name">box_on_storage</span> = <span class="literal">'*'</span>
+<span class="name">storage</span> = <span class="literal">'.'</span>
+<span class="name">wall</span> = <span class="literal">'#'</span>
+<span class="name">empty</span> = <span class="literal">' '</span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    if <span class="name">key</span> in (<span class="name">keys.UP</span>, <span class="name">keys.DOWN</span>, <span class="name">keys.LEFT</span>, <span class="name">keys.RIGHT</span>):
+        for <span class="name">test_y</span>, <span class="name">row</span> in <span class="call">enumerate</span>(<span class="name">level</span>):
+            for <span class="name">test_x</span>, <span class="name">cell</span> in <span class="call">enumerate</span>(<span class="name">row</span>):
+                if <span class="name">cell</span> == <span class="name">player</span> or <span class="name">cell</span> == <span class="name">player_on_storage</span>:
+                    <span class="name">player_x</span> = <span class="name">test_x</span>
+                    <span class="name">player_y</span> = <span class="name">test_y</span>
+
+        <span class="name">dx</span> = <span class="literal">0</span>
+        <span class="name">dy</span> = <span class="literal">0</span>
+        if <span class="name">key</span> == <span class="name">keys.LEFT</span>:
+            <span class="name">dx</span> = -<span class="literal">1</span>
+        elif <span class="name">key</span> == <span class="name">keys.RIGHT</span>:
+            <span class="name">dx</span> = <span class="literal">1</span>
+        elif <span class="name">key</span> == <span class="name">keys.UP</span>:
+            <span class="name">dy</span> = -<span class="literal">1</span>
+        elif <span class="name">key</span> == <span class="name">keys.DOWN</span>:
+            <span class="name">dy</span> = <span class="literal">1</span>
+
+        <span class="name">current</span> = <span class="name">level</span>[<span class="name">player_y</span>][<span class="name">player_x</span>]
+        <span class="name">adjacent</span> = <span class="name">level</span>[<span class="name">player_y</span> + <span class="name">dy</span>][<span class="name">player_x</span> + <span class="name">dx</span>]
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">190</span>))
+
+    for <span class="name">y</span>, <span class="name">row</span> in <span class="call">enumerate</span>(<span class="name">level</span>):
+        for <span class="name">x</span>, <span class="name">cell</span> in <span class="call">enumerate</span>(<span class="name">row</span>):
+            if <span class="name">cell</span> != <span class="name">empty</span>:
+                <span class="name">cell_size</span> = <span class="literal">23</span>
+
+                <span class="name">colors</span> = {
+                    <span class="name">player</span>: (<span class="literal">167</span>, <span class="literal">135</span>, <span class="literal">255</span>),
+                    <span class="name">player_on_storage</span>: (<span class="literal">158</span>, <span class="literal">119</span>, <span class="literal">255</span>),
+                    <span class="name">box</span>: (<span class="literal">255</span>, <span class="literal">201</span>, <span class="literal">126</span>),
+                    <span class="name">box_on_storage</span>: (<span class="literal">150</span>, <span class="literal">255</span>, <span class="literal">127</span>),
+                    <span class="name">storage</span>: (<span class="literal">156</span>, <span class="literal">229</span>, <span class="literal">255</span>),
+                    <span class="name">wall</span>: (<span class="literal">255</span>, <span class="literal">147</span>, <span class="literal">209</span>),
+                }
+
+                <span class="call">screen.draw.filled_rect</span>(
+                    <span class="call">Rect</span>(
+                        (<span class="name">x</span> * <span class="name">cell_size</span>, <span class="name">y</span> * <span class="name">cell_size</span>),
+                        (<span class="name">cell_size</span>, <span class="name">cell_size</span>)
+                    ),
+                    <span class="name">color</span>=<span class="name">colors</span>[<span class="name">cell</span>]
+                )
+
+                <span class="call">screen.draw.text</span>(
+                    <span class="name">cell</span>,
+                    (<span class="name">x</span> * <span class="name">cell_size</span>, <span class="name">y</span> * <span class="name">cell_size</span>),
+                    <span class="name">color</span>=(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+                )</pre></div></body></html>

@@ -1,0 +1,161 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">import <span class="name">random</span>
+
+<span class="name">snake_segments</span> = [
+    {<span class="literal">'x'</span>: <span class="literal">2</span>, <span class="literal">'y'</span>: <span class="literal">0</span>},
+    {<span class="literal">'x'</span>: <span class="literal">1</span>, <span class="literal">'y'</span>: <span class="literal">0</span>},
+    {<span class="literal">'x'</span>: <span class="literal">0</span>, <span class="literal">'y'</span>: <span class="literal">0</span>},
+]
+
+<span class="name">timer</span> = <span class="literal">0</span>
+
+<span class="name">direction_queue</span> = [<span class="literal">'right'</span>]
+
+<span class="name">grid_x_count</span> = <span class="literal">20</span>
+<span class="name">grid_y_count</span> = <span class="literal">15</span>
+
+def <span class="name">move_food</span>():
+    global <span class="name">food_position</span>
+
+    <span class="name">possible_food_positions</span> = []
+
+    for <span class="name">food_x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+        for <span class="name">food_y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+            <span class="name">possible</span> = <span class="literal">True</span>
+
+            for <span class="name">segment</span> in <span class="name">snake_segments</span>:
+                if <span class="name">food_x</span> == <span class="name">segment</span>[<span class="literal">'x'</span>] and <span class="name">food_y</span> == <span class="name">segment</span>[<span class="literal">'y'</span>]:
+                    <span class="name">possible</span> = <span class="literal">False</span>
+
+            if <span class="name">possible</span>:
+                <span class="call">possible_food_positions.append</span>({<span class="literal">'x'</span>: <span class="name">food_x</span>, <span class="literal">'y'</span>: <span class="name">food_y</span>})
+
+    <span class="name">food_position</span> = <span class="call">random.choice</span>(<span class="name">possible_food_positions</span>)
+
+<span class="call">move_food</span>()
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">timer</span>
+    global <span class="name">food_position</span>
+
+    <span class="name">timer</span> += <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="literal">0.15</span>:
+        <span class="name">timer</span> = <span class="literal">0</span>
+
+        if <span class="call">len</span>(<span class="name">direction_queue</span>) > <span class="literal">1</span>:
+            <span class="call">direction_queue.pop</span>(<span class="literal">0</span>)
+
+        <span class="name">next_x_position</span> = <span class="name">snake_segments</span>[<span class="literal">0</span>][<span class="literal">'x'</span>]
+        <span class="name">next_y_position</span> = <span class="name">snake_segments</span>[<span class="literal">0</span>][<span class="literal">'y'</span>]
+
+        if <span class="name">direction_queue</span>[<span class="literal">0</span>] == <span class="literal">'right'</span>:
+            <span class="name">next_x_position</span> += <span class="literal">1</span>
+            if <span class="name">next_x_position</span> >= <span class="name">grid_x_count</span>:
+                <span class="name">next_x_position</span> = <span class="literal">0</span>
+
+        elif <span class="name">direction_queue</span>[<span class="literal">0</span>] == <span class="literal">'left'</span>:
+            <span class="name">next_x_position</span> -= <span class="literal">1</span>
+            if <span class="name">next_x_position</span> < <span class="literal">0</span>:
+                <span class="name">next_x_position</span> = <span class="name">grid_x_count</span> - <span class="literal">1</span>
+
+        elif <span class="name">direction_queue</span>[<span class="literal">0</span>] == <span class="literal">'down'</span>:
+            <span class="name">next_y_position</span> += <span class="literal">1</span>
+            if <span class="name">next_y_position</span> >= <span class="name">grid_y_count</span>:
+                <span class="name">next_y_position</span> = <span class="literal">0</span>
+
+        elif <span class="name">direction_queue</span>[<span class="literal">0</span>] == <span class="literal">'up'</span>:
+            <span class="name">next_y_position</span> -= <span class="literal">1</span>
+            if <span class="name">next_y_position</span> < <span class="literal">0</span>:
+                <span class="name">next_y_position</span> = <span class="name">grid_y_count</span> - <span class="literal">1</span>
+
+        <span class="highlight"><span class="name">can_move</span> = <span class="literal">True</span></span>
+
+        <span class="highlight">for <span class="name">segment</span> in <span class="name">snake_segments</span>[:-<span class="literal">1</span>]:</span>
+        <span class="highlight">    if (<span class="name">next_x_position</span> == <span class="name">segment</span>[<span class="literal">'x'</span>]</span>
+        <span class="highlight">    and <span class="name">next_y_position</span> == <span class="name">segment</span>[<span class="literal">'y'</span>]):</span>
+        <span class="highlight">        <span class="name">can_move</span> = <span class="literal">False</span></span>
+
+        <span class="highlight">if <span class="name">can_move</span>:</span>
+            <span class="call">snake_segments.insert</span>(<span class="literal">0</span>, {<span class="literal">'x'</span>: <span class="name">next_x_position</span>, <span class="literal">'y'</span>: <span class="name">next_y_position</span>})
+
+            if (<span class="name">snake_segments</span>[<span class="literal">0</span>][<span class="literal">'x'</span>] == <span class="name">food_position</span>[<span class="literal">'x'</span>]
+            and <span class="name">snake_segments</span>[<span class="literal">0</span>][<span class="literal">'y'</span>] == <span class="name">food_position</span>[<span class="literal">'y'</span>]):
+                <span class="call">move_food</span>()
+            else:
+                <span class="call">snake_segments.pop</span>()
+        <span class="highlight">else:</span>
+        <span class="highlight">    <span class="call">print</span>(<span class="literal">'collision'</span>)</span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    if (<span class="name">key</span> == <span class="name">keys.RIGHT</span>
+    and <span class="name">direction_queue</span>[-<span class="literal">1</span>] != <span class="literal">'right'</span>
+    and <span class="name">direction_queue</span>[-<span class="literal">1</span>] != <span class="literal">'left'</span>):
+        <span class="call">direction_queue.append</span>(<span class="literal">'right'</span>)
+
+    elif (<span class="name">key</span> == <span class="name">keys.LEFT</span>
+    and <span class="name">direction_queue</span>[-<span class="literal">1</span>] != <span class="literal">'left'</span>
+    and <span class="name">direction_queue</span>[-<span class="literal">1</span>] != <span class="literal">'right'</span>):
+        <span class="call">direction_queue.append</span>(<span class="literal">'left'</span>)
+
+    elif (<span class="name">key</span> == <span class="name">keys.DOWN</span>
+    and <span class="name">direction_queue</span>[-<span class="literal">1</span>] != <span class="literal">'down'</span>
+    and <span class="name">direction_queue</span>[-<span class="literal">1</span>] != <span class="literal">'up'</span>):
+        <span class="call">direction_queue.append</span>(<span class="literal">'down'</span>)
+
+    elif (<span class="name">key</span> == <span class="name">keys.UP</span>
+    and <span class="name">direction_queue</span>[-<span class="literal">1</span>] != <span class="literal">'up'</span>
+    and <span class="name">direction_queue</span>[-<span class="literal">1</span>] != <span class="literal">'down'</span>):
+        <span class="call">direction_queue.append</span>(<span class="literal">'up'</span>)
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    <span class="name">cell_size</span> = <span class="literal">15</span>
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(
+            <span class="literal">0</span>, <span class="literal">0</span>,
+            <span class="name">grid_x_count</span> * <span class="name">cell_size</span>, <span class="name">grid_y_count</span> * <span class="name">cell_size</span>
+        ),
+        <span class="name">color</span>=(<span class="literal">70</span>, <span class="literal">70</span>, <span class="literal">70</span>)
+    )
+
+    def <span class="name">draw_cell</span>(<span class="name">x</span>, <span class="name">y</span>, <span class="name">color</span>):
+        <span class="call">screen.draw.filled_rect</span>(
+            <span class="call">Rect</span>(
+                <span class="name">x</span> * <span class="name">cell_size</span>, <span class="name">y</span> * <span class="name">cell_size</span>,
+                <span class="name">cell_size</span> - <span class="literal">1</span>, <span class="name">cell_size</span> - <span class="literal">1</span>
+            ),
+            <span class="name">color</span>=<span class="name">color</span>
+        )
+
+    for <span class="name">segment</span> in <span class="name">snake_segments</span>:
+        <span class="call">draw_cell</span>(<span class="name">segment</span>[<span class="literal">'x'</span>], <span class="name">segment</span>[<span class="literal">'y'</span>], <span class="name">color</span>=(<span class="literal">165</span>, <span class="literal">255</span>, <span class="literal">81</span>))
+
+    <span class="call">draw_cell</span>(<span class="name">food_position</span>[<span class="literal">'x'</span>], <span class="name">food_position</span>[<span class="literal">'y'</span>], (<span class="literal">255</span>, <span class="literal">76</span>, <span class="literal">76</span>))</pre></div></body></html>
