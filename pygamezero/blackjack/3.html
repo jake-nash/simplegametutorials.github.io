@@ -38,11 +38,11 @@ for <span class="name">suit</span> in (<span class="literal">'club'</span>, <spa
 
 <span class="highlight">def <span class="name">draw</span>():</span>
 <span class="highlight">    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))</span>
-
+<span class="highlight">    </span>
 <span class="highlight">    <span class="name">output</span> = []</span>
-
+<span class="highlight">    </span>
 <span class="highlight">    <span class="call">output.append</span>(<span class="literal">'Player hand:'</span>)</span>
 <span class="highlight">    for <span class="name">card</span> in <span class="name">player_hand</span>:</span>
 <span class="highlight">        <span class="call">output.append</span>(<span class="literal">'suit: '</span> + <span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">', rank: '</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]))</span>
-
+<span class="highlight">    </span>
 <span class="highlight">    <span class="call">screen.draw.text</span>(<span class="literal">'\n'</span>.<span class="call">join</span>(<span class="name">output</span>), (<span class="literal">15</span>, <span class="literal">15</span>))</span></pre></div></body></html>
