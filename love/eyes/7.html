@@ -1,0 +1,47 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">function <span class="name">love.draw</span>()
+    <span class="highlight">function <span class="name">drawEye</span>(<span class="name">eyeX</span>, <span class="name">eyeY</span>)</span>
+        local <span class="name">distanceX</span> = <span class="call">love.mouse.getX</span>() - <span class="name">eyeX</span>
+        local <span class="name">distanceY</span> = <span class="call">love.mouse.getY</span>() - <span class="name">eyeY</span>
+        local <span class="name">distance</span> = <span class="call">math.min</span>(<span class="call">math.sqrt</span>(<span class="name">distanceX</span>^<span class="literal">2</span> + <span class="name">distanceY</span>^<span class="literal">2</span>), <span class="literal">30</span>)
+        local <span class="name">angle</span> = <span class="call">math.atan2</span>(<span class="name">distanceY</span>, <span class="name">distanceX</span>)
+
+        local <span class="name">pupilX</span> = <span class="name">eyeX</span> + (<span class="call">math.cos</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
+        local <span class="name">pupilY</span> = <span class="name">eyeY</span> + (<span class="call">math.sin</span>(<span class="name">angle</span>) * <span class="name">distance</span>)
+
+        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+        <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">eyeX</span>, <span class="name">eyeY</span>, <span class="literal">50</span>)
+
+        <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">.4</span>)
+        <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">pupilX</span>, <span class="name">pupilY</span>, <span class="literal">15</span>)
+    <span class="highlight">end</span>
+
+    <span class="highlight"><span class="call">drawEye</span>(<span class="literal">200</span>, <span class="literal">200</span>)</span>
+    <span class="highlight"><span class="call">drawEye</span>(<span class="literal">330</span>, <span class="literal">200</span>)</span>
+end</pre></div></body></html>

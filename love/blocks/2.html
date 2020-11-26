@@ -1,0 +1,47 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode"><span class="highlight">function <span class="name">love.load</span>()</span>
+<span class="highlight">    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)</span>
+<span class="highlight">end</span>
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">18</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">10</span> do
+            <span class="highlight"><span class="call">love.graphics.setColor</span>(<span class="literal">.87</span>, <span class="literal">.87</span>, <span class="literal">.87</span>)</span>
+            local <span class="name">blockSize</span> = <span class="literal">20</span>
+            local <span class="name">blockDrawSize</span> = <span class="name">blockSize</span> - <span class="literal">1</span>
+            <span class="call">love.graphics.rectangle</span>(
+                <span class="literal">'fill'</span>,
+                (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+                (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+                <span class="name">blockDrawSize</span>,
+                <span class="name">blockDrawSize</span>
+            )
+        end
+    end
+end</pre></div></body></html>

@@ -1,0 +1,166 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">function <span class="name">love.load</span>()
+    <span class="call">love.graphics.setNewFont</span>(<span class="literal">30</span>)
+
+    <span class="name">gridXCount</span> = <span class="literal">4</span>
+    <span class="name">gridYCount</span> = <span class="literal">4</span>
+
+    function <span class="name">getInitialValue</span>(<span class="name">x</span>, <span class="name">y</span>)
+        return ((<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">gridXCount</span>) + <span class="name">x</span>
+    end
+
+    <span class="name">grid</span> = {}
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        <span class="name">grid</span>[<span class="name">y</span>] = {}
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] = <span class="call">getInitialValue</span>(<span class="name">x</span>, <span class="name">y</span>)
+        end
+    end
+
+    function <span class="name">move</span>(<span class="name">direction</span>)
+        local <span class="name">emptyX</span>
+        local <span class="name">emptyY</span>
+
+        for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+            for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+                if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] == <span class="name">gridXCount</span> * <span class="name">gridYCount</span> then
+                    <span class="name">emptyX</span> = <span class="name">x</span>
+                    <span class="name">emptyY</span> = <span class="name">y</span>
+                end
+            end
+        end
+
+        local <span class="name">newEmptyY</span> = <span class="name">emptyY</span>
+        local <span class="name">newEmptyX</span> = <span class="name">emptyX</span>
+
+        if <span class="name">direction</span> == <span class="literal">'down'</span> then
+            <span class="name">newEmptyY</span> = <span class="name">emptyY</span> - <span class="literal">1</span>
+        elseif <span class="name">direction</span> == <span class="literal">'up'</span> then
+            <span class="name">newEmptyY</span> = <span class="name">emptyY</span> + <span class="literal">1</span>
+        elseif <span class="name">direction</span> == <span class="literal">'right'</span> then
+            <span class="name">newEmptyX</span> = <span class="name">emptyX</span> - <span class="literal">1</span>
+        elseif <span class="name">direction</span> == <span class="literal">'left'</span> then
+            <span class="name">newEmptyX</span> = <span class="name">emptyX</span> + <span class="literal">1</span>
+        end
+
+        if <span class="name">grid</span>[<span class="name">newEmptyY</span>] and <span class="name">grid</span>[<span class="name">newEmptyY</span>][<span class="name">newEmptyX</span>] then
+            <span class="name">grid</span>[<span class="name">newEmptyY</span>][<span class="name">newEmptyX</span>], <span class="name">grid</span>[<span class="name">emptyY</span>][<span class="name">emptyX</span>] =
+            <span class="name">grid</span>[<span class="name">emptyY</span>][<span class="name">emptyX</span>], <span class="name">grid</span>[<span class="name">newEmptyY</span>][<span class="name">newEmptyX</span>]
+        end
+    end
+
+    <span class="highlight">function <span class="name">isComplete</span>()</span>
+        for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+            for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+                if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] ~= <span class="call">getInitialValue</span>(<span class="name">x</span>, <span class="name">y</span>) then
+                    <span class="highlight">return</span> <span class="literal">false</span>
+                end
+            end
+        end
+        <span class="highlight">return <span class="literal">true</span></span>
+    <span class="highlight">end</span>
+
+    <span class="highlight">repeat</span>
+        for <span class="name">moveNumber</span> = <span class="literal">1</span>, <span class="literal">1000</span> do
+            local <span class="name">roll</span> = <span class="call">love.math.random</span>(<span class="literal">4</span>)
+            if <span class="name">roll</span> == <span class="literal">1</span> then
+                <span class="call">move</span>(<span class="literal">'down'</span>)
+            elseif <span class="name">roll</span> == <span class="literal">2</span> then
+                <span class="call">move</span>(<span class="literal">'up'</span>)
+            elseif <span class="name">roll</span> == <span class="literal">3</span> then
+                <span class="call">move</span>(<span class="literal">'right'</span>)
+            elseif <span class="name">roll</span> == <span class="literal">4</span> then
+                <span class="call">move</span>(<span class="literal">'left'</span>)
+            end
+        end
+
+        for <span class="name">moveNumber</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> - <span class="literal">1</span> do
+            <span class="call">move</span>(<span class="literal">'left'</span>)
+        end
+
+        for <span class="name">moveNumber</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> - <span class="literal">1</span> do
+            <span class="call">move</span>(<span class="literal">'up'</span>)
+        end
+    <span class="highlight">until not <span class="call">isComplete</span>()</span>
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">key</span> == <span class="literal">'down'</span> then
+        <span class="call">move</span>(<span class="literal">'down'</span>)
+    elseif <span class="name">key</span> == <span class="literal">'up'</span> then
+        <span class="call">move</span>(<span class="literal">'up'</span>)
+    elseif <span class="name">key</span> == <span class="literal">'right'</span> then
+        <span class="call">move</span>(<span class="literal">'right'</span>)
+    elseif <span class="name">key</span> == <span class="literal">'left'</span> then
+        <span class="call">move</span>(<span class="literal">'left'</span>)
+    end
+
+    <span class="highlight"><span class="comment">-- Removed:</span></span>
+    <span class="highlight"><span class="comment">-- local complete = true</span></span>
+
+    <span class="highlight"><span class="comment">-- for y = 1, gridYCount do</span></span>
+    <span class="highlight"><span class="comment">--     for x = 1, gridXCount do</span></span>
+    <span class="highlight"><span class="comment">--         if grid[y][x] ~= getInitialValue(x, y) then</span></span>
+    <span class="highlight"><span class="comment">--             complete = false</span></span>
+    <span class="highlight"><span class="comment">--         end</span></span>
+    <span class="highlight"><span class="comment">--     end</span></span>
+    <span class="highlight"><span class="comment">-- end</span></span>
+
+    if <span class="highlight"><span class="call">isComplete</span>()</span> then
+        <span class="call">love.load</span>()
+    end
+end
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] ~= <span class="name">gridXCount</span> * <span class="name">gridYCount</span> then
+                local <span class="name">pieceSize</span> = <span class="literal">100</span>
+                local <span class="name">pieceDrawSize</span> = <span class="name">pieceSize</span> - <span class="literal">1</span>
+
+                <span class="call">love.graphics.setColor</span>(<span class="literal">.4</span>, <span class="literal">.1</span>, <span class="literal">.6</span>)
+                <span class="call">love.graphics.rectangle</span>(
+                    <span class="literal">'fill'</span>,
+                    (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">pieceSize</span>,
+                    (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">pieceSize</span>,
+                    <span class="name">pieceDrawSize</span>,
+                    <span class="name">pieceDrawSize</span>
+                )
+
+                <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
+                <span class="call">love.graphics.print</span>(
+                    <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>],
+                    (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">pieceSize</span>,
+                    (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">pieceSize</span>
+                )
+            end
+        end
+    end
+end</pre></div></body></html>

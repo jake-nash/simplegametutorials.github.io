@@ -1,0 +1,250 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">function <span class="name">love.load</span>()
+    <span class="call">love.graphics.setBackgroundColor</span>(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+
+    <span class="name">gridXCount</span> = <span class="literal">10</span>
+    <span class="name">gridYCount</span> = <span class="literal">18</span>
+
+    <span class="name">inert</span> = {}
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        <span class="name">inert</span>[<span class="name">y</span>] = {}
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="name">inert</span>[<span class="name">y</span>][<span class="name">x</span>] = <span class="literal">' '</span>
+        end
+    end
+
+    <span class="name">pieceStructures</span> = {
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'i'</span>, <span class="literal">'i'</span>, <span class="literal">'i'</span>, <span class="literal">'i'</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'o'</span>, <span class="literal">'o'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'o'</span>, <span class="literal">'o'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>},
+                {<span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>},
+                {<span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'s'</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>},
+                {<span class="literal">'s'</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'s'</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+        {
+            {
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'z'</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">'z'</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+            {
+                {<span class="literal">' '</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'z'</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+                {<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>},
+            },
+        },
+    }
+
+    <span class="name">pieceType</span> = <span class="literal">1</span>
+    <span class="name">pieceRotation</span> = <span class="literal">1</span>
+    <span class="highlight"><span class="name">pieceX</span> = <span class="literal">3</span></span>
+    <span class="highlight"><span class="name">pieceY</span> = <span class="literal">0</span></span>
+end
+
+function <span class="name">love.keypressed</span>(<span class="name">key</span>)
+    if <span class="name">key</span> == <span class="literal">'x'</span> then
+        <span class="name">pieceRotation</span> = <span class="name">pieceRotation</span> + <span class="literal">1</span>
+        if <span class="name">pieceRotation</span> > #<span class="name">pieceStructures</span>[<span class="name">pieceType</span>] then
+            <span class="name">pieceRotation</span> = <span class="literal">1</span>
+        end
+
+    elseif <span class="name">key</span> == <span class="literal">'z'</span> then
+        <span class="name">pieceRotation</span> = <span class="name">pieceRotation</span> - <span class="literal">1</span>
+        if <span class="name">pieceRotation</span> < <span class="literal">1</span> then
+            <span class="name">pieceRotation</span> = #<span class="name">pieceStructures</span>[<span class="name">pieceType</span>]
+        end
+
+    <span class="comment">-- Temporary</span>
+    elseif <span class="name">key</span> == <span class="literal">'down'</span> then
+        <span class="name">pieceType</span> = <span class="name">pieceType</span> + <span class="literal">1</span>
+        if <span class="name">pieceType</span> > #<span class="name">pieceStructures</span> then
+            <span class="name">pieceType</span> = <span class="literal">1</span>
+        end
+        <span class="name">pieceRotation</span> = <span class="literal">1</span>
+
+    <span class="comment">-- Temporary</span>
+    elseif <span class="name">key</span> == <span class="literal">'up'</span> then
+        <span class="name">pieceType</span> = <span class="name">pieceType</span> - <span class="literal">1</span>
+        if <span class="name">pieceType</span> < <span class="literal">1</span> then
+            <span class="name">pieceType</span> = #<span class="name">pieceStructures</span>
+        end
+        <span class="name">pieceRotation</span> = <span class="literal">1</span>
+    end
+end
+
+function <span class="name">love.draw</span>()
+    local function <span class="name">drawBlock</span>(<span class="name">block</span>, <span class="name">x</span>, <span class="name">y</span>)
+        local <span class="name">colors</span> = {
+            [<span class="literal">' '</span>] = {<span class="literal">.87</span>, <span class="literal">.87</span>, <span class="literal">.87</span>},
+            <span class="name">i</span> = {<span class="literal">.47</span>, <span class="literal">.76</span>, <span class="literal">.94</span>},
+            <span class="name">j</span> = {<span class="literal">.93</span>, <span class="literal">.91</span>, <span class="literal">.42</span>},
+            <span class="name">l</span> = {<span class="literal">.49</span>, <span class="literal">.85</span>, <span class="literal">.76</span>},
+            <span class="name">o</span> = {<span class="literal">.92</span>, <span class="literal">.69</span>, <span class="literal">.47</span>},
+            <span class="name">s</span> = {<span class="literal">.83</span>, <span class="literal">.54</span>, <span class="literal">.93</span>},
+            <span class="name">t</span> = {<span class="literal">.97</span>, <span class="literal">.58</span>, <span class="literal">.77</span>},
+            <span class="name">z</span> = {<span class="literal">.66</span>, <span class="literal">.83</span>, <span class="literal">.46</span>},
+        }
+        local <span class="name">color</span> = <span class="name">colors</span>[<span class="name">block</span>]
+        <span class="call">love.graphics.setColor</span>(<span class="name">color</span>)
+
+        local <span class="name">blockSize</span> = <span class="literal">20</span>
+        local <span class="name">blockDrawSize</span> = <span class="name">blockSize</span> - <span class="literal">1</span>
+        <span class="call">love.graphics.rectangle</span>(
+            <span class="literal">'fill'</span>,
+            (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+            (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">blockSize</span>,
+            <span class="name">blockDrawSize</span>,
+            <span class="name">blockDrawSize</span>
+        )
+    end
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="call">drawBlock</span>(<span class="name">inert</span>[<span class="name">y</span>][<span class="name">x</span>], <span class="name">x</span>, <span class="name">y</span>)
+        end
+    end
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="literal">4</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="literal">4</span> do
+            local <span class="name">block</span> = <span class="name">pieceStructures</span>[<span class="name">pieceType</span>][<span class="name">pieceRotation</span>][<span class="name">y</span>][<span class="name">x</span>]
+            if <span class="name">block</span> ~= <span class="literal">' '</span> then
+                <span class="call">drawBlock</span>(<span class="name">block</span>, <span class="name">x</span> <span class="highlight">+ <span class="name">pieceX</span></span>, <span class="name">y</span> <span class="highlight">+ <span class="name">pieceY</span></span>)
+            end
+        end
+    end
+end</pre></div></body></html>

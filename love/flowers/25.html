@@ -1,0 +1,220 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">function <span class="name">love.load</span>()
+    <span class="name">images</span> = {}
+
+    for <span class="name">imageIndex</span>, <span class="name">image</span> in <span class="call">ipairs</span>({
+        <span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">3</span>, <span class="literal">4</span>, <span class="literal">5</span>, <span class="literal">6</span>, <span class="literal">7</span>, <span class="literal">8</span>,
+        <span class="literal">'uncovered'</span>, <span class="literal">'covered_highlighted'</span>, <span class="literal">'covered'</span>,
+        <span class="literal">'flower'</span>, <span class="literal">'flag'</span>, <span class="literal">'question'</span>,
+    }) do
+        <span class="name">images</span>[<span class="name">image</span>] = <span class="call">love.graphics.newImage</span>(<span class="literal">'images/'</span>..<span class="name">image</span>..<span class="literal">'.png'</span>)
+    end
+
+    <span class="name">cellSize</span> = <span class="literal">18</span>
+
+    <span class="name">gridXCount</span> = <span class="literal">19</span>
+    <span class="name">gridYCount</span> = <span class="literal">14</span>
+
+    <span class="name">grid</span> = {}
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        <span class="name">grid</span>[<span class="name">y</span>] = {}
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] = {
+                <span class="name">flower</span> = <span class="literal">false</span>,
+                <span class="name">state</span> = <span class="literal">'covered'</span>, <span class="comment">-- 'covered', 'uncovered', 'flag', 'question'</span>
+            }
+        end
+    end
+
+    local <span class="name">possibleFlowerPositions</span> = {}
+
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            <span class="call">table.insert</span>(<span class="name">possibleFlowerPositions</span>, {<span class="name">x</span> = <span class="name">x</span>, <span class="name">y</span> = <span class="name">y</span>})
+        end
+    end
+
+    for <span class="name">flowerIndex</span> = <span class="literal">1</span>, <span class="literal">40</span> do
+        local <span class="name">position</span> = <span class="call">table.remove</span>(
+            <span class="name">possibleFlowerPositions</span>,
+            <span class="call">love.math.random</span>(#<span class="name">possibleFlowerPositions</span>)
+        )
+        <span class="name">grid</span>[<span class="name">position.y</span>][<span class="name">position.x</span>].<span class="name">flower</span> = <span class="literal">true</span>
+    end
+
+    function <span class="name">getSurroundingFlowerCount</span>(<span class="name">x</span>, <span class="name">y</span>)
+        local <span class="name">surroundingFlowerCount</span> = <span class="literal">0</span>
+
+        for <span class="name">dy</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
+            for <span class="name">dx</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
+                if not (<span class="name">dy</span> == <span class="literal">0</span> and <span class="name">dx</span> == <span class="literal">0</span>)
+                and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>]
+                and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>]
+                and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>].<span class="name">flower</span>
+                then
+                    <span class="name">surroundingFlowerCount</span> = <span class="name">surroundingFlowerCount</span> + <span class="literal">1</span>
+                end
+            end
+        end
+
+        return <span class="name">surroundingFlowerCount</span>
+    end
+
+    <span class="name">gameOver</span> = <span class="literal">false</span>
+end
+
+function <span class="name">love.update</span>()
+    <span class="name">selectedX</span> = <span class="call">math.floor</span>(<span class="call">love.mouse.getX</span>() / <span class="name">cellSize</span>) + <span class="literal">1</span>
+    <span class="name">selectedY</span> = <span class="call">math.floor</span>(<span class="call">love.mouse.getY</span>() / <span class="name">cellSize</span>) + <span class="literal">1</span>
+
+    if <span class="name">selectedX</span> > <span class="name">gridXCount</span> then
+        <span class="name">selectedX</span> = <span class="name">gridXCount</span>
+    end
+
+    if <span class="name">selectedY</span> > <span class="name">gridYCount</span> then
+        <span class="name">selectedY</span> = <span class="name">gridYCount</span>
+    end
+end
+
+function <span class="name">love.mousereleased</span>(<span class="name">mouseX</span>, <span class="name">mouseY</span>, <span class="name">button</span>)
+    if not <span class="name">gameOver</span> then
+        if <span class="name">button</span> == <span class="literal">1</span> and <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> ~= <span class="literal">'flag'</span> then
+            if <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">flower</span> then
+                <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> = <span class="literal">'uncovered'</span>
+                <span class="name">gameOver</span> = <span class="literal">true</span>
+            else
+                local <span class="name">stack</span> = {
+                    {
+                        <span class="name">x</span> = <span class="name">selectedX</span>,
+                        <span class="name">y</span> = <span class="name">selectedY</span>,
+                    }
+                }
+
+                while #<span class="name">stack</span> > <span class="literal">0</span> do
+                    local <span class="name">current</span> = <span class="call">table.remove</span>(<span class="name">stack</span>)
+                    local <span class="name">x</span> = <span class="name">current.x</span>
+                    local <span class="name">y</span> = <span class="name">current.y</span>
+
+                    <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> = <span class="literal">'uncovered'</span>
+
+                    if <span class="call">getSurroundingFlowerCount</span>(<span class="name">x</span>, <span class="name">y</span>) == <span class="literal">0</span> then
+                        for <span class="name">dy</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
+                            for <span class="name">dx</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
+                                if not (<span class="name">dx</span> == <span class="literal">0</span> and <span class="name">dy</span> == <span class="literal">0</span>)
+                                and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>]
+                                and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>]
+                                and (
+                                    <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>].<span class="name">state</span> == <span class="literal">'covered'</span>
+                                    or <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>].<span class="name">state</span> == <span class="literal">'question'</span>
+                                ) then
+                                    <span class="call">table.insert</span>(<span class="name">stack</span>, {
+                                        <span class="name">x</span> = <span class="name">x</span> + <span class="name">dx</span>,
+                                        <span class="name">y</span> = <span class="name">y</span> + <span class="name">dy</span>,
+                                    })
+                                end
+                            end
+                        end
+                    end
+                end
+
+                local <span class="name">complete</span> = <span class="literal">true</span>
+
+                for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+                    for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+                        if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> ~= <span class="literal">'uncovered'</span>
+                        and not <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">flower</span> then
+                            <span class="name">complete</span> = <span class="literal">false</span>
+                        end
+                    end
+                end
+
+                if <span class="name">complete</span> then
+                    <span class="name">gameOver</span> = <span class="literal">true</span>
+                end
+            end
+
+        elseif <span class="name">button</span> == <span class="literal">2</span> then
+            if <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> == <span class="literal">'covered'</span> then
+                <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> = <span class="literal">'flag'</span>
+
+            elseif <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> == <span class="literal">'flag'</span> then
+                <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> = <span class="literal">'question'</span>
+
+            elseif <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> == <span class="literal">'question'</span> then
+                <span class="name">grid</span>[<span class="name">selectedY</span>][<span class="name">selectedX</span>].<span class="name">state</span> = <span class="literal">'covered'</span>
+            end
+        end
+    else
+        <span class="call">love.load</span>()
+    end
+end
+
+function <span class="name">love.draw</span>()
+    for <span class="name">y</span> = <span class="literal">1</span>, <span class="name">gridYCount</span> do
+        for <span class="name">x</span> = <span class="literal">1</span>, <span class="name">gridXCount</span> do
+            local function <span class="name">drawCell</span>(<span class="name">image</span>, <span class="name">x</span>, <span class="name">y</span>)
+                <span class="call">love.graphics.draw</span>(
+                    <span class="name">image</span>,
+                    (<span class="name">x</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>, (<span class="name">y</span> - <span class="literal">1</span>) * <span class="name">cellSize</span>
+                )
+            end
+
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> == <span class="literal">'uncovered'</span> then
+                <span class="call">drawCell</span>(<span class="name">images.uncovered</span>, <span class="name">x</span>, <span class="name">y</span>)
+            else
+                if <span class="name">x</span> == <span class="name">selectedX</span> and <span class="name">y</span> == <span class="name">selectedY</span> and not <span class="name">gameOver</span> then
+                    if <span class="call">love.mouse.isDown</span>(<span class="literal">1</span>) then
+                        if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> == <span class="literal">'flag'</span> then
+                            <span class="call">drawCell</span>(<span class="name">images.covered</span>, <span class="name">x</span>, <span class="name">y</span>)
+                        else
+                            <span class="call">drawCell</span>(<span class="name">images.uncovered</span>, <span class="name">x</span>, <span class="name">y</span>)
+                        end
+                    else
+                        <span class="call">drawCell</span>(<span class="name">images.covered_highlighted</span>, <span class="name">x</span>, <span class="name">y</span>)
+                    end
+                else
+                    <span class="call">drawCell</span>(<span class="name">images.covered</span>, <span class="name">x</span>, <span class="name">y</span>)
+                end
+            end
+
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">flower</span> <span class="highlight">and <span class="name">gameOver</span></span> then
+                <span class="call">drawCell</span>(<span class="name">images.flower</span>, <span class="name">x</span>, <span class="name">y</span>)
+            elseif <span class="call">getSurroundingFlowerCount</span>(<span class="name">x</span>, <span class="name">y</span>) > <span class="literal">0</span> then
+                <span class="call">drawCell</span>(<span class="name">images</span>[<span class="call">getSurroundingFlowerCount</span>(<span class="name">x</span>, <span class="name">y</span>)], <span class="name">x</span>, <span class="name">y</span>)
+            end
+
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> == <span class="literal">'flag'</span> then
+                <span class="call">drawCell</span>(<span class="name">images.flag</span>, <span class="name">x</span>, <span class="name">y</span>)
+            elseif <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>].<span class="name">state</span> == <span class="literal">'question'</span> then
+                <span class="call">drawCell</span>(<span class="name">images.question</span>, <span class="name">x</span>, <span class="name">y</span>)
+            end
+        end
+    end
+end</pre></div></body></html>
