@@ -1,0 +1,61 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode"><span class="name">bird_y</span> = <span class="literal">200</span>
+<span class="name">bird_y_speed</span> = <span class="literal">0</span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">bird_y</span>
+    global <span class="name">bird_y_speed</span>
+
+    <span class="name">bird_y_speed</span> += <span class="literal">516</span> * <span class="name">dt</span>
+    <span class="name">bird_y</span> += <span class="name">bird_y_speed</span> * <span class="name">dt</span>
+
+def <span class="name">on_key_down</span>():
+    global <span class="name">bird_y_speed</span>
+
+    <span class="highlight">if <span class="name">bird_y</span> > <span class="literal">0</span>:</span>
+        <span class="name">bird_y_speed</span> = -<span class="literal">165</span>
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(
+            (<span class="literal">0</span>, <span class="literal">0</span>),
+            (<span class="literal">300</span>, <span class="literal">388</span>)
+        ),
+        <span class="name">color</span>=(<span class="literal">35</span>, <span class="literal">92</span>, <span class="literal">118</span>)
+    )
+
+    <span class="call">screen.draw.filled_rect</span>(
+        <span class="call">Rect</span>(
+            (<span class="literal">62</span>, <span class="name">bird_y</span>),
+            (<span class="literal">30</span>, <span class="literal">25</span>)
+        ),
+        <span class="name">color</span>=(<span class="literal">224</span>, <span class="literal">214</span>, <span class="literal">68</span>)
+    )</pre></div></body></html>

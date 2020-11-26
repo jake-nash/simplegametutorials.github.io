@@ -1,0 +1,145 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">import <span class="name">random</span>
+
+def <span class="name">take_card</span>(<span class="name">hand</span>):
+    <span class="call">hand.append</span>(<span class="call">deck.pop</span>(<span class="call">random.randrange</span>(<span class="call">len</span>(<span class="name">deck</span>))))
+
+def <span class="name">reset</span>():
+    global <span class="name">deck</span>
+    global <span class="name">player_hand</span>
+    global <span class="name">dealer_hand</span>
+    global <span class="name">round_over</span>
+
+    <span class="name">deck</span> = []
+    for <span class="name">suit</span> in (<span class="literal">'club'</span>, <span class="literal">'diamond'</span>, <span class="literal">'heart'</span>, <span class="literal">'spade'</span>):
+        for <span class="name">rank</span> in <span class="call">range</span>(<span class="literal">1</span>, <span class="literal">14</span>):
+            <span class="call">deck.append</span>({<span class="literal">'suit'</span>: <span class="name">suit</span>, <span class="literal">'rank'</span>: <span class="name">rank</span>})
+
+    <span class="name">player_hand</span> = []
+    <span class="call">take_card</span>(<span class="name">player_hand</span>)
+    <span class="call">take_card</span>(<span class="name">player_hand</span>)
+
+    <span class="name">dealer_hand</span> = []
+    <span class="call">take_card</span>(<span class="name">dealer_hand</span>)
+    <span class="call">take_card</span>(<span class="name">dealer_hand</span>)
+
+    <span class="name">round_over</span> = <span class="literal">False</span>
+
+<span class="call">reset</span>()
+
+def <span class="name">get_total</span>(<span class="name">hand</span>):
+    <span class="name">total</span> = <span class="literal">0</span>
+    <span class="name">has_ace</span> = <span class="literal">False</span>
+
+    for <span class="name">card</span> in <span class="name">hand</span>:
+        if <span class="name">card</span>[<span class="literal">'rank'</span>] > <span class="literal">10</span>:
+            <span class="name">total</span> += <span class="literal">10</span>
+        else:
+            <span class="name">total</span> += <span class="name">card</span>[<span class="literal">'rank'</span>]
+
+        if <span class="name">card</span>[<span class="literal">'rank'</span>] == <span class="literal">1</span>:
+            <span class="name">has_ace</span> = <span class="literal">True</span>
+
+    if <span class="name">has_ace</span> and <span class="name">total</span> <= <span class="literal">11</span>:
+        <span class="name">total</span> += <span class="literal">10</span>
+
+    return <span class="name">total</span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    global <span class="name">round_over</span>
+
+    if not <span class="name">round_over</span>:
+        if <span class="name">key</span> == <span class="name">keys.H</span>:
+            <span class="call">take_card</span>(<span class="name">player_hand</span>)
+            if <span class="call">get_total</span>(<span class="name">player_hand</span>) >= <span class="literal">21</span>:
+                <span class="name">round_over</span> = <span class="literal">True</span>
+        elif <span class="name">key</span> == <span class="name">keys.S</span>:
+            <span class="name">round_over</span> = <span class="literal">True</span>
+
+        if <span class="name">round_over</span>:
+            while <span class="call">get_total</span>(<span class="name">dealer_hand</span>) < <span class="literal">17</span>:
+                <span class="call">take_card</span>(<span class="name">dealer_hand</span>)
+    else:
+        <span class="call">reset</span>()
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>))
+
+    <span class="name">output</span> = []
+
+    <span class="call">output.append</span>(<span class="literal">'Player hand:'</span>)
+    for <span class="name">card</span> in <span class="name">player_hand</span>:
+        <span class="call">output.append</span>(<span class="literal">'suit: '</span> + <span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">', rank: '</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]))
+    <span class="call">output.append</span>(<span class="literal">'Total: '</span> + <span class="call">str</span>(<span class="call">get_total</span>(<span class="name">player_hand</span>)))
+
+    <span class="call">output.append</span>(<span class="literal">''</span>)
+
+    <span class="call">output.append</span>(<span class="literal">'Dealer hand:'</span>)
+    for <span class="name">card_index</span>, <span class="name">card</span> in <span class="call">enumerate</span>(<span class="name">dealer_hand</span>):
+        if not <span class="name">round_over</span> and <span class="name">card_index</span> == <span class="literal">0</span>:
+            <span class="call">output.append</span>(<span class="literal">'(Card hidden)'</span>)
+        else:
+            <span class="call">output.append</span>(<span class="literal">'suit: '</span> + <span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">', rank: '</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]))
+
+    if <span class="name">round_over</span>:
+        <span class="call">output.append</span>(<span class="literal">'Total: '</span> + <span class="call">str</span>(<span class="call">get_total</span>(<span class="name">dealer_hand</span>)))
+    else:
+        <span class="call">output.append</span>(<span class="literal">'Total: ?'</span>)
+
+    if <span class="name">round_over</span>:
+        <span class="call">output.append</span>(<span class="literal">''</span>)
+
+        def <span class="name">has_hand_won</span>(<span class="name">this_hand</span>, <span class="name">other_hand</span>):
+            return (
+                <span class="call">get_total</span>(<span class="name">this_hand</span>) <= <span class="literal">21</span>
+                and (
+                    <span class="call">get_total</span>(<span class="name">other_hand</span>) > <span class="literal">21</span>
+                    or <span class="call">get_total</span>(<span class="name">this_hand</span>) > <span class="call">get_total</span>(<span class="name">other_hand</span>)
+                )
+            )
+
+        if <span class="call">has_hand_won</span>(<span class="name">player_hand</span>, <span class="name">dealer_hand</span>):
+            <span class="call">output.append</span>(<span class="literal">'Player wins'</span>)
+        elif <span class="call">has_hand_won</span>(<span class="name">dealer_hand</span>, <span class="name">player_hand</span>):
+            <span class="call">output.append</span>(<span class="literal">'Dealer wins'</span>)
+        else:
+            <span class="call">output.append</span>(<span class="literal">'Draw'</span>)
+
+    <span class="name">card_spacing</span> = <span class="literal">60</span>
+    <span class="name">margin_x</span> = <span class="literal">10</span>
+
+    for <span class="name">card_index</span>, <span class="name">card</span> in <span class="call">enumerate</span>(<span class="name">dealer_hand</span>):
+        <span class="highlight"><span class="name">image</span> =</span> <span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">'_'</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>])
+        <span class="highlight">if not <span class="name">round_over</span> and <span class="name">card_index</span> == <span class="literal">0</span>:</span>
+        <span class="highlight">    <span class="name">image</span> = <span class="literal">'card_face_down'</span></span>
+        <span class="call">screen.blit</span>(<span class="highlight"><span class="name">image</span></span>, (<span class="name">card_index</span> * <span class="name">card_spacing</span> + <span class="name">margin_x</span>, <span class="literal">30</span>))
+
+    for <span class="name">card_index</span>, <span class="name">card</span> in <span class="call">enumerate</span>(<span class="name">player_hand</span>):
+        <span class="call">screen.blit</span>(<span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">'_'</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]),
+            (<span class="name">card_index</span> * <span class="name">card_spacing</span> + <span class="name">margin_x</span>, <span class="literal">140</span>))</pre></div></body></html>

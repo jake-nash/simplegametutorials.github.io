@@ -1,0 +1,219 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">import <span class="name">math</span>
+import <span class="name">random</span>
+
+<span class="name">arena_width</span> = <span class="literal">800</span>
+<span class="name">arena_height</span> = <span class="literal">600</span>
+
+<span class="name">ship_x</span> = <span class="name">arena_width</span> / <span class="literal">2</span>
+<span class="name">ship_y</span> = <span class="name">arena_height</span> / <span class="literal">2</span>
+<span class="name">ship_speed_x</span> = <span class="literal">0</span>
+<span class="name">ship_speed_y</span> = <span class="literal">0</span>
+<span class="name">ship_angle</span> = <span class="literal">0</span>
+<span class="name">ship_radius</span> = <span class="literal">30</span>
+
+<span class="name">bullets</span> = []
+<span class="name">bullet_timer_limit</span> = <span class="literal">0.5</span>
+<span class="name">bullet_timer</span> = <span class="name">bullet_timer_limit</span>
+<span class="name">bullet_radius</span> = <span class="literal">5</span>
+
+<span class="name">asteroids</span> = [
+    {
+        <span class="literal">'x'</span>: <span class="literal">100</span>,
+        <span class="literal">'y'</span>: <span class="literal">100</span>,
+    },
+    {
+        <span class="literal">'x'</span>: <span class="name">arena_width</span> - <span class="literal">100</span>,
+        <span class="literal">'y'</span>: <span class="literal">100</span>,
+    },
+    {
+        <span class="literal">'x'</span>: <span class="name">arena_width</span> / <span class="literal">2</span>,
+        <span class="literal">'y'</span>: <span class="name">arena_height</span> - <span class="literal">100</span>,
+    },
+]
+
+<span class="highlight"><span class="name">asteroid_stages</span> = [</span>
+<span class="highlight">    {</span>
+<span class="highlight">        <span class="literal">'speed'</span>: <span class="literal">120</span>,</span>
+<span class="highlight">        <span class="literal">'radius'</span>: <span class="literal">15</span>,</span>
+<span class="highlight">    },</span>
+<span class="highlight">    {</span>
+<span class="highlight">        <span class="literal">'speed'</span>: <span class="literal">70</span>,</span>
+<span class="highlight">        <span class="literal">'radius'</span>: <span class="literal">30</span>,</span>
+<span class="highlight">    },</span>
+<span class="highlight">    {</span>
+<span class="highlight">        <span class="literal">'speed'</span>: <span class="literal">50</span>,</span>
+<span class="highlight">        <span class="literal">'radius'</span>: <span class="literal">50</span>,</span>
+<span class="highlight">    },</span>
+<span class="highlight">    {</span>
+<span class="highlight">        <span class="literal">'speed'</span>: <span class="literal">20</span>,</span>
+<span class="highlight">        <span class="literal">'radius'</span>: <span class="literal">80</span>,</span>
+<span class="highlight">    },</span>
+<span class="highlight">]</span>
+
+for <span class="name">asteroid</span> in <span class="name">asteroids</span>:
+    <span class="name">asteroid</span>[<span class="literal">'angle'</span>] = <span class="call">random.random</span>() * (<span class="literal">2</span> * <span class="name">math.pi</span>)
+    <span class="highlight"><span class="name">asteroid</span>[<span class="literal">'stage'</span>] = <span class="call">len</span>(<span class="name">asteroid_stages</span>) - <span class="literal">1</span></span>
+
+<span class="highlight"><span class="comment"># Removed: asteroid_radius = 80</span></span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">ship_x</span>
+    global <span class="name">ship_y</span>
+    global <span class="name">ship_speed_x</span>
+    global <span class="name">ship_speed_y</span>
+    global <span class="name">ship_angle</span>
+    global <span class="name">bullet_timer</span>
+
+    <span class="name">turn_speed</span> = <span class="literal">10</span>
+
+    if <span class="name">keyboard.right</span>:
+        <span class="name">ship_angle</span> += <span class="name">turn_speed</span> * <span class="name">dt</span>
+
+    if <span class="name">keyboard.left</span>:
+        <span class="name">ship_angle</span> -= <span class="name">turn_speed</span> * <span class="name">dt</span>
+
+    <span class="name">ship_angle</span> %= <span class="literal">2</span> * <span class="name">math.pi</span>
+
+    if <span class="name">keyboard.up</span>:
+        <span class="name">ship_speed</span> = <span class="literal">100</span>
+        <span class="name">ship_speed_x</span> += <span class="call">math.cos</span>(<span class="name">ship_angle</span>) * <span class="name">ship_speed</span> * <span class="name">dt</span>
+        <span class="name">ship_speed_y</span> += <span class="call">math.sin</span>(<span class="name">ship_angle</span>) * <span class="name">ship_speed</span> * <span class="name">dt</span>
+
+    <span class="name">ship_x</span> += <span class="name">ship_speed_x</span> * <span class="name">dt</span>
+    <span class="name">ship_y</span> += <span class="name">ship_speed_y</span> * <span class="name">dt</span>
+
+    <span class="name">ship_x</span> %= <span class="name">arena_width</span>
+    <span class="name">ship_y</span> %= <span class="name">arena_height</span>
+
+    def <span class="name">are_circles_intersecting</span>(<span class="name">a_x</span>, <span class="name">a_y</span>, <span class="name">a_radius</span>, <span class="name">b_x</span>, <span class="name">b_y</span>, <span class="name">b_radius</span>):
+        return (<span class="name">a_x</span> - <span class="name">b_x</span>)**<span class="literal">2</span> + (<span class="name">a_y</span> - <span class="name">b_y</span>)**<span class="literal">2</span> <= (<span class="name">a_radius</span> + <span class="name">b_radius</span>)**<span class="literal">2</span>
+
+    for <span class="name">bullet</span> in <span class="call">bullets.copy</span>():
+        <span class="name">bullet</span>[<span class="literal">'time_left'</span>] -= <span class="name">dt</span>
+
+        if <span class="name">bullet</span>[<span class="literal">'time_left'</span>] <= <span class="literal">0</span>:
+            <span class="call">bullets.remove</span>(<span class="name">bullet</span>)
+            continue
+
+        <span class="name">bullet_speed</span> = <span class="literal">500</span>
+        <span class="name">bullet</span>[<span class="literal">'x'</span>] += <span class="call">math.cos</span>(<span class="name">bullet</span>[<span class="literal">'angle'</span>]) * <span class="name">bullet_speed</span> * <span class="name">dt</span>
+        <span class="name">bullet</span>[<span class="literal">'y'</span>] += <span class="call">math.sin</span>(<span class="name">bullet</span>[<span class="literal">'angle'</span>]) * <span class="name">bullet_speed</span> * <span class="name">dt</span>
+        <span class="name">bullet</span>[<span class="literal">'x'</span>] %= <span class="name">arena_width</span>
+        <span class="name">bullet</span>[<span class="literal">'y'</span>] %= <span class="name">arena_height</span>
+
+        for <span class="name">asteroid</span> in <span class="call">asteroids.copy</span>():
+            if <span class="call">are_circles_intersecting</span>(
+                <span class="name">bullet</span>[<span class="literal">'x'</span>], <span class="name">bullet</span>[<span class="literal">'y'</span>], <span class="name">bullet_radius</span>,
+                <span class="name">asteroid</span>[<span class="literal">'x'</span>], <span class="name">asteroid</span>[<span class="literal">'y'</span>],
+                <span class="highlight"><span class="name">asteroid_stages</span>[<span class="name">asteroid</span>[<span class="literal">'stage'</span>]][<span class="literal">'radius'</span>]</span>
+            ):
+                <span class="call">bullets.remove</span>(<span class="name">bullet</span>)
+
+                <span class="highlight">if <span class="name">asteroid</span>[<span class="literal">'stage'</span>] > <span class="literal">0</span>:</span>
+                    <span class="name">angle1</span> = <span class="call">random.random</span>() * (<span class="literal">2</span> * <span class="name">math.pi</span>)
+                    <span class="name">angle2</span> = (<span class="name">angle1</span> - <span class="name">math.pi</span>) % (<span class="literal">2</span> * <span class="name">math.pi</span>)
+
+                    <span class="call">asteroids.append</span>({
+                        <span class="literal">'x'</span>: <span class="name">asteroid</span>[<span class="literal">'x'</span>],
+                        <span class="literal">'y'</span>: <span class="name">asteroid</span>[<span class="literal">'y'</span>],
+                        <span class="literal">'angle'</span>: <span class="name">angle1</span>,
+                        <span class="highlight"><span class="literal">'stage'</span>: <span class="name">asteroid</span>[<span class="literal">'stage'</span>] - <span class="literal">1</span>,</span>
+                    })
+                    <span class="call">asteroids.append</span>({
+                        <span class="literal">'x'</span>: <span class="name">asteroid</span>[<span class="literal">'x'</span>],
+                        <span class="literal">'y'</span>: <span class="name">asteroid</span>[<span class="literal">'y'</span>],
+                        <span class="literal">'angle'</span>: <span class="name">angle2</span>,
+                        <span class="highlight"><span class="literal">'stage'</span>: <span class="name">asteroid</span>[<span class="literal">'stage'</span>] - <span class="literal">1</span>,</span>
+                    })
+
+                <span class="call">asteroids.remove</span>(<span class="name">asteroid</span>)
+                break
+
+    <span class="name">bullet_timer</span> += <span class="name">dt</span>
+
+    if <span class="name">keyboard.S</span>:
+        if <span class="name">bullet_timer</span> >= <span class="name">bullet_timer_limit</span>:
+            <span class="name">bullet_timer</span> = <span class="literal">0</span>
+
+            <span class="call">bullets.append</span>({
+                <span class="literal">'x'</span>: <span class="name">ship_x</span> + <span class="call">math.cos</span>(<span class="name">ship_angle</span>) * <span class="name">ship_radius</span>,
+                <span class="literal">'y'</span>: <span class="name">ship_y</span> + <span class="call">math.sin</span>(<span class="name">ship_angle</span>) * <span class="name">ship_radius</span>,
+                <span class="literal">'angle'</span>: <span class="name">ship_angle</span>,
+                <span class="literal">'time_left'</span>: <span class="literal">4</span>,
+            })
+
+    for <span class="name">asteroid</span> in <span class="name">asteroids</span>:
+        <span class="name">asteroid_speed</span> = <span class="highlight"><span class="name">asteroid_stages</span>[<span class="name">asteroid</span>[<span class="literal">'stage'</span>]][<span class="literal">'speed'</span>]</span>
+        <span class="name">asteroid</span>[<span class="literal">'x'</span>] += <span class="call">math.cos</span>(<span class="name">asteroid</span>[<span class="literal">'angle'</span>]) * <span class="name">asteroid_speed</span> * <span class="name">dt</span>
+        <span class="name">asteroid</span>[<span class="literal">'y'</span>] += <span class="call">math.sin</span>(<span class="name">asteroid</span>[<span class="literal">'angle'</span>]) * <span class="name">asteroid_speed</span> * <span class="name">dt</span>
+        <span class="name">asteroid</span>[<span class="literal">'x'</span>] %= <span class="name">arena_width</span>
+        <span class="name">asteroid</span>[<span class="literal">'y'</span>] %= <span class="name">arena_height</span>
+
+        if <span class="call">are_circles_intersecting</span>(
+            <span class="name">ship_x</span>, <span class="name">ship_y</span>, <span class="name">ship_radius</span>,
+            <span class="name">asteroid</span>[<span class="literal">'x'</span>], <span class="name">asteroid</span>[<span class="literal">'y'</span>],
+            <span class="highlight"><span class="name">asteroid_stages</span>[<span class="name">asteroid</span>[<span class="literal">'stage'</span>]][<span class="literal">'radius'</span>]</span>
+        ):
+            <span class="call">print</span>(<span class="literal">'collision'</span>)
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    for <span class="name">y</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+            <span class="name">offset_x</span> = <span class="name">x</span> * <span class="name">arena_width</span>
+            <span class="name">offset_y</span> = <span class="name">y</span> * <span class="name">arena_height</span>
+
+            <span class="call">screen.draw.filled_circle</span>(
+                (<span class="name">ship_x</span> + <span class="name">offset_x</span>, <span class="name">ship_y</span> + <span class="name">offset_y</span>),
+                <span class="name">ship_radius</span>, <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">255</span>)
+            )
+
+            <span class="name">ship_circle_distance</span> = <span class="literal">20</span>
+            <span class="call">screen.draw.filled_circle</span>((
+                <span class="name">ship_x</span> + <span class="name">offset_x</span> +
+                    <span class="call">math.cos</span>(<span class="name">ship_angle</span>) * <span class="name">ship_circle_distance</span>,
+                <span class="name">ship_y</span> + <span class="name">offset_y</span> +
+                    <span class="call">math.sin</span>(<span class="name">ship_angle</span>) * <span class="name">ship_circle_distance</span>),
+                <span class="literal">5</span>, <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+            )
+
+            for <span class="name">bullet</span> in <span class="name">bullets</span>:
+                <span class="call">screen.draw.filled_circle</span>(
+                    (<span class="name">bullet</span>[<span class="literal">'x'</span>] + <span class="name">offset_x</span>, <span class="name">bullet</span>[<span class="literal">'y'</span>] + <span class="name">offset_y</span>),
+                    <span class="name">bullet_radius</span>, <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">0</span>)
+                )
+
+            for <span class="name">asteroid</span> in <span class="name">asteroids</span>:
+                <span class="call">screen.draw.filled_circle</span>((
+                    <span class="name">asteroid</span>[<span class="literal">'x'</span>] + <span class="name">offset_x</span>, <span class="name">asteroid</span>[<span class="literal">'y'</span>] + <span class="name">offset_y</span>),
+                    <span class="highlight"><span class="name">asteroid_stages</span>[<span class="name">asteroid</span>[<span class="literal">'stage'</span>]][<span class="literal">'radius'</span>]</span>,
+                    <span class="name">color</span>=(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">0</span>)
+                )</pre></div></body></html>

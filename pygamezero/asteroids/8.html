@@ -1,0 +1,102 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">import <span class="name">math</span>
+
+<span class="name">arena_width</span> = <span class="literal">800</span>
+<span class="name">arena_height</span> = <span class="literal">600</span>
+
+<span class="name">ship_x</span> = <span class="name">arena_width</span> / <span class="literal">2</span>
+<span class="name">ship_y</span> = <span class="name">arena_height</span> / <span class="literal">2</span>
+<span class="name">ship_speed_x</span> = <span class="literal">0</span>
+<span class="name">ship_speed_y</span> = <span class="literal">0</span>
+<span class="name">ship_angle</span> = <span class="literal">0</span>
+
+<span class="highlight"><span class="name">bullets</span> = []</span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">ship_x</span>
+    global <span class="name">ship_y</span>
+    global <span class="name">ship_speed_x</span>
+    global <span class="name">ship_speed_y</span>
+    global <span class="name">ship_angle</span>
+
+    <span class="name">turn_speed</span> = <span class="literal">10</span>
+
+    if <span class="name">keyboard.right</span>:
+        <span class="name">ship_angle</span> += <span class="name">turn_speed</span> * <span class="name">dt</span>
+
+    if <span class="name">keyboard.left</span>:
+        <span class="name">ship_angle</span> -= <span class="name">turn_speed</span> * <span class="name">dt</span>
+
+    <span class="name">ship_angle</span> %= <span class="literal">2</span> * <span class="name">math.pi</span>
+
+    if <span class="name">keyboard.up</span>:
+        <span class="name">ship_speed</span> = <span class="literal">100</span>
+        <span class="name">ship_speed_x</span> += <span class="call">math.cos</span>(<span class="name">ship_angle</span>) * <span class="name">ship_speed</span> * <span class="name">dt</span>
+        <span class="name">ship_speed_y</span> += <span class="call">math.sin</span>(<span class="name">ship_angle</span>) * <span class="name">ship_speed</span> * <span class="name">dt</span>
+
+    <span class="name">ship_x</span> += <span class="name">ship_speed_x</span> * <span class="name">dt</span>
+    <span class="name">ship_y</span> += <span class="name">ship_speed_y</span> * <span class="name">dt</span>
+
+    <span class="name">ship_x</span> %= <span class="name">arena_width</span>
+    <span class="name">ship_y</span> %= <span class="name">arena_height</span>
+
+<span class="highlight">def <span class="name">on_key_down</span>(<span class="name">key</span>):</span>
+<span class="highlight">    if <span class="name">key</span> == <span class="name">keys.S</span>:</span>
+<span class="highlight">        <span class="call">bullets.append</span>({</span>
+<span class="highlight">            <span class="literal">'x'</span>: <span class="name">ship_x</span>,</span>
+<span class="highlight">            <span class="literal">'y'</span>: <span class="name">ship_y</span>,</span>
+<span class="highlight">        })</span>
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    for <span class="name">y</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+            <span class="name">offset_x</span> = <span class="name">x</span> * <span class="name">arena_width</span>
+            <span class="name">offset_y</span> = <span class="name">y</span> * <span class="name">arena_height</span>
+
+            <span class="call">screen.draw.filled_circle</span>(
+                (<span class="name">ship_x</span> + <span class="name">offset_x</span>, <span class="name">ship_y</span> + <span class="name">offset_y</span>),
+                <span class="literal">30</span>, <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">255</span>)
+            )
+
+            <span class="name">ship_circle_distance</span> = <span class="literal">20</span>
+            <span class="call">screen.draw.filled_circle</span>((
+                <span class="name">ship_x</span> + <span class="name">offset_x</span> +
+                    <span class="call">math.cos</span>(<span class="name">ship_angle</span>) * <span class="name">ship_circle_distance</span>,
+                <span class="name">ship_y</span> + <span class="name">offset_y</span> +
+                    <span class="call">math.sin</span>(<span class="name">ship_angle</span>) * <span class="name">ship_circle_distance</span>),
+                <span class="literal">5</span>, <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+            )
+
+            <span class="highlight">for <span class="name">bullet</span> in <span class="name">bullets</span>:</span>
+            <span class="highlight">    <span class="call">screen.draw.filled_circle</span>(</span>
+            <span class="highlight">        (<span class="name">bullet</span>[<span class="literal">'x'</span>] + <span class="name">offset_x</span>, <span class="name">bullet</span>[<span class="literal">'y'</span>] + <span class="name">offset_y</span>),</span>
+            <span class="highlight">        <span class="literal">5</span>, <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">0</span>)</span>
+            <span class="highlight">    )</span></pre></div></body></html>

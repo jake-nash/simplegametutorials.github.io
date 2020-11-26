@@ -1,0 +1,78 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">import <span class="name">random</span>
+
+<span class="name">deck</span> = []
+for <span class="name">suit</span> in (<span class="literal">'club'</span>, <span class="literal">'diamond'</span>, <span class="literal">'heart'</span>, <span class="literal">'spade'</span>):
+    for <span class="name">rank</span> in <span class="call">range</span>(<span class="literal">1</span>, <span class="literal">14</span>):
+        <span class="call">deck.append</span>({<span class="literal">'suit'</span>: <span class="name">suit</span>, <span class="literal">'rank'</span>: <span class="name">rank</span>})
+
+def <span class="name">take_card</span>(<span class="name">hand</span>):
+    <span class="call">hand.append</span>(<span class="call">deck.pop</span>(<span class="call">random.randrange</span>(<span class="call">len</span>(<span class="name">deck</span>))))
+
+<span class="name">player_hand</span> = []
+<span class="call">take_card</span>(<span class="name">player_hand</span>)
+<span class="call">take_card</span>(<span class="name">player_hand</span>)
+
+<span class="name">dealer_hand</span> = []
+<span class="call">take_card</span>(<span class="name">dealer_hand</span>)
+<span class="call">take_card</span>(<span class="name">dealer_hand</span>)
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    if <span class="name">key</span> == <span class="name">keys.H</span>:
+        <span class="call">take_card</span>(<span class="name">player_hand</span>)
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    def <span class="name">get_total</span>(<span class="name">hand</span>):
+        <span class="name">total</span> = <span class="literal">0</span>
+
+        for <span class="name">card</span> in <span class="name">hand</span>:
+            <span class="highlight">if <span class="name">card</span>[<span class="literal">'rank'</span>] > <span class="literal">10</span>:</span>
+            <span class="highlight">    <span class="name">total</span> += <span class="literal">10</span></span>
+            <span class="highlight">else:</span>
+                <span class="name">total</span> += <span class="name">card</span>[<span class="literal">'rank'</span>]
+
+        return <span class="name">total</span>
+
+    <span class="name">output</span> = []
+
+    <span class="call">output.append</span>(<span class="literal">'Player hand:'</span>)
+    for <span class="name">card</span> in <span class="name">player_hand</span>:
+        <span class="call">output.append</span>(<span class="literal">'suit: '</span> + <span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">', rank: '</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]))
+    <span class="call">output.append</span>(<span class="literal">'Total: '</span> + <span class="call">str</span>(<span class="call">get_total</span>(<span class="name">player_hand</span>)))
+
+    <span class="call">output.append</span>(<span class="literal">''</span>)
+
+    <span class="call">output.append</span>(<span class="literal">'Dealer hand:'</span>)
+    for <span class="name">card</span> in <span class="name">dealer_hand</span>:
+        <span class="call">output.append</span>(<span class="literal">'suit: '</span> + <span class="name">card</span>[<span class="literal">'suit'</span>] + <span class="literal">', rank: '</span> + <span class="call">str</span>(<span class="name">card</span>[<span class="literal">'rank'</span>]))
+    <span class="call">output.append</span>(<span class="literal">'Total: '</span> + <span class="call">str</span>(<span class="call">get_total</span>(<span class="name">dealer_hand</span>)))
+
+    <span class="call">screen.draw.text</span>(<span class="literal">'\n'</span>.<span class="call">join</span>(<span class="name">output</span>), (<span class="literal">15</span>, <span class="literal">15</span>))</pre></div></body></html>
