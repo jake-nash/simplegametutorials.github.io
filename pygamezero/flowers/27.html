@@ -1,0 +1,204 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">import <span class="name">pygame</span>
+import <span class="name">math</span>
+import <span class="name">random</span>
+
+<span class="name">cell_size</span> = <span class="literal">18</span>
+
+<span class="name">grid_x_count</span> = <span class="literal">19</span>
+<span class="name">grid_y_count</span> = <span class="literal">14</span>
+
+def <span class="name">reset</span>():
+    global <span class="name">grid</span>
+    global <span class="name">game_over</span>
+    <span class="highlight">global <span class="name">first_click</span></span>
+
+    <span class="name">grid</span> = []
+
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        <span class="call">grid.append</span>([])
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+            <span class="name">grid</span>[<span class="name">y</span>].<span class="call">append</span>({
+                <span class="literal">'flower'</span>: <span class="literal">False</span>,
+                <span class="literal">'state'</span>: <span class="literal">'covered'</span>, <span class="comment"># 'covered', 'uncovered', 'flag', 'question'</span>
+            })
+
+    <span class="name">game_over</span> = <span class="literal">False</span>
+    <span class="highlight"><span class="name">first_click</span> = <span class="literal">True</span></span>
+
+<span class="call">reset</span>()
+
+def <span class="name">get_surrounding_flower_count</span>(<span class="name">x</span>, <span class="name">y</span>):
+    <span class="name">surrounding_flower_count</span> = <span class="literal">0</span>
+
+    for <span class="name">dy</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+        for <span class="name">dx</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+            if (
+                not (<span class="name">dy</span> == <span class="literal">0</span> and <span class="name">dx</span> == <span class="literal">0</span>)
+                and <span class="literal">0</span> <= (<span class="name">y</span> + <span class="name">dy</span>) < <span class="call">len</span>(<span class="name">grid</span>)
+                and <span class="literal">0</span> <= (<span class="name">x</span> + <span class="name">dx</span>) < <span class="call">len</span>(<span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>])
+                and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>][<span class="literal">'flower'</span>]
+            ):
+                <span class="name">surrounding_flower_count</span> += <span class="literal">1</span>
+
+    return <span class="name">surrounding_flower_count</span>
+
+def <span class="name">update</span>():
+    global <span class="name">selected_x</span>
+    global <span class="name">selected_y</span>
+
+    <span class="name">mouse_x</span>, <span class="name">mouse_y</span> = <span class="call">pygame.mouse.get_pos</span>()
+    <span class="name">selected_x</span> = <span class="call">math.floor</span>(<span class="name">mouse_x</span> / <span class="name">cell_size</span>)
+    <span class="name">selected_y</span> = <span class="call">math.floor</span>(<span class="name">mouse_y</span> / <span class="name">cell_size</span>)
+
+    if <span class="name">selected_x</span> > <span class="name">grid_x_count</span> - <span class="literal">1</span>:
+        <span class="name">selected_x</span> = <span class="name">grid_x_count</span> - <span class="literal">1</span>
+    if <span class="name">selected_y</span> > <span class="name">grid_y_count</span> - <span class="literal">1</span>:
+        <span class="name">selected_y</span> = <span class="name">grid_y_count</span> - <span class="literal">1</span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    <span class="call">reset</span>()
+
+def <span class="name">on_mouse_up</span>(<span class="name">button</span>):
+    global <span class="name">game_over</span>
+    <span class="highlight">global <span class="name">first_click</span></span>
+
+    if not <span class="name">game_over</span>:
+        if <span class="name">button</span> == <span class="name">mouse.LEFT</span> and <span class="name">grid</span>[<span class="name">selected_y</span>][<span class="name">selected_x</span>][<span class="literal">'state'</span>] != <span class="literal">'flag'</span>:
+            <span class="highlight">if <span class="name">first_click</span>:</span>
+                <span class="highlight"><span class="name">first_click</span> = <span class="literal">False</span></span>
+
+                <span class="name">possible_flower_positions</span> = []
+
+                for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+                    for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+                        <span class="highlight">if not (<span class="name">x</span> == <span class="name">selected_x</span> and <span class="name">y</span> == <span class="name">selected_y</span>):</span>
+                            <span class="call">possible_flower_positions.append</span>({<span class="literal">'x'</span>: <span class="name">x</span>, <span class="literal">'y'</span>: <span class="name">y</span>})
+
+                for <span class="name">flower_index</span> in <span class="call">range</span>(<span class="literal">40</span>):
+                    <span class="name">position</span> = <span class="call">possible_flower_positions.pop</span>(<span class="call">random.randrange</span>(<span class="call">len</span>(<span class="name">possible_flower_positions</span>)))
+                    <span class="name">grid</span>[<span class="name">position</span>[<span class="literal">'y'</span>]][<span class="name">position</span>[<span class="literal">'x'</span>]][<span class="literal">'flower'</span>] = <span class="literal">True</span>
+
+            if <span class="name">grid</span>[<span class="name">selected_y</span>][<span class="name">selected_x</span>][<span class="literal">'flower'</span>]:
+                <span class="name">grid</span>[<span class="name">selected_y</span>][<span class="name">selected_x</span>][<span class="literal">'state'</span>] = <span class="literal">'uncovered'</span>
+                <span class="name">game_over</span> = <span class="literal">True</span>
+            else:
+                <span class="name">stack</span> = [
+                    {
+                        <span class="literal">'x'</span>: <span class="name">selected_x</span>,
+                        <span class="literal">'y'</span>: <span class="name">selected_y</span>,
+                    }
+                ]
+
+                while <span class="call">len</span>(<span class="name">stack</span>) > <span class="literal">0</span>:
+                    <span class="name">current</span> = <span class="call">stack.pop</span>()
+                    <span class="name">x</span> = <span class="name">current</span>[<span class="literal">'x'</span>]
+                    <span class="name">y</span> = <span class="name">current</span>[<span class="literal">'y'</span>]
+
+                    <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>][<span class="literal">'state'</span>] = <span class="literal">'uncovered'</span>
+
+                    if <span class="call">get_surrounding_flower_count</span>(<span class="name">x</span>, <span class="name">y</span>) == <span class="literal">0</span>:
+                        for <span class="name">dy</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+                            for <span class="name">dx</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+                                if (
+                                    not (<span class="name">dy</span> == <span class="literal">0</span> and <span class="name">dx</span> == <span class="literal">0</span>)
+                                    and <span class="literal">0</span> <= (<span class="name">y</span> + <span class="name">dy</span>) < <span class="call">len</span>(<span class="name">grid</span>)
+                                    and <span class="literal">0</span> <= (<span class="name">x</span> + <span class="name">dx</span>) < <span class="call">len</span>(<span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>])
+                                    and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>][<span class="literal">'state'</span>] in (<span class="literal">'covered'</span>, <span class="literal">'question'</span>)
+                                ):
+                                    <span class="call">stack.append</span>({
+                                        <span class="literal">'x'</span>: <span class="name">x</span> + <span class="name">dx</span>,
+                                        <span class="literal">'y'</span>: <span class="name">y</span> + <span class="name">dy</span>,
+                                    })
+
+                <span class="name">complete</span> = <span class="literal">True</span>
+
+                for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+                    for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+                        if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>][<span class="literal">'state'</span>] != <span class="literal">'uncovered'</span> and not <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>][<span class="literal">'flower'</span>]:
+                            <span class="name">complete</span> = <span class="literal">False</span>
+
+                if <span class="name">complete</span>:
+                    <span class="name">game_over</span> = <span class="literal">True</span>
+
+        elif <span class="name">button</span> == <span class="name">mouse.RIGHT</span>:
+            if <span class="name">grid</span>[<span class="name">selected_y</span>][<span class="name">selected_x</span>][<span class="literal">'state'</span>] == <span class="literal">'covered'</span>:
+                <span class="name">grid</span>[<span class="name">selected_y</span>][<span class="name">selected_x</span>][<span class="literal">'state'</span>] = <span class="literal">'flag'</span>
+            elif <span class="name">grid</span>[<span class="name">selected_y</span>][<span class="name">selected_x</span>][<span class="literal">'state'</span>] == <span class="literal">'flag'</span>:
+                <span class="name">grid</span>[<span class="name">selected_y</span>][<span class="name">selected_x</span>][<span class="literal">'state'</span>] = <span class="literal">'question'</span>
+            elif <span class="name">grid</span>[<span class="name">selected_y</span>][<span class="name">selected_x</span>][<span class="literal">'state'</span>] == <span class="literal">'question'</span>:
+                <span class="name">grid</span>[<span class="name">selected_y</span>][<span class="name">selected_x</span>][<span class="literal">'state'</span>] = <span class="literal">'covered'</span>
+
+    else:
+        <span class="call">reset</span>()
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+
+            def <span class="name">draw_cell</span>(<span class="name">image</span>, <span class="name">x</span>, <span class="name">y</span>):
+                <span class="call">screen.blit</span>(<span class="name">image</span>, (<span class="name">x</span> * <span class="name">cell_size</span>, <span class="name">y</span> * <span class="name">cell_size</span>))
+
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>][<span class="literal">'state'</span>] == <span class="literal">'uncovered'</span>:
+                <span class="call">draw_cell</span>(<span class="literal">'uncovered'</span>, <span class="name">x</span>, <span class="name">y</span>)
+            else:
+                if <span class="name">x</span> == <span class="name">selected_x</span> and <span class="name">y</span> == <span class="name">selected_y</span> and not <span class="name">game_over</span>:
+                    if <span class="call">pygame.mouse.get_pressed</span>()[<span class="literal">0</span>] == <span class="literal">1</span>:
+                        if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>][<span class="literal">'state'</span>] == <span class="literal">'flag'</span>:
+                            <span class="call">draw_cell</span>(<span class="literal">'covered'</span>, <span class="name">x</span>, <span class="name">y</span>)
+                        else:
+                            <span class="call">draw_cell</span>(<span class="literal">'uncovered'</span>, <span class="name">x</span>, <span class="name">y</span>)
+                    else:
+                        <span class="call">draw_cell</span>(<span class="literal">'covered_highlighted'</span>, <span class="name">x</span>, <span class="name">y</span>)
+                else:
+                    <span class="call">draw_cell</span>(<span class="literal">'covered'</span>, <span class="name">x</span>, <span class="name">y</span>)
+
+            <span class="name">surrounding_flower_count</span> = <span class="literal">0</span>
+
+            for <span class="name">dy</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+                for <span class="name">dx</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+                    if (
+                        not (<span class="name">dy</span> == <span class="literal">0</span> and <span class="name">dx</span> == <span class="literal">0</span>)
+                        and <span class="literal">0</span> <= (<span class="name">y</span> + <span class="name">dy</span>) < <span class="call">len</span>(<span class="name">grid</span>)
+                        and <span class="literal">0</span> <= (<span class="name">x</span> + <span class="name">dx</span>) < <span class="call">len</span>(<span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>])
+                        and <span class="name">grid</span>[<span class="name">y</span> + <span class="name">dy</span>][<span class="name">x</span> + <span class="name">dx</span>][<span class="literal">'flower'</span>]
+                    ):
+                        <span class="name">surrounding_flower_count</span> += <span class="literal">1</span>
+
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>][<span class="literal">'flower'</span>] and <span class="name">game_over</span>:
+                <span class="call">draw_cell</span>(<span class="literal">'flower'</span>, <span class="name">x</span>, <span class="name">y</span>)
+            elif <span class="call">get_surrounding_flower_count</span>(<span class="name">x</span>, <span class="name">y</span>) > <span class="literal">0</span> and <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>][<span class="literal">'state'</span>] == <span class="literal">'uncovered'</span>:
+                <span class="call">draw_cell</span>(<span class="call">str</span>(<span class="call">get_surrounding_flower_count</span>(<span class="name">x</span>, <span class="name">y</span>)), <span class="name">x</span>, <span class="name">y</span>)
+
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>][<span class="literal">'state'</span>] == <span class="literal">'flag'</span>:
+                <span class="call">draw_cell</span>(<span class="literal">'flag'</span>, <span class="name">x</span>, <span class="name">y</span>)
+            elif <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>][<span class="literal">'state'</span>] == <span class="literal">'question'</span>:
+                <span class="call">draw_cell</span>(<span class="literal">'question'</span>, <span class="name">x</span>, <span class="name">y</span>)</pre></div></body></html>

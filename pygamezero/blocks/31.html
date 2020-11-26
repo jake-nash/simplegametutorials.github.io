@@ -1,0 +1,327 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode">import <span class="name">random</span>
+
+<span class="name">grid_x_count</span> = <span class="literal">10</span>
+<span class="name">grid_y_count</span> = <span class="literal">18</span>
+
+<span class="name">inert</span> = []
+for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+    <span class="call">inert.append</span>([])
+    for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+        <span class="name">inert</span>[<span class="name">y</span>].<span class="call">append</span>(<span class="literal">' '</span>)
+
+<span class="name">piece_structures</span> = [
+    [
+        [
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">'i'</span>, <span class="literal">'i'</span>, <span class="literal">'i'</span>, <span class="literal">'i'</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+        [
+            [<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'i'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+    ],
+    [
+        [
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'o'</span>, <span class="literal">'o'</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'o'</span>, <span class="literal">'o'</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+    ],
+    [
+        [
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+        [
+            [<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+        [
+            [<span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+        [
+            [<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'j'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+    ],
+    [
+        [
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>],
+            [<span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+        [
+            [<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+        [
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>],
+            [<span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+        [
+            [<span class="literal">'l'</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'l'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+    ],
+    [
+        [
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+        [
+            [<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+        [
+            [<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+        [
+            [<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">'t'</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'t'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+    ],
+    [
+        [
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'s'</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>],
+            [<span class="literal">'s'</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+        [
+            [<span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">'s'</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'s'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+    ],
+    [
+        [
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">'z'</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">'z'</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+        [
+            [<span class="literal">' '</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">'z'</span>, <span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">'z'</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+            [<span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>, <span class="literal">' '</span>],
+        ],
+    ],
+]
+
+def <span class="name">new_sequence</span>():
+    global <span class="name">sequence</span>
+
+    <span class="name">sequence</span> = <span class="call">list</span>(<span class="call">range</span>(<span class="call">len</span>(<span class="name">piece_structures</span>)))
+    <span class="call">random.shuffle</span>(<span class="name">sequence</span>)
+
+<span class="call">new_sequence</span>()
+
+def <span class="name">new_piece</span>():
+    global <span class="name">piece_x</span>
+    global <span class="name">piece_y</span>
+    global <span class="name">piece_type</span>
+    global <span class="name">piece_rotation</span>
+
+    <span class="name">piece_x</span> = <span class="literal">3</span>
+    <span class="name">piece_y</span> = <span class="literal">0</span>
+    <span class="name">piece_type</span> = <span class="call">sequence.pop</span>()
+    if <span class="call">len</span>(<span class="name">sequence</span>) == <span class="literal">0</span>:
+        <span class="call">new_sequence</span>()
+    <span class="name">piece_rotation</span> = <span class="literal">0</span>
+
+<span class="call">new_piece</span>()
+
+<span class="name">piece_x_count</span> = <span class="literal">4</span>
+<span class="name">piece_y_count</span> = <span class="literal">4</span>
+
+<span class="name">timer</span> = <span class="literal">0</span>
+<span class="name">timer_limit</span> = <span class="literal">0.5</span>
+
+def <span class="name">can_piece_move</span>(<span class="name">test_x</span>, <span class="name">test_y</span>, <span class="name">test_rotation</span>):
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">piece_y_count</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">piece_x_count</span>):
+            <span class="name">test_block_x</span> = <span class="name">test_x</span> + <span class="name">x</span>
+            <span class="name">test_block_y</span> = <span class="name">test_y</span> + <span class="name">y</span>
+
+            if (
+                <span class="name">piece_structures</span>[<span class="name">piece_type</span>][<span class="name">test_rotation</span>][<span class="name">y</span>][<span class="name">x</span>] != <span class="literal">' '</span> and (
+                    <span class="name">test_block_x</span> < <span class="literal">0</span>
+                    or <span class="name">test_block_x</span> >= <span class="name">grid_x_count</span>
+                    or <span class="name">test_block_y</span> >= <span class="name">grid_y_count</span>
+                    or <span class="name">inert</span>[<span class="name">test_block_y</span>][<span class="name">test_block_x</span>] != <span class="literal">' '</span>
+                )
+            ):
+                return <span class="literal">False</span>
+
+    return <span class="literal">True</span>
+
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">timer</span>
+    global <span class="name">piece_y</span>
+
+    <span class="name">timer</span> += <span class="name">dt</span>
+    if <span class="name">timer</span> >= <span class="name">timer_limit</span>:
+        <span class="name">timer</span> = <span class="literal">0</span>
+
+        <span class="name">test_y</span> = <span class="name">piece_y</span> + <span class="literal">1</span>
+        if <span class="call">can_piece_move</span>(<span class="name">piece_x</span>, <span class="name">test_y</span>, <span class="name">piece_rotation</span>):
+            <span class="name">piece_y</span> = <span class="name">test_y</span>
+        else:
+            <span class="comment"># Add piece to inert</span>
+            for <span class="name">y</span> in <span class="call">range</span>(<span class="name">piece_y_count</span>):
+                for <span class="name">x</span> in <span class="call">range</span>(<span class="name">piece_x_count</span>):
+                    <span class="name">block</span> = <span class="name">piece_structures</span>[<span class="name">piece_type</span>][<span class="name">piece_rotation</span>][<span class="name">y</span>][<span class="name">x</span>]
+                    if <span class="name">block</span> != <span class="literal">' '</span>:
+                        <span class="name">inert</span>[<span class="name">piece_y</span> + <span class="name">y</span>][<span class="name">piece_x</span> + <span class="name">x</span>] = <span class="name">block</span>
+
+            <span class="comment"># Find complete rows</span>
+            for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+                <span class="name">complete</span> = <span class="literal">True</span>
+                for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+                    if <span class="name">inert</span>[<span class="name">y</span>][<span class="name">x</span>] == <span class="literal">' '</span>:
+                        <span class="name">complete</span> = <span class="literal">False</span>
+                        break
+
+                if <span class="name">complete</span>:
+                    <span class="highlight">for <span class="name">ry</span> in <span class="call">range</span>(<span class="name">y</span>, <span class="literal">1</span>, -<span class="literal">1</span>):</span>
+                    <span class="highlight">    for <span class="name">rx</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):</span>
+                    <span class="highlight">        <span class="name">inert</span>[<span class="name">ry</span>][<span class="name">rx</span>] = <span class="name">inert</span>[<span class="name">ry</span> - <span class="literal">1</span>][<span class="name">rx</span>]</span>
+
+                    <span class="highlight">for <span class="name">rx</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):</span>
+                    <span class="highlight">    <span class="name">inert</span>[<span class="literal">0</span>][<span class="name">rx</span>] = <span class="literal">' '</span></span>
+
+            <span class="call">new_piece</span>()
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    global <span class="name">piece_rotation</span>
+    global <span class="name">piece_x</span>
+    global <span class="name">piece_y</span>
+    global <span class="name">timer</span>
+
+    if <span class="name">key</span> == <span class="name">keys.X</span>:
+        <span class="name">test_rotation</span> = <span class="name">piece_rotation</span> + <span class="literal">1</span>
+        if <span class="name">test_rotation</span> > <span class="call">len</span>(<span class="name">piece_structures</span>[<span class="name">piece_type</span>]) - <span class="literal">1</span>:
+            <span class="name">test_rotation</span> = <span class="literal">0</span>
+
+        if <span class="call">can_piece_move</span>(<span class="name">piece_x</span>, <span class="name">piece_y</span>, <span class="name">test_rotation</span>):
+            <span class="name">piece_rotation</span> = <span class="name">test_rotation</span>
+
+    elif <span class="name">key</span> == <span class="name">keys.Z</span>:
+        <span class="name">test_rotation</span> = <span class="name">piece_rotation</span> - <span class="literal">1</span>
+        if <span class="name">test_rotation</span> < <span class="literal">0</span>:
+            <span class="name">test_rotation</span> = <span class="call">len</span>(<span class="name">piece_structures</span>[<span class="name">piece_type</span>]) - <span class="literal">1</span>
+
+        if <span class="call">can_piece_move</span>(<span class="name">piece_x</span>, <span class="name">piece_y</span>, <span class="name">test_rotation</span>):
+            <span class="name">piece_rotation</span> = <span class="name">test_rotation</span>
+
+    elif <span class="name">key</span> == <span class="name">keys.LEFT</span>:
+        <span class="name">test_x</span> = <span class="name">piece_x</span> - <span class="literal">1</span>
+
+        if <span class="call">can_piece_move</span>(<span class="name">test_x</span>, <span class="name">piece_y</span>, <span class="name">piece_rotation</span>):
+            <span class="name">piece_x</span> = <span class="name">test_x</span>
+
+    elif <span class="name">key</span> == <span class="name">keys.RIGHT</span>:
+        <span class="name">test_x</span> = <span class="name">piece_x</span> + <span class="literal">1</span>
+
+        if <span class="call">can_piece_move</span>(<span class="name">test_x</span>, <span class="name">piece_y</span>, <span class="name">piece_rotation</span>):
+            <span class="name">piece_x</span> = <span class="name">test_x</span>
+
+    elif <span class="name">key</span> == <span class="name">keys.C</span>:
+        while <span class="call">can_piece_move</span>(<span class="name">piece_x</span>, <span class="name">piece_y</span> + <span class="literal">1</span>, <span class="name">piece_rotation</span>):
+            <span class="name">piece_y</span> += <span class="literal">1</span>
+            <span class="name">timer</span> = <span class="name">timer_limit</span>
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">255</span>))
+
+    def <span class="name">draw_block</span>(<span class="name">block</span>, <span class="name">x</span>, <span class="name">y</span>):
+        <span class="name">colors</span> = {
+            <span class="literal">' '</span>: (<span class="literal">222</span>, <span class="literal">222</span>, <span class="literal">222</span>),
+            <span class="literal">'i'</span>: (<span class="literal">120</span>, <span class="literal">195</span>, <span class="literal">239</span>),
+            <span class="literal">'j'</span>: (<span class="literal">236</span>, <span class="literal">231</span>, <span class="literal">108</span>),
+            <span class="literal">'l'</span>: (<span class="literal">124</span>, <span class="literal">218</span>, <span class="literal">193</span>),
+            <span class="literal">'o'</span>: (<span class="literal">234</span>, <span class="literal">177</span>, <span class="literal">121</span>),
+            <span class="literal">'s'</span>: (<span class="literal">211</span>, <span class="literal">136</span>, <span class="literal">236</span>),
+            <span class="literal">'t'</span>: (<span class="literal">248</span>, <span class="literal">147</span>, <span class="literal">196</span>),
+            <span class="literal">'z'</span>: (<span class="literal">169</span>, <span class="literal">221</span>, <span class="literal">118</span>),
+        }
+        <span class="name">color</span> = <span class="name">colors</span>[<span class="name">block</span>]
+
+        <span class="name">block_size</span> = <span class="literal">20</span>
+        <span class="name">block_draw_size</span> = <span class="name">block_size</span> - <span class="literal">1</span>
+        <span class="call">screen.draw.filled_rect</span>(
+            <span class="call">Rect</span>(
+                <span class="name">x</span> * <span class="name">block_size</span>, <span class="name">y</span> * <span class="name">block_size</span>,
+                <span class="name">block_draw_size</span>, <span class="name">block_draw_size</span>
+            ),
+            <span class="name">color</span>=<span class="name">color</span>
+        )
+
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+            <span class="call">draw_block</span>(<span class="name">inert</span>[<span class="name">y</span>][<span class="name">x</span>], <span class="name">x</span>, <span class="name">y</span>)
+
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">piece_y_count</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">piece_x_count</span>):
+            <span class="name">block</span> = <span class="name">piece_structures</span>[<span class="name">piece_type</span>][<span class="name">piece_rotation</span>][<span class="name">y</span>][<span class="name">x</span>]
+            if <span class="name">block</span> != <span class="literal">' '</span>:
+                <span class="call">draw_block</span>(<span class="name">block</span>, <span class="name">x</span> + <span class="name">piece_x</span>, <span class="name">y</span> + <span class="name">piece_y</span>)</pre></div></body></html>

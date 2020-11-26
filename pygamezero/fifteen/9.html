@@ -1,0 +1,116 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet"><style>body {
+    font-family: Calibri, sans-serif;
+    margin: 20px;
+}
+p, li, td, h1, h2, h3, h4 {
+    font-family: 'Quicksand';
+    color: #333;
+}
+p, li, td, pre {
+    font-weight: 500;
+    font-size: 16px;
+}
+p {
+    max-width: 695px;
+    line-height: 1.4;
+}
+.fullcode {
+    font-family: Consolas, Monaco, Inconsolata, monospace;
+    padding: 12px;
+    color: #555;
+}
+.name {color:#e824b7;}
+.call {color:#ab22d0;}
+.literal {color:#01afa5;}
+.comment {color:#555; background:#eee;}
+.highlight {background:#fffcad;}
+.highlight .comment, .comment .highlight {background:#f0edd3;}
+    </style></head><body style="margin: 0"><div class="pre"><pre class="fullcode"><span class="highlight">import <span class="name">random</span></span>
+
+<span class="name">grid_x_count</span> = <span class="literal">4</span>
+<span class="name">grid_y_count</span> = <span class="literal">4</span>
+
+<span class="name">grid</span> = []
+
+for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+    <span class="call">grid.append</span>([])
+    for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+        <span class="name">grid</span>[<span class="name">y</span>].<span class="call">append</span>(<span class="name">y</span> * <span class="name">grid_x_count</span> + <span class="name">x</span> + <span class="literal">1</span>)
+
+<span class="highlight">for <span class="name">move_number</span> in <span class="call">range</span>(<span class="literal">1000</span>):</span>
+<span class="highlight">    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):</span>
+<span class="highlight">        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):</span>
+<span class="highlight">            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] == <span class="name">grid_x_count</span> * <span class="name">grid_y_count</span>:</span>
+<span class="highlight">                <span class="name">empty_x</span> = <span class="name">x</span></span>
+<span class="highlight">                <span class="name">empty_y</span> = <span class="name">y</span></span>
+<span class="highlight">    </span>
+<span class="highlight">    <span class="name">new_empty_y</span> = <span class="name">empty_y</span></span>
+<span class="highlight">    <span class="name">new_empty_x</span> = <span class="name">empty_x</span></span>
+<span class="highlight">    </span>
+<span class="highlight">    <span class="name">roll</span> = <span class="call">random.randint</span>(<span class="literal">0</span>, <span class="literal">3</span>)</span>
+<span class="highlight">    if <span class="name">roll</span> == <span class="literal">0</span>:</span>
+<span class="highlight">        <span class="name">new_empty_y</span> -= <span class="literal">1</span></span>
+<span class="highlight">    elif <span class="name">roll</span> == <span class="literal">1</span>:</span>
+<span class="highlight">        <span class="name">new_empty_y</span> += <span class="literal">1</span></span>
+<span class="highlight">    elif <span class="name">roll</span> == <span class="literal">2</span>:</span>
+<span class="highlight">        <span class="name">new_empty_x</span> -= <span class="literal">1</span></span>
+<span class="highlight">    elif <span class="name">roll</span> == <span class="literal">3</span>:</span>
+<span class="highlight">        <span class="name">new_empty_x</span> += <span class="literal">1</span></span>
+<span class="highlight">    </span>
+<span class="highlight">    if (</span>
+<span class="highlight">        <span class="literal">0</span> <= <span class="name">new_empty_y</span> < <span class="name">grid_y_count</span> and</span>
+<span class="highlight">        <span class="literal">0</span> <= <span class="name">new_empty_x</span> < <span class="name">grid_x_count</span></span>
+<span class="highlight">    ):</span>
+<span class="highlight">        <span class="name">changed</span> = (<span class="name">grid</span>[<span class="name">empty_y</span>][<span class="name">empty_x</span>], <span class="name">grid</span>[<span class="name">new_empty_y</span>][<span class="name">new_empty_x</span>])</span>
+<span class="highlight">        <span class="name">grid</span>[<span class="name">new_empty_y</span>][<span class="name">new_empty_x</span>], <span class="name">grid</span>[<span class="name">empty_y</span>][<span class="name">empty_x</span>] = <span class="name">changed</span></span>
+
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] == <span class="name">grid_x_count</span> * <span class="name">grid_y_count</span>:
+                <span class="name">empty_x</span> = <span class="name">x</span>
+                <span class="name">empty_y</span> = <span class="name">y</span>
+
+    <span class="name">new_empty_y</span> = <span class="name">empty_y</span>
+    <span class="name">new_empty_x</span> = <span class="name">empty_x</span>
+
+    if <span class="name">key</span> == <span class="name">keys.DOWN</span>:
+        <span class="name">new_empty_y</span> -= <span class="literal">1</span>
+    elif <span class="name">key</span> == <span class="name">keys.UP</span>:
+        <span class="name">new_empty_y</span> += <span class="literal">1</span>
+    elif <span class="name">key</span> == <span class="name">keys.RIGHT</span>:
+        <span class="name">new_empty_x</span> -= <span class="literal">1</span>
+    elif <span class="name">key</span> == <span class="name">keys.LEFT</span>:
+        <span class="name">new_empty_x</span> += <span class="literal">1</span>
+
+    if (
+        <span class="literal">0</span> <= <span class="name">new_empty_y</span> < <span class="name">grid_y_count</span> and
+        <span class="literal">0</span> <= <span class="name">new_empty_x</span> < <span class="name">grid_x_count</span>
+    ):
+        <span class="name">changed</span> = (<span class="name">grid</span>[<span class="name">empty_y</span>][<span class="name">empty_x</span>], <span class="name">grid</span>[<span class="name">new_empty_y</span>][<span class="name">new_empty_x</span>])
+        <span class="name">grid</span>[<span class="name">new_empty_y</span>][<span class="name">new_empty_x</span>], <span class="name">grid</span>[<span class="name">empty_y</span>][<span class="name">empty_x</span>] = <span class="name">changed</span>
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    for <span class="name">y</span> in <span class="call">range</span>(<span class="name">grid_y_count</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(<span class="name">grid_x_count</span>):
+            if <span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>] == <span class="name">grid_x_count</span> * <span class="name">grid_y_count</span>:
+                continue
+
+            <span class="name">piece_size</span> = <span class="literal">100</span>
+            <span class="name">piece_draw_size</span> = <span class="name">piece_size</span> - <span class="literal">1</span>
+
+            <span class="call">screen.draw.filled_rect</span>(
+                <span class="call">Rect</span>(
+                    <span class="name">x</span> * <span class="name">piece_size</span>, <span class="name">y</span> * <span class="name">piece_size</span>,
+                    <span class="name">piece_draw_size</span>, <span class="name">piece_draw_size</span>
+                ),
+                <span class="name">color</span>=(<span class="literal">100</span>, <span class="literal">20</span>, <span class="literal">150</span>)
+            )
+
+            <span class="call">screen.draw.text</span>(
+                <span class="call">str</span>(<span class="name">grid</span>[<span class="name">y</span>][<span class="name">x</span>]),
+                (<span class="name">x</span> * <span class="name">piece_size</span>, <span class="name">y</span> * <span class="name">piece_size</span>),
+                <span class="name">fontsize</span>=<span class="literal">60</span>
+            )</pre></div></body></html>
