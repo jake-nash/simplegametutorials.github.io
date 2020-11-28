@@ -1,4 +1,4 @@
-<html><head><title>Asteroids Tutorial for Lua and L&OumlVE 11</title>
+<html><head><title>Asteroids Tutorial for Python and Pygame Zero 1.2</title>
 <link href="https://fonts.googleapis.com/css?family=Quicksand:500,700" rel="stylesheet">
 <style>
 body {
@@ -120,10 +120,12 @@ h2 + h3 {
     margin-top: 0;
 }
 </style>
+<meta charset="utf-8">
 </head>
 <body>
 <div class="container">
-<p><a href="../../">Home page</a> > <a href="../">L&OumlVE tutorials</a></p><h1>Asteroids</h1><p class="subheading">A tutorial for Lua and L&OumlVE 11</p><p>Please send any feedback to <a href="mailto:simple.game.tutorials@gmail.com">simple.game.tutorials@gmail.com</a></p><p><a href="asteroids.love" class="download">Download asteroids.love</a></p><img src="1.png">
+<p><a href="../../">Home page</a> > <a href="../">Pygame Zero tutorials</a></p><h1>Asteroids</h1><p class="subheading">A tutorial for Python and Pygame Zero 1.2</p><p>Please send any feedback to <a href="mailto:simple.game.tutorials@gmail.com">simple.game.tutorials@gmail.com</a></p><p><a href="asteroids.py" class='download'>Download asteroids.py</a></p>
+<img src="1.png">
 <h2>Rules</h2>
 <p>Move the ship to avoid asteroids, and destroy them with bullets.</p>
 <p>Bigger asteroids break into two smaller and faster asteroids when hit with a bullet, and the smallest asteroids are destroyed completely.</p>
@@ -135,16 +137,16 @@ h2 + h3 {
 </table>
 <h2>Overview</h2>
 <p>The ship has an X and Y position, an X and Y speed, and an angle it is facing.</p>
-<p>Each asteroid and bullet is represented by a table containing an X and Y position and an angle it is moving in. An X and Y speed isn't stored for the asteroids and bullets because, unlike the ship, they always move in the direction of their angle.</p>
+<p>Each asteroid and bullet is represented by a dictionary containing an X and Y position and an angle it is moving in. An X and Y speed isn't stored for the asteroids and bullets because, unlike the ship, they always move in the direction of their angle.</p>
 <p>Each bullet additionally has a number representing how long until the bullet is automatically removed if it doesn't hit an asteroid.</p>
 <p>Each asteroid additionally has a number representing its "stage" which is used to determine its speed and radius.</p>
-<p>There is a table which contains all the asteroids and another table which contains all the bullets.</p>
-<p>Each bullet is checked to see if it collides with any of the asteroids. If it does, both the bullet and asteroid are removed from their tables. If the asteroid isn't in its lowest stage, two new asteroids with the next lowest stage are added to the asteroid table. A random angle is given to one of these asteroids, and the opposite angle is given to the other asteroid.</p>
+<p>There is a list which contains all the asteroids and another list which contains all the bullets.</p>
+<p>Each bullet is checked to see if it collides with any of the asteroids. If it does, both the bullet and asteroid are removed from their lists. If the asteroid isn't in its lowest stage, two new asteroids with the next lowest stage are added to the asteroid list. A random angle is given to one of these asteroids, and the opposite angle is given to the other asteroid.</p>
 <p>Each asteroid is checked to see if it collides with the ship. If it does, the game is reset.</p>
 <p>If there are no asteroids left, the game is also reset.</p>
-<p>So that objects partially off the edge of the screen can be seen on the other side, everything is drawn 9 times, in all directions around the screen.</p>
+<p>So that objects partially off the edge of the screen can be seen on the other side, everything is drawn 9 times; above the screen, below, left, right and the diagonal positions.</p>
 <img src="2.png">
-<p>To see if an asteroid collides with a bullet or the ship, the difference of the two circle's X axes is squared and added to the difference of the two circle's Y axes squared, and if this is less than or equal to the radiuses added together and squared, then the circles are touching or overlapping: <span class="inlinecode">(<span class="name">aX</span> - <span class="name">bX</span>)^<span class="literal">2</span> + (<span class="name">aY</span> - <span class="name">bY</span>)^<span class="literal">2</span> <= (<span class="name">aRadius</span> + <span class="name">bRadius</span>)^<span class="literal">2</span></span></p>
+<p>To see if an asteroid collides with a bullet or the ship, the difference of the two circle's X axes is squared and added to the difference of the two circle's Y axes squared, and if this is less than or equal to the radiuses added together and squared, then the circles are touching or overlapping: <span class="inlinecode">(<span class="name">a_x</span> - <span class="name">b_x</span>)**<span class="literal">2</span> + (<span class="name">a_y</span> - <span class="name">b_y</span>)**<span class="literal">2</span> <= (<span class="name">a_radius</span> + <span class="name">b_radius</span>)**2</span></p>
 <p>The Pythagorean theorem states that the square of a right triangle's hypotenuse is equal to the sum of the squares of the other two sides, i.e. <b>a² + b² = c²</b></p>
 <img src="3.png">
 <p>The two other sides in this instance are the differences between the positions of the two circles on the X and Y axes.</p>
@@ -159,705 +161,607 @@ h2 + h3 {
 <h2>Coding</h2>
 <h3>Drawing the ship</h3>
 <p>The ship is drawn as a blue circle in the middle of the screen.</p>
-<p><a class="fullcodelink" target="_blank" href="1.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
-    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">1</span>)
-    <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="literal">800</span> / <span class="literal">2</span>, <span class="literal">600</span> / <span class="literal">2</span>, <span class="literal">30</span>)
-end
+<p><a class="fullcodelink" target="_blank" href="1.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    <span class="call">screen.draw.filled_circle</span>((<span class="literal">800</span> / <span class="literal">2</span>, <span class="literal">600</span> / <span class="literal">2</span>), <span class="literal">30</span>, <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">255</span>))
 </pre></div>
 <img src="10.png">
 <h3>Turning the ship clockwise</h3>
 <p>When the right arrow is held down, the ship's angle increases at a rate of 10 radians per second.</p>
 <p>To show the angle of the ship, a light blue circle is drawn 20 pixels from the center of the ship in the direction of its angle.</p>
 <p>This uses the ship's X and Y positions, so they are made into variables.</p>
-<p><a class="fullcodelink" target="_blank" href="2.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
-    <span class="name">shipX</span> = <span class="literal">800</span> / <span class="literal">2</span>
-    <span class="name">shipY</span> = <span class="literal">600</span> / <span class="literal">2</span>
-    <span class="name">shipAngle</span> = <span class="literal">0</span>
-end
+<p>The <b>math</b> module is imported so that <span class="inlinecode"><span class="name">math.sin</span></span> and <span class="inlinecode"><span class="name">math.cos</span></span> can be used.</p>
+<p><a class="fullcodelink" target="_blank" href="2.html">Full code at this point</a></p><div class="pre"><pre class="code">import <span class="name">math</span>
 
-function <span class="name">love.update</span>(<span class="name">dt</span>)
-    if <span class="call">love.keyboard.isDown</span>(<span class="literal">'right'</span>) then
-         <span class="name">shipAngle</span> = <span class="name">shipAngle</span> + <span class="literal">10</span> * <span class="name">dt</span>
-    end
-end
+<span class="name">ship_x</span> = <span class="literal">800</span> / <span class="literal">2</span>
+<span class="name">ship_y</span> = <span class="literal">600</span> / <span class="literal">2</span>
+<span class="name">ship_angle</span> = <span class="literal">0</span>
 
-function <span class="name">love.draw</span>()
-    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">1</span>)
-    <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="highlight"><span class="name">shipX</span></span>, <span class="highlight"><span class="name">shipY</span></span>, <span class="literal">30</span>)
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">ship_angle</span>
 
-    local <span class="name">shipCircleDistance</span> = <span class="literal">20</span>
-    <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">1</span>, <span class="literal">1</span>)
-    <span class="call">love.graphics.circle</span>(
-        <span class="literal">'fill'</span>,
-        <span class="name">shipX</span> + <span class="call">math.cos</span>(<span class="name">shipAngle</span>) * <span class="name">shipCircleDistance</span>,
-        <span class="name">shipY</span> + <span class="call">math.sin</span>(<span class="name">shipAngle</span>) * <span class="name">shipCircleDistance</span>,
-        <span class="literal">5</span>
+    if <span class="name">keyboard.right</span>:
+        <span class="name">ship_angle</span> += <span class="literal">10</span> * <span class="name">dt</span>
+
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
+
+    <span class="call">screen.draw.filled_circle</span>((<span class="highlight"><span class="name">ship_x</span></span>, <span class="highlight"><span class="name">ship_y</span></span>), <span class="literal">30</span>, <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">255</span>))
+
+    <span class="name">ship_circle_distance</span> = <span class="literal">20</span>
+    <span class="call">screen.draw.filled_circle</span>((
+        <span class="name">ship_x</span> + <span class="call">math.cos</span>(<span class="name">ship_angle</span>) * <span class="name">ship_circle_distance</span>,
+        <span class="name">ship_y</span> + <span class="call">math.sin</span>(<span class="name">ship_angle</span>) * <span class="name">ship_circle_distance</span>),
+        <span class="literal">5</span>, <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">255</span>)
     )
 
-    <span class="comment">-- Temporary</span>
-    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
-    <span class="call">love.graphics.print</span>(<span class="literal">'shipAngle: '</span>..<span class="name">shipAngle</span>)
-end
+    <span class="comment"># Temporary</span>
+    <span class="call">screen.draw.text</span>(<span class="literal">'ship_angle: '</span> + <span class="call">str</span>(<span class="name">ship_angle</span>), (<span class="literal">0</span>, <span class="literal">0</span>))
 </pre></div>
 <img src="11.png">
 <h3>Turning the ship counterclockwise</h3>
 <p>When the left arrow is held down, the ship's angle decreases.</p>
 <p>The turning speed is reused, so it is made into a variable.</p>
-<p><a class="fullcodelink" target="_blank" href="3.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="highlight">local <span class="name">turnSpeed</span> = <span class="literal">10</span></span>
+<p><a class="fullcodelink" target="_blank" href="3.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">ship_angle</span>
 
-    if <span class="call">love.keyboard.isDown</span>(<span class="literal">'right'</span>) then
-        <span class="name">shipAngle</span> = <span class="name">shipAngle</span> + <span class="highlight"><span class="name">turnSpeed</span></span> * <span class="name">dt</span>
-    end
+    <span class="highlight"><span class="name">turn_speed</span> = <span class="literal">10</span></span>
 
-    <span class="highlight">if <span class="call">love.keyboard.isDown</span>(<span class="literal">'left'</span>) then</span>
-    <span class="highlight">    <span class="name">shipAngle</span> = <span class="name">shipAngle</span> - <span class="name">turnSpeed</span> * <span class="name">dt</span></span>
-    <span class="highlight">end</span>
-end
+    if <span class="name">keyboard.right</span>:
+        <span class="name">ship_angle</span> += <span class="highlight"><span class="name">turn_speed</span></span> * <span class="name">dt</span>
+
+    <span class="highlight">if <span class="name">keyboard.left</span>:</span>
+    <span class="highlight">    <span class="name">ship_angle</span> -= <span class="name">turn_speed</span> * <span class="name">dt</span></span>
 </pre></div>
 <h3>Wrapping the ship's angle</h3>
 <p>So that the angle doesn't continue going up beyond 2 pi or down into negative numbers, the modulo operator is used to keep the angle greater than or equal to 0 and less than 2 pi. Now holding down the right or left arrow will turn the ship just as before, but the angle number won't continue to increase or decrease infinitely.</p>
-<p><a class="fullcodelink" target="_blank" href="4.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="comment">-- etc.</span>
+<p><a class="fullcodelink" target="_blank" href="4.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
 
-    <span class="name">shipAngle</span> = <span class="name">shipAngle</span> % (<span class="literal">2</span> * <span class="name">math.pi</span>)
-end
+    <span class="name">ship_angle</span> %= <span class="literal">2</span> * <span class="name">math.pi</span>
 </pre></div>
 <h3>Ship acceleration</h3>
 <p>The ship is given X and Y speeds.</p>
 <p>When the up arrow is pressed, the ship's X and Y speeds are changed based on the ship's angle.</p>
 <p>The ship's X and Y position are then changed based on the ship's X and Y speed.</p>
-<p><a class="fullcodelink" target="_blank" href="5.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
-    <span class="comment">-- etc.</span>
+<p><a class="fullcodelink" target="_blank" href="5.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
 
-    <span class="name">shipSpeedX</span> = <span class="literal">0</span>
-    <span class="name">shipSpeedY</span> = <span class="literal">0</span>
-end
+<span class="name">ship_speed_x</span> = <span class="literal">0</span>
+<span class="name">ship_speed_y</span> = <span class="literal">0</span>
 
-function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="comment">-- etc.</span>
+def <span class="name">update</span>(<span class="name">dt</span>):
+    global <span class="name">ship_x</span>
+    global <span class="name">ship_y</span>
+    global <span class="name">ship_speed_x</span>
+    global <span class="name">ship_speed_y</span>
 
-    if <span class="call">love.keyboard.isDown</span>(<span class="literal">'up'</span>) then
-        local <span class="name">shipSpeed</span> = <span class="literal">100</span>
-        <span class="name">shipSpeedX</span> = <span class="name">shipSpeedX</span> + <span class="call">math.cos</span>(<span class="name">shipAngle</span>) * <span class="name">shipSpeed</span> * <span class="name">dt</span>
-        <span class="name">shipSpeedY</span> = <span class="name">shipSpeedY</span> + <span class="call">math.sin</span>(<span class="name">shipAngle</span>) * <span class="name">shipSpeed</span> * <span class="name">dt</span>
-    end
+    <span class="comment"># etc.</span>
 
-    <span class="name">shipX</span> = <span class="name">shipX</span> + <span class="name">shipSpeedX</span> * <span class="name">dt</span>
-    <span class="name">shipY</span> = <span class="name">shipY</span> + <span class="name">shipSpeedY</span> * <span class="name">dt</span>
-end
+    if <span class="name">keyboard.up</span>:
+        <span class="name">ship_speed</span> = <span class="literal">100</span>
+        <span class="name">ship_speed_x</span> += <span class="call">math.cos</span>(<span class="name">ship_angle</span>) * <span class="name">ship_speed</span> * <span class="name">dt</span>
+        <span class="name">ship_speed_y</span> += <span class="call">math.sin</span>(<span class="name">ship_angle</span>) * <span class="name">ship_speed</span> * <span class="name">dt</span>
 
-function <span class="name">love.draw</span>()
-    <span class="comment">-- etc.</span>
+    <span class="name">ship_x</span> += <span class="name">ship_speed_x</span> * <span class="name">dt</span>
+    <span class="name">ship_y</span> += <span class="name">ship_speed_y</span> * <span class="name">dt</span>
 
-    <span class="comment">-- Temporary</span>
-    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
-    <span class="call">love.graphics.print</span>(<span class="highlight"><span class="call">table.concat</span>({</span>
-        <span class="literal">'shipAngle: '</span>..<span class="name">shipAngle</span><span class="highlight">,</span>
-    <span class="highlight">    <span class="literal">'shipX: '</span>..<span class="name">shipX</span>,</span>
-    <span class="highlight">    <span class="literal">'shipY: '</span>..<span class="name">shipY</span>,</span>
-    <span class="highlight">    <span class="literal">'shipSpeedX: '</span>..<span class="name">shipSpeedX</span>,</span>
-    <span class="highlight">    <span class="literal">'shipSpeedY: '</span>..<span class="name">shipSpeedY</span>,</span>
-    <span class="highlight">}, <span class="literal">'\n'</span>)</span>)
-end
+def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
+
+    <span class="comment"># Temporary</span>
+    <span class="call">screen.draw.text</span>(
+        <span class="literal">'ship_angle: '</span> + <span class="call">str</span>(<span class="name">ship_angle</span>) <span class="highlight">+ <span class="literal">'\n'</span> +</span>
+        <span class="highlight"><span class="literal">'ship_x: '</span> + <span class="call">str</span>(<span class="name">ship_x</span>) + <span class="literal">'\n'</span> +</span>
+        <span class="highlight"><span class="literal">'ship_y: '</span> + <span class="call">str</span>(<span class="name">ship_y</span>) + <span class="literal">'\n'</span> +</span>
+        <span class="highlight"><span class="literal">'ship_speed_x: '</span> + <span class="call">str</span>(<span class="name">ship_speed_x</span>) + <span class="literal">'\n'</span> +</span>
+        <span class="highlight"><span class="literal">'ship_speed_y: '</span> + <span class="call">str</span>(<span class="name">ship_speed_y</span>),</span>
+    (<span class="literal">0</span>, <span class="literal">0</span>))
 </pre></div>
 <img src="12.png">
 <h3>Wrapping the ship's position</h3>
 <p>So that the ship wraps around to the other side of the screen when it goes off the edge, the modulo operator is used to keep the ship's X/Y positions greater than or equal to 0 and less than the width/height of the arena.</p>
 <p>The arena width and height are reused, so they are made into variables.</p>
-<p><a class="fullcodelink" target="_blank" href="6.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
-    <span class="name">arenaWidth</span> = <span class="literal">800</span>
-    <span class="name">arenaHeight</span> = <span class="literal">600</span>
+<p><a class="fullcodelink" target="_blank" href="6.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
 
-    <span class="name">shipX</span> = <span class="highlight"><span class="name">arenaWidth</span></span> / <span class="literal">2</span>
-    <span class="name">shipY</span> = <span class="highlight"><span class="name">arenaHeight</span></span> / <span class="literal">2</span>
+<span class="name">arena_width</span> = <span class="literal">800</span>
+<span class="name">arena_height</span> = <span class="literal">600</span>
 
-    <span class="comment">-- etc.</span>
-end
+<span class="name">ship_x</span> = <span class="highlight"><span class="name">arena_width</span></span> / <span class="literal">2</span>
+<span class="name">ship_y</span> = <span class="highlight"><span class="name">arena_height</span></span> / <span class="literal">2</span>
 
-function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="comment">-- etc.</span>
+<span class="comment"># etc.</span>
 
-    <span class="name">shipX</span> = <span class="highlight">(</span><span class="name">shipX</span> + <span class="name">shipSpeedX</span> * <span class="name">dt</span><span class="highlight">) % <span class="name">arenaWidth</span></span>
-    <span class="name">shipY</span> = <span class="highlight">(</span><span class="name">shipY</span> + <span class="name">shipSpeedY</span> * <span class="name">dt</span><span class="highlight">) % <span class="name">arenaHeight</span></span>
-end
+def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
+
+    <span class="name">ship_x</span> %= <span class="name">arena_width</span>
+    <span class="name">ship_y</span> %= <span class="name">arena_height</span>
 </pre></div>
 <h3>Drawing partially off-screen objects</h3>
-<p>So that objects that are partially off the edge of the screen can be seen on the other side, the coordinate system is translated to different positions and everything is drawn at each position around the screen and in the center.</p>
-<p><a class="fullcodelink" target="_blank" href="7.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.draw</span>()
-    <span class="highlight">for <span class="name">y</span> = -<span class="literal">1</span>, <span class="literal">1</span> do</span>
-        <span class="highlight">for <span class="name">x</span> = -<span class="literal">1</span>, <span class="literal">1</span> do</span>
-            <span class="highlight"><span class="call">love.graphics.origin</span>()</span>
-            <span class="highlight"><span class="call">love.graphics.translate</span>(<span class="name">x</span> * <span class="name">arenaWidth</span>, <span class="name">y</span> * <span class="name">arenaHeight</span>)</span>
+<p>So that objects that are partially off the edge of the screen can be seen on the other side, everything is drawn in 9 positions. In each position an X and Y offset is added to the drawn position.</p>
+<p><a class="fullcodelink" target="_blank" href="7.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
 
-            <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">1</span>)
-            <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">shipX</span>, <span class="name">shipY</span>, <span class="literal">30</span>)
+    <span class="highlight">for <span class="name">y</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):</span>
+        <span class="highlight">for <span class="name">x</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):</span>
+            <span class="highlight"><span class="name">offset_x</span> = <span class="name">x</span> * <span class="name">arena_width</span></span>
+            <span class="highlight"><span class="name">offset_y</span> = <span class="name">y</span> * <span class="name">arena_height</span></span>
 
-            local <span class="name">shipCircleDistance</span> = <span class="literal">20</span>
-            <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">1</span>, <span class="literal">1</span>)
-            <span class="call">love.graphics.circle</span>(
-                <span class="comment">-- etc.</span>
+            <span class="call">screen.draw.filled_circle</span>(
+                (<span class="name">ship_x</span> <span class="highlight">+ <span class="name">offset_x</span></span>, <span class="name">ship_y</span> <span class="highlight">+ <span class="name">offset_y</span></span>),
+                <span class="literal">30</span>, <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">255</span>)
             )
-        <span class="highlight">end</span>
-    <span class="highlight">end</span>
 
-    <span class="comment">-- Temporary</span>
-    <span class="highlight"><span class="call">love.graphics.origin</span>()</span>
-    <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">1</span>)
-    <span class="call">love.graphics.print</span>(<span class="call">table.concat</span>({
-        <span class="comment">-- etc.</span>
-    }, <span class="literal">'\n'</span>))
-end
+            <span class="name">ship_circle_distance</span> = <span class="literal">20</span>
+            <span class="call">screen.draw.filled_circle</span>((
+                <span class="name">ship_x</span> <span class="highlight">+ <span class="name">offset_x</span></span> +
+                    <span class="call">math.cos</span>(<span class="name">ship_angle</span>) * <span class="name">ship_circle_distance</span>,
+                <span class="name">ship_y</span> <span class="highlight">+ <span class="name">offset_y</span></span> +
+                    <span class="call">math.sin</span>(<span class="name">ship_angle</span>) * <span class="name">ship_circle_distance</span>),
+                <span class="literal">5</span>, <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">255</span>)
+            )
+
+    <span class="comment"># etc.</span>
 </pre></div>
 <img src="13.png">
 <h3>Bullets</h3>
-<p>For now, a bullet is represented by a table with an X and Y position, and when the <b>s</b> key is pressed it is created at the position of the ship and added to the bullets table.</p>
-<p><a class="fullcodelink" target="_blank" href="8.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
-    <span class="comment">-- etc.</span>
+<p>For now, a bullet is represented by a dictionary with an X and Y position, and when the <b>s</b> key is pressed it is created at the position of the ship and added to the bullets list.</p>
+<p><a class="fullcodelink" target="_blank" href="8.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
 
-    <span class="name">bullets</span> = {}
-end
+<span class="name">bullets</span> = []
 
-function <span class="name">love.keypressed</span>(<span class="name">key</span>)
-    if <span class="name">key</span> == <span class="literal">'s'</span> then
-        <span class="call">table.insert</span>(<span class="name">bullets</span>, {
-            <span class="name">x</span> = <span class="name">shipX</span>,
-            <span class="name">y</span> = <span class="name">shipY</span>,
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    if <span class="name">key</span> == <span class="name">keys.S</span>:
+        <span class="call">bullets.append</span>({
+            <span class="literal">'x'</span>: <span class="name">ship_x</span>,
+            <span class="literal">'y'</span>: <span class="name">ship_y</span>,
         })
-    end
-end
 
-function <span class="name">love.draw</span>()
-    for <span class="name">y</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
-        for <span class="name">x</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
-            <span class="comment">-- etc.</span>
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
 
-            for <span class="name">bulletIndex</span>, <span class="name">bullet</span> in <span class="call">ipairs</span>(<span class="name">bullets</span>) do
-                <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">1</span>, <span class="literal">0</span>)
-                <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">bullet.x</span>, <span class="name">bullet.y</span>, <span class="literal">5</span>)
-            end
-        end
-    end
-end
+    for <span class="name">y</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+
+            <span class="comment"># etc.</span>
+
+            for <span class="name">bullet</span> in <span class="name">bullets</span>:
+                <span class="call">screen.draw.filled_circle</span>(
+                    (<span class="name">bullet</span>[<span class="literal">'x'</span>] + <span class="name">offset_x</span>, <span class="name">bullet</span>[<span class="literal">'y'</span>] + <span class="name">offset_y</span>),
+                    <span class="literal">5</span>, <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">0</span>)
+                )
 </pre></div>
 <img src="14.png">
-<h3>Creating bullets at edge of ship</h3>
+<h3>Creating bullets at the edge of the ship</h3>
 <p>The bullets are now created at the ship's radius away from the ship's position in the direction of the ship's angle.</p>
 <p>The ship's radius is reused, so it is made into a variable.</p>
-<p><a class="fullcodelink" target="_blank" href="9.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
-    <span class="comment">-- etc.</span>
+<p><a class="fullcodelink" target="_blank" href="9.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
 
-    <span class="name">shipRadius</span> = <span class="literal">30</span>
+<span class="name">ship_radius</span> = <span class="literal">30</span>
 
-    <span class="comment">-- etc.</span>
-end
-
-function <span class="name">love.keypressed</span>(<span class="name">key</span>)
-    if <span class="name">key</span> == <span class="literal">'s'</span> then
-        <span class="call">table.insert</span>(<span class="name">bullets</span>, {
-            <span class="name">x</span> = <span class="name">shipX</span> <span class="highlight">+ <span class="call">math.cos</span>(<span class="name">shipAngle</span>) * <span class="name">shipRadius</span></span>,
-            <span class="name">y</span> = <span class="name">shipY</span> <span class="highlight">+ <span class="call">math.sin</span>(<span class="name">shipAngle</span>) * <span class="name">shipRadius</span></span>,
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    if <span class="name">key</span> == <span class="name">keys.S</span>:
+        <span class="call">bullets.append</span>({
+            <span class="literal">'x'</span>: <span class="name">ship_x</span> <span class="highlight">+ <span class="call">math.cos</span>(<span class="name">ship_angle</span>) * <span class="name">ship_radius</span></span>,
+            <span class="literal">'y'</span>: <span class="name">ship_y</span> <span class="highlight">+ <span class="call">math.sin</span>(<span class="name">ship_angle</span>) * <span class="name">ship_radius</span></span>,
         })
-    end
-end
 
-function <span class="name">love.draw</span>()
-    for <span class="name">y</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
-        for <span class="name">x</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
-            <span class="comment">-- etc.</span>
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
 
-            <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">shipX</span>, <span class="name">shipY</span>, <span class="highlight"><span class="name">shipRadius</span></span>)
+    for <span class="name">y</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
 
-            <span class="comment">-- etc.</span>
-        end
-    end
-end
+            <span class="comment"># etc.</span>
+
+            <span class="call">screen.draw.filled_circle</span>(
+                (<span class="name">ship_x</span> + <span class="name">offset_x</span>, <span class="name">ship_y</span> + <span class="name">offset_y</span>),
+                <span class="highlight"><span class="name">ship_radius</span></span>, <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">255</span>)
+            )
+
+            <span class="comment"># etc.</span>
 </pre></div>
 <img src="15.png">
 <h3>Moving bullets</h3>
 <p>Newly created bullets are given an angle to move in, which is the ship's angle at time of shooting.</p>
-<p>The bullet table is looped through and each bullet's X and Y position is updated based on its angle.</p>
-<p>So that the bullets wrap around the screen, the modulo operator is used to keep the bullet's X/Y positions greater than or equal to 0 and less than the width/height of the arena.</p>
-<p><a class="fullcodelink" target="_blank" href="10.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="comment">-- etc.</span>
+<p>The bullet list is looped through and each bullet's X and Y position is updated based on its angle.</p>
+<p>So that bullets wrap around the screen, the modulo operator is used to keep each bullet's X/Y positions greater than or equal to 0 and less than the width/height of the arena.</p>
+<p><a class="fullcodelink" target="_blank" href="10.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
 
-    for <span class="name">bulletIndex</span>, <span class="name">bullet</span> in <span class="call">ipairs</span>(<span class="name">bullets</span>) do
-        local <span class="name">bulletSpeed</span> = <span class="literal">500</span>
-        <span class="name">bullet.x</span> = (<span class="name">bullet.x</span> + <span class="call">math.cos</span>(<span class="name">bullet.angle</span>) * <span class="name">bulletSpeed</span> * <span class="name">dt</span>)
-            % <span class="name">arenaWidth</span>
-        <span class="name">bullet.y</span> = (<span class="name">bullet.y</span> + <span class="call">math.sin</span>(<span class="name">bullet.angle</span>) * <span class="name">bulletSpeed</span> * <span class="name">dt</span>)
-            % <span class="name">arenaHeight</span>
-    end
-end
+    for <span class="name">bullet</span> in <span class="name">bullets</span>:
+        <span class="name">bullet_speed</span> = <span class="literal">500</span>
+        <span class="name">bullet</span>[<span class="literal">'x'</span>] += <span class="call">math.cos</span>(<span class="name">bullet</span>[<span class="literal">'angle'</span>]) * <span class="name">bullet_speed</span> * <span class="name">dt</span>
+        <span class="name">bullet</span>[<span class="literal">'y'</span>] += <span class="call">math.sin</span>(<span class="name">bullet</span>[<span class="literal">'angle'</span>]) * <span class="name">bullet_speed</span> * <span class="name">dt</span>
+        <span class="name">bullet</span>[<span class="literal">'x'</span>] %= <span class="name">arena_width</span>
+        <span class="name">bullet</span>[<span class="literal">'y'</span>] %= <span class="name">arena_height</span>
 
-function <span class="name">love.keypressed</span>(<span class="name">key</span>)
-    if <span class="name">key</span> == <span class="literal">'s'</span> then
-        <span class="call">table.insert</span>(<span class="name">bullets</span>, {
-            <span class="name">x</span> = <span class="name">shipX</span> + <span class="call">math.cos</span>(<span class="name">shipAngle</span>) * <span class="name">shipRadius</span>,
-            <span class="name">y</span> = <span class="name">shipY</span> + <span class="call">math.sin</span>(<span class="name">shipAngle</span>) * <span class="name">shipRadius</span>,
-            <span class="highlight"><span class="name">angle</span> = <span class="name">shipAngle</span>,</span>
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    if <span class="name">key</span> == <span class="name">keys.S</span>:
+        <span class="call">bullets.append</span>({
+            <span class="literal">'x'</span>: <span class="name">ship_x</span> + <span class="call">math.cos</span>(<span class="name">ship_angle</span>) * <span class="name">ship_radius</span>,
+            <span class="literal">'y'</span>: <span class="name">ship_y</span> + <span class="call">math.sin</span>(<span class="name">ship_angle</span>) * <span class="name">ship_radius</span>,
+            <span class="highlight"><span class="literal">'angle'</span>: <span class="name">ship_angle</span>,</span>
         })
-    end
-end
 </pre></div>
 <h3>Automatically removing bullets</h3>
-<p>Each bullet has a timer which starts at 4 seconds and is decreased every frame. When the timer reaches 0, the bullet is removed from the bullets table.</p>
-<p>Because bullets are removed from the table while it is being looped through, the loop is changed to loop through the table in reverse order.</p>
-<p><a class="fullcodelink" target="_blank" href="11.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="comment">-- etc.</span>
+<p>Each bullet has a timer which starts at 4 seconds and is decreased every frame. When the timer reaches 0, the bullet is removed from the bullets list.</p>
+<p>Because bullets are removed from the list while it is being looped through, a copy of the list is created to loop through.</p>
+<p><a class="fullcodelink" target="_blank" href="11.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
 
-    for <span class="highlight"><span class="name">bulletIndex</span> = #<span class="name">bullets</span>, <span class="literal">1</span>, -<span class="literal">1</span></span> do
-        <span class="highlight">local <span class="name">bullet</span> = <span class="name">bullets</span>[<span class="name">bulletIndex</span>]</span>
+    for <span class="name">bullet</span> in <span class="name">bullets</span><span class="highlight">.<span class="call">copy</span>()</span>:
+        <span class="highlight"><span class="name">bullet</span>[<span class="literal">'time_left'</span>] -= <span class="name">dt</span></span>
 
-        <span class="highlight"><span class="name">bullet.timeLeft</span> = <span class="name">bullet.timeLeft</span> - <span class="name">dt</span></span>
+        <span class="highlight">if <span class="name">bullet</span>[<span class="literal">'time_left'</span>] <= <span class="literal">0</span>:</span>
+        <span class="highlight">    <span class="call">bullets.remove</span>(<span class="name">bullet</span>)</span>
+        <span class="highlight">    continue</span>
 
-        <span class="highlight">if <span class="name">bullet.timeLeft</span> <= <span class="literal">0</span> then</span>
-        <span class="highlight">    <span class="call">table.remove</span>(<span class="name">bullets</span>, <span class="name">bulletIndex</span>)</span>
-        <span class="highlight">else</span>
-            local <span class="name">bulletSpeed</span> = <span class="literal">500</span>
-            <span class="name">bullet.x</span> = (<span class="name">bullet.x</span> + <span class="call">math.cos</span>(<span class="name">bullet.angle</span>) * <span class="name">bulletSpeed</span> * <span class="name">dt</span>)
-                % <span class="name">arenaWidth</span>
-            <span class="name">bullet.y</span> = (<span class="name">bullet.y</span> + <span class="call">math.sin</span>(<span class="name">bullet.angle</span>) * <span class="name">bulletSpeed</span> * <span class="name">dt</span>)
-                % <span class="name">arenaHeight</span>
-        <span class="highlight">end</span>
-    end
-end
+        <span class="name">bullet_speed</span> = <span class="literal">500</span>
+        <span class="name">bullet</span>[<span class="literal">'x'</span>] += <span class="call">math.cos</span>(<span class="name">bullet</span>[<span class="literal">'angle'</span>]) * <span class="name">bullet_speed</span> * <span class="name">dt</span>
+        <span class="name">bullet</span>[<span class="literal">'y'</span>] += <span class="call">math.sin</span>(<span class="name">bullet</span>[<span class="literal">'angle'</span>]) * <span class="name">bullet_speed</span> * <span class="name">dt</span>
+        <span class="name">bullet</span>[<span class="literal">'x'</span>] %= <span class="name">arena_width</span>
+        <span class="name">bullet</span>[<span class="literal">'y'</span>] %= <span class="name">arena_height</span>
 
-function <span class="name">love.keypressed</span>(<span class="name">key</span>)
-    if <span class="name">key</span> == <span class="literal">'s'</span> then
-        <span class="call">table.insert</span>(<span class="name">bullets</span>, {
-            <span class="name">x</span> = <span class="name">shipX</span> + <span class="call">math.cos</span>(<span class="name">shipAngle</span>) * <span class="name">shipRadius</span>,
-            <span class="name">y</span> = <span class="name">shipY</span> + <span class="call">math.sin</span>(<span class="name">shipAngle</span>) * <span class="name">shipRadius</span>,
-            <span class="name">angle</span> = <span class="name">shipAngle</span>,
-            <span class="highlight"><span class="name">timeLeft</span> = <span class="literal">4</span>,</span>
+def <span class="name">on_key_down</span>(<span class="name">key</span>):
+    if <span class="name">key</span> == <span class="name">keys.S</span>:
+        <span class="call">bullets.append</span>({
+            <span class="literal">'x'</span>: <span class="name">ship_x</span> + <span class="call">math.cos</span>(<span class="name">ship_angle</span>) * <span class="name">ship_radius</span>,
+            <span class="literal">'y'</span>: <span class="name">ship_y</span> + <span class="call">math.sin</span>(<span class="name">ship_angle</span>) * <span class="name">ship_radius</span>,
+            <span class="literal">'angle'</span>: <span class="name">ship_angle</span>,
+            <span class="highlight"><span class="literal">'time_left'</span>: <span class="literal">4</span>,</span>
         })
-    end
-end
 </pre></div>
 <h3>Holding down the shoot key</h3>
 <p>Instead of creating a bullet each time the <b>s</b> key is pressed, bullets are created if the <b>s</b> key is down and a timer is ready.</p>
 <p>The timer is set to its limit initially so that the ship can shoot immediately.</p>
-<p>The code from <span class="inlinecode"><span class="name">love.keypressed</span></span> is moved to <span class="inlinecode"><span class="name">love.update</span></span>.</p>
-<p><a class="fullcodelink" target="_blank" href="12.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
-    <span class="comment">-- etc.</span>
+<p>The code from <span class="inlinecode"><span class="name">on_key_down</span></span> is moved to <span class="inlinecode"><span class="name">update</span></span>.</p>
+<p><a class="fullcodelink" target="_blank" href="12.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
 
-    <span class="name">bulletTimerLimit</span> = <span class="literal">0.5</span>
-    <span class="name">bulletTimer</span> = <span class="name">bulletTimerLimit</span>
-end
+<span class="name">bullet_timer_limit</span> = <span class="literal">0.5</span>
+<span class="name">bullet_timer</span> = <span class="name">bullet_timer_limit</span>
 
-function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="comment">-- etc.</span>
+def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
+    global <span class="name">bullet_timer</span>
 
-    <span class="name">bulletTimer</span> = <span class="name">bulletTimer</span> + <span class="name">dt</span>
+    <span class="comment"># etc.</span>
 
-    <span class="highlight">if <span class="call">love.keyboard.isDown</span>(<span class="literal">'s'</span>) then</span>
-        <span class="highlight">if <span class="name">bulletTimer</span> >= <span class="name">bulletTimerLimit</span> then</span>
-            <span class="highlight"><span class="name">bulletTimer</span> = <span class="literal">0</span></span>
+    <span class="name">bullet_timer</span> += <span class="name">dt</span>
 
-            <span class="highlight"><span class="comment">-- Moved</span></span>
-            <span class="call">table.insert</span>(<span class="name">bullets</span>, {
-                <span class="name">x</span> = <span class="name">shipX</span> + <span class="call">math.cos</span>(<span class="name">shipAngle</span>) * <span class="name">shipRadius</span>,
-                <span class="name">y</span> = <span class="name">shipY</span> + <span class="call">math.sin</span>(<span class="name">shipAngle</span>) * <span class="name">shipRadius</span>,
-                <span class="name">angle</span> = <span class="name">shipAngle</span>,
-                <span class="name">timeLeft</span> = <span class="literal">4</span>,
+    if <span class="highlight"><span class="name">keyboard.S</span></span>:
+        if <span class="name">bullet_timer</span> >= <span class="name">bullet_timer_limit</span>:
+            <span class="name">bullet_timer</span> = <span class="literal">0</span>
+
+            <span class="highlight"><span class="comment"># Moved</span></span>
+            <span class="call">bullets.append</span>({
+                <span class="literal">'x'</span>: <span class="name">ship_x</span> + <span class="call">math.cos</span>(<span class="name">ship_angle</span>) * <span class="name">ship_radius</span>,
+                <span class="literal">'y'</span>: <span class="name">ship_y</span> + <span class="call">math.sin</span>(<span class="name">ship_angle</span>) * <span class="name">ship_radius</span>,
+                <span class="literal">'angle'</span>: <span class="name">ship_angle</span>,
+                <span class="literal">'time_left'</span>: <span class="literal">4</span>,
             })
-        <span class="highlight">end</span>
-    <span class="highlight">end</span>
-end
 
-<span class="comment">-- Removed: function love.keypressed(key)</span>
+<span class="comment"># Removed: def on_key_down(key):</span>
 </pre></div>
 <h3>Drawing asteroids</h3>
 <p>Asteroids have an X and Y position and are drawn as yellow circles.</p>
-<p><a class="fullcodelink" target="_blank" href="13.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
-    <span class="comment">-- etc.</span>
+<p><a class="fullcodelink" target="_blank" href="13.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
 
-    <span class="name">asteroids</span> = {
-        {
-            <span class="name">x</span> = <span class="literal">100</span>,
-            <span class="name">y</span> = <span class="literal">100</span>,
-        },
-        {
-            <span class="name">x</span> = <span class="name">arenaWidth</span> - <span class="literal">100</span>,
-            <span class="name">y</span> = <span class="literal">100</span>,
-        },
-        {
-            <span class="name">x</span> = <span class="name">arenaWidth</span> / <span class="literal">2</span>,
-            <span class="name">y</span> = <span class="name">arenaHeight</span> - <span class="literal">100</span>,
-        },
-    }
-end
+<span class="name">asteroids</span> = [
+    {
+        <span class="literal">'x'</span>: <span class="literal">100</span>,
+        <span class="literal">'y'</span>: <span class="literal">100</span>,
+    },
+    {
+        <span class="literal">'x'</span>: <span class="name">arena_width</span> - <span class="literal">100</span>,
+        <span class="literal">'y'</span>: <span class="literal">100</span>,
+    },
+    {
+        <span class="literal">'x'</span>: <span class="name">arena_width</span> / <span class="literal">2</span>,
+        <span class="literal">'y'</span>: <span class="name">arena_height</span> - <span class="literal">100</span>,
+    },
+]
 
-function <span class="name">love.draw</span>()
-    for <span class="name">y</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
-        for <span class="name">x</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
-            <span class="comment">-- etc.</span>
+def <span class="name">draw</span>():
+    <span class="call">screen.fill</span>((<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>))
 
-            for <span class="name">asteroidIndex</span>, <span class="name">asteroid</span> in <span class="call">ipairs</span>(<span class="name">asteroids</span>) do
-                <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">0</span>)
-                <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">asteroid.x</span>, <span class="name">asteroid.y</span>, <span class="literal">80</span>)
-            end
-        end
-    end
-end
+    for <span class="name">y</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+        for <span class="name">x</span> in <span class="call">range</span>(-<span class="literal">1</span>, <span class="literal">2</span>):
+
+            <span class="comment"># etc.</span>
+
+            for <span class="name">asteroid</span> in <span class="name">asteroids</span>:
+                <span class="call">screen.draw.filled_circle</span>(
+                    (<span class="name">asteroid</span>[<span class="literal">'x'</span>] + <span class="name">offset_x</span>, <span class="name">asteroid</span>[<span class="literal">'y'</span>] + <span class="name">offset_y</span>),
+                    <span class="literal">80</span>, <span class="name">color</span>=(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">0</span>)
+                )
 </pre></div>
 <img src="16.png">
 <h3>Moving asteroids</h3>
 <p>Each asteroid is given a random angle which it moves at.</p>
-<p><a class="fullcodelink" target="_blank" href="14.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
-    <span class="comment">-- etc.</span>
+<p>The <b>random</b> module is imported so that <span class="inlinecode"><span class="name">random.random</span></span> can be used.</p>
+<p><a class="fullcodelink" target="_blank" href="14.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
+import <span class="name">random</span>
 
-    for <span class="name">asteroidIndex</span>, <span class="name">asteroid</span> in <span class="call">ipairs</span>(<span class="name">asteroids</span>) do
-        <span class="name">asteroid.angle</span> = <span class="call">love.math.random</span>() * (<span class="literal">2</span> * <span class="name">math.pi</span>)
-    end
-end
+<span class="comment"># etc.</span>
 
-function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="comment">-- etc.</span>
+for <span class="name">asteroid</span> in <span class="name">asteroids</span>:
+    <span class="name">asteroid</span>[<span class="literal">'angle'</span>] = <span class="call">random.random</span>() * (<span class="literal">2</span> * <span class="name">math.pi</span>)
 
-    for <span class="name">asteroidIndex</span>, <span class="name">asteroid</span> in <span class="call">ipairs</span>(<span class="name">asteroids</span>) do
-        local <span class="name">asteroidSpeed</span> = <span class="literal">20</span>
-        <span class="name">asteroid.x</span> = (<span class="name">asteroid.x</span> + <span class="call">math.cos</span>(<span class="name">asteroid.angle</span>)
-            * <span class="name">asteroidSpeed</span> * <span class="name">dt</span>) % <span class="name">arenaWidth</span>
-        <span class="name">asteroid.y</span> = (<span class="name">asteroid.y</span> + <span class="call">math.sin</span>(<span class="name">asteroid.angle</span>)
-            * <span class="name">asteroidSpeed</span> * <span class="name">dt</span>) % <span class="name">arenaHeight</span>
-    end
-end
+def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
+
+    for <span class="name">asteroid</span> in <span class="name">asteroids</span>:
+        <span class="name">asteroid_speed</span> = <span class="literal">20</span>
+        <span class="name">asteroid</span>[<span class="literal">'x'</span>] += <span class="call">math.cos</span>(<span class="name">asteroid</span>[<span class="literal">'angle'</span>]) * <span class="name">asteroid_speed</span> * <span class="name">dt</span>
+        <span class="name">asteroid</span>[<span class="literal">'y'</span>] += <span class="call">math.sin</span>(<span class="name">asteroid</span>[<span class="literal">'angle'</span>]) * <span class="name">asteroid_speed</span> * <span class="name">dt</span>
+        <span class="name">asteroid</span>[<span class="literal">'x'</span>] %= <span class="name">arena_width</span>
+        <span class="name">asteroid</span>[<span class="literal">'y'</span>] %= <span class="name">arena_height</span>
 </pre></div>
 <h3>Asteroids colliding with the ship</h3>
-<p>The asteroid table is looped through, and if any asteroids collide with the ship, then the game is reset by (for now) calling <span class="inlinecode"><span class="name">love.load</span></span>.</p>
+<p>The asteroid list is looped through, and if any asteroids collide with the ship, then, for now, 'collision' is printed.</p>
 <p>The asteroid radius is reused, so it is made into a variable.</p>
-<p><a class="fullcodelink" target="_blank" href="15.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
-    <span class="comment">-- etc.</span>
+<p><a class="fullcodelink" target="_blank" href="15.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
 
-    <span class="name">asteroidRadius</span> = <span class="literal">80</span>
-end
+<span class="name">asteroid_radius</span> = <span class="literal">80</span>
 
-function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="comment">-- etc.</span>
+def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
 
-    <span class="highlight">local function <span class="name">areCirclesIntersecting</span>(<span class="name">aX</span>, <span class="name">aY</span>, <span class="name">aRadius</span>, <span class="name">bX</span>, <span class="name">bY</span>, <span class="name">bRadius</span>)</span>
-    <span class="highlight">    return (<span class="name">aX</span> - <span class="name">bX</span>)^<span class="literal">2</span> + (<span class="name">aY</span> - <span class="name">bY</span>)^<span class="literal">2</span> <= (<span class="name">aRadius</span> + <span class="name">bRadius</span>)^<span class="literal">2</span></span>
-    <span class="highlight">end</span>
+    <span class="highlight">def <span class="name">are_circles_intersecting</span>(<span class="name">a_x</span>, <span class="name">a_y</span>, <span class="name">a_radius</span>, <span class="name">b_x</span>, <span class="name">b_y</span>, <span class="name">b_radius</span>):</span>
+    <span class="highlight">    return (<span class="name">a_x</span> - <span class="name">b_x</span>)**<span class="literal">2</span> + (<span class="name">a_y</span> - <span class="name">b_y</span>)**<span class="literal">2</span> <= (<span class="name">a_radius</span> + <span class="name">b_radius</span>)**<span class="literal">2</span></span>
 
-    for <span class="name">asteroidIndex</span>, <span class="name">asteroid</span> in <span class="call">ipairs</span>(<span class="name">asteroids</span>) do
-        local <span class="name">asteroidSpeed</span> = <span class="literal">20</span>
-        <span class="name">asteroid.x</span> = (<span class="name">asteroid.x</span> + <span class="call">math.cos</span>(<span class="name">asteroid.angle</span>)
-            * <span class="name">asteroidSpeed</span> * <span class="name">dt</span>) % <span class="name">arenaWidth</span>
-        <span class="name">asteroid.y</span> = (<span class="name">asteroid.y</span> + <span class="call">math.sin</span>(<span class="name">asteroid.angle</span>)
-            * <span class="name">asteroidSpeed</span> * <span class="name">dt</span>) % <span class="name">arenaHeight</span>
+    for <span class="name">asteroid</span> in <span class="name">asteroids</span>:
+        <span class="name">asteroid_speed</span> = <span class="literal">20</span>
+        <span class="name">asteroid</span>[<span class="literal">'x'</span>] += <span class="call">math.cos</span>(<span class="name">asteroid</span>[<span class="literal">'angle'</span>]) * <span class="name">asteroid_speed</span> * <span class="name">dt</span>
+        <span class="name">asteroid</span>[<span class="literal">'y'</span>] += <span class="call">math.sin</span>(<span class="name">asteroid</span>[<span class="literal">'angle'</span>]) * <span class="name">asteroid_speed</span> * <span class="name">dt</span>
+        <span class="name">asteroid</span>[<span class="literal">'x'</span>] %= <span class="name">arena_width</span>
+        <span class="name">asteroid</span>[<span class="literal">'y'</span>] %= <span class="name">arena_height</span>
 
-        <span class="highlight">if <span class="call">areCirclesIntersecting</span>(</span>
-        <span class="highlight">    <span class="name">shipX</span>, <span class="name">shipY</span>, <span class="name">shipRadius</span>,</span>
-        <span class="highlight">    <span class="name">asteroid.x</span>, <span class="name">asteroid.y</span>, <span class="name">asteroidRadius</span></span>
-        <span class="highlight">) then</span>
-        <span class="highlight">    <span class="call">love.load</span>()</span>
-        <span class="highlight">    break</span>
-        <span class="highlight">end</span>
-    end
-end
+        <span class="highlight">if <span class="call">are_circles_intersecting</span>(</span>
+        <span class="highlight">    <span class="name">ship_x</span>, <span class="name">ship_y</span>, <span class="name">ship_radius</span>,</span>
+        <span class="highlight">    <span class="name">asteroid</span>[<span class="literal">'x'</span>], <span class="name">asteroid</span>[<span class="literal">'y'</span>], <span class="name">asteroid_radius</span></span>
+        <span class="highlight">):</span>
+        <span class="highlight">    <span class="call">print</span>(<span class="literal">'collision'</span>)</span>
 
-function <span class="name">love.draw</span>()
-    <span class="comment">-- etc.</span>
+def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
 
-    for <span class="name">asteroidIndex</span>, <span class="name">asteroid</span> in <span class="call">ipairs</span>(<span class="name">asteroids</span>) do
-        <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">0</span>)
-        <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">asteroid.x</span>, <span class="name">asteroid.y</span>,
-            <span class="highlight"><span class="name">asteroidRadius</span></span>)
-    end
-end
+            for <span class="name">asteroid</span> in <span class="name">asteroids</span>:
+                <span class="call">screen.draw.filled_circle</span>(
+                    (<span class="name">asteroid</span>[<span class="literal">'x'</span>] + <span class="name">offset_x</span>, <span class="name">asteroid</span>[<span class="literal">'y'</span>] + <span class="name">offset_y</span>),
+                    <span class="highlight"><span class="name">asteroid_radius</span></span>, <span class="name">color</span>=(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">0</span>)
+                )
 </pre></div>
 <h3>Bullets colliding with asteroids</h3>
-<p>For each bullet, each asteroid is looped through, and if the bullet and asteroid collide, then both are removed from their tables.</p>
-<p>The <span class="inlinecode"><span class="name">areCirclesIntersecting</span></span> function is moved above the bullet loop code.</p>
+<p>For each bullet, each asteroid is looped through, and if the bullet and asteroid collide, then both are removed from their lists.</p>
+<p>The <span class="inlinecode"><span class="name">are_circles_intersecting</span></span> function is moved above the bullet loop code.</p>
 <p>The bullet radius is reused, so it is made into a variable.</p>
-<p>Because asteroids are removed from the table while it is being looped through, the table is looped through in reverse order.</p>
-<p><a class="fullcodelink" target="_blank" href="16.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
-    <span class="comment">-- etc.</span>
+<p>Because asteroids are removed from the list while it is being looped through, a copy of the list is created to loop through.</p>
+<p><a class="fullcodelink" target="_blank" href="16.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
 
-    <span class="name">bulletRadius</span> = <span class="literal">5</span>
+<span class="name">bullet_radius</span> = <span class="literal">5</span>
 
-    <span class="comment">-- etc.</span>
-end
+def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
 
-function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="comment">-- etc.</span>
+    <span class="highlight"><span class="comment"># Moved</span></span>
+    def <span class="name">are_circles_intersecting</span>(<span class="name">a_x</span>, <span class="name">a_y</span>, <span class="name">a_radius</span>, <span class="name">b_x</span>, <span class="name">b_y</span>, <span class="name">b_radius</span>):
+        return (<span class="name">a_x</span> - <span class="name">b_x</span>)**<span class="literal">2</span> + (<span class="name">a_y</span> - <span class="name">b_y</span>)**<span class="literal">2</span> <= (<span class="name">a_radius</span> + <span class="name">b_radius</span>)**<span class="literal">2</span>
 
-    <span class="highlight"><span class="comment">-- Moved</span></span>
-    local function <span class="name">areCirclesIntersecting</span>(<span class="name">aX</span>, <span class="name">aY</span>, <span class="name">aRadius</span>, <span class="name">bX</span>, <span class="name">bY</span>, <span class="name">bRadius</span>)
-        return (<span class="name">aX</span> - <span class="name">bX</span>)^<span class="literal">2</span> + (<span class="name">aY</span> - <span class="name">bY</span>)^<span class="literal">2</span> <= (<span class="name">aRadius</span> + <span class="name">bRadius</span>)^<span class="literal">2</span>
-    end
+    for <span class="name">bullet</span> in <span class="call">bullets.copy</span>():
+        <span class="name">bullet</span>[<span class="literal">'time_left'</span>] -= <span class="name">dt</span>
 
-    for <span class="name">bulletIndex</span> = #<span class="name">bullets</span>, <span class="literal">1</span>, -<span class="literal">1</span> do
-        local <span class="name">bullet</span> = <span class="name">bullets</span>[<span class="name">bulletIndex</span>]
+        if <span class="name">bullet</span>[<span class="literal">'time_left'</span>] <= <span class="literal">0</span>:
+            <span class="call">bullets.remove</span>(<span class="name">bullet</span>)
+            continue
 
-        <span class="name">bullet.timeLeft</span> = <span class="name">bullet.timeLeft</span> - <span class="name">dt</span>
+        <span class="name">bullet_speed</span> = <span class="literal">500</span>
+        <span class="name">bullet</span>[<span class="literal">'x'</span>] += <span class="call">math.cos</span>(<span class="name">bullet</span>[<span class="literal">'angle'</span>]) * <span class="name">bullet_speed</span> * <span class="name">dt</span>
+        <span class="name">bullet</span>[<span class="literal">'y'</span>] += <span class="call">math.sin</span>(<span class="name">bullet</span>[<span class="literal">'angle'</span>]) * <span class="name">bullet_speed</span> * <span class="name">dt</span>
+        <span class="name">bullet</span>[<span class="literal">'x'</span>] %= <span class="name">arena_width</span>
+        <span class="name">bullet</span>[<span class="literal">'y'</span>] %= <span class="name">arena_height</span>
 
-        if <span class="name">bullet.timeLeft</span> <= <span class="literal">0</span> then
-            <span class="call">table.remove</span>(<span class="name">bullets</span>, <span class="name">bulletIndex</span>)
-        else
-            local <span class="name">bulletSpeed</span> = <span class="literal">500</span>
-            <span class="name">bullet.x</span> = (<span class="name">bullet.x</span> + <span class="call">math.cos</span>(<span class="name">bullet.angle</span>) * <span class="name">bulletSpeed</span> * <span class="name">dt</span>)
-                % <span class="name">arenaWidth</span>
-            <span class="name">bullet.y</span> = (<span class="name">bullet.y</span> + <span class="call">math.sin</span>(<span class="name">bullet.angle</span>) * <span class="name">bulletSpeed</span> * <span class="name">dt</span>)
-                % <span class="name">arenaHeight</span>
-        end
-
-        <span class="highlight">for <span class="name">asteroidIndex</span> = #<span class="name">asteroids</span>, <span class="literal">1</span>, -<span class="literal">1</span> do</span>
-        <span class="highlight">    local <span class="name">asteroid</span> = <span class="name">asteroids</span>[<span class="name">asteroidIndex</span>]</span>
-
-        <span class="highlight">    if <span class="call">areCirclesIntersecting</span>(</span>
-        <span class="highlight">    <span class="name">bullet.x</span>, <span class="name">bullet.y</span>, <span class="name">bulletRadius</span>,</span>
-        <span class="highlight">    <span class="name">asteroid.x</span>, <span class="name">asteroid.y</span>, <span class="name">asteroidRadius</span></span>
-        <span class="highlight">) then</span>
-        <span class="highlight">        <span class="call">table.remove</span>(<span class="name">bullets</span>, <span class="name">bulletIndex</span>)</span>
-        <span class="highlight">        <span class="call">table.remove</span>(<span class="name">asteroids</span>, <span class="name">asteroidIndex</span>)</span>
+        <span class="highlight">for <span class="name">asteroid</span> in <span class="call">asteroids.copy</span>():</span>
+        <span class="highlight">    if <span class="call">are_circles_intersecting</span>(</span>
+        <span class="highlight">        <span class="name">bullet</span>[<span class="literal">'x'</span>], <span class="name">bullet</span>[<span class="literal">'y'</span>], <span class="name">bullet_radius</span>,</span>
+        <span class="highlight">        <span class="name">asteroid</span>[<span class="literal">'x'</span>], <span class="name">asteroid</span>[<span class="literal">'y'</span>], <span class="name">asteroid_radius</span></span>
+        <span class="highlight">    ):</span>
+        <span class="highlight">        <span class="call">bullets.remove</span>(<span class="name">bullet</span>)</span>
+        <span class="highlight">        <span class="call">asteroids.remove</span>(<span class="name">asteroid</span>)</span>
         <span class="highlight">        break</span>
-        <span class="highlight">    end</span>
-        <span class="highlight">end</span>
-    end
 
-    <span class="comment">-- etc.</span>
-end
+    <span class="comment"># etc.</span>
 
-function <span class="name">love.draw</span>()
-    <span class="comment">-- etc.</span>
+def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
 
-    for <span class="name">bulletIndex</span>, <span class="name">bullet</span> in <span class="call">ipairs</span>(<span class="name">bullets</span>) do
-        <span class="call">love.graphics.setColor</span>(<span class="literal">0</span>, <span class="literal">1</span>, <span class="literal">0</span>)
-        <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">bullet.x</span>, <span class="name">bullet.y</span>, <span class="highlight"><span class="name">bulletRadius</span></span>)
-    end
+            for <span class="name">bullet</span> in <span class="name">bullets</span>:
+                <span class="call">screen.draw.filled_circle</span>(
+                    (<span class="name">bullet</span>[<span class="literal">'x'</span>] + <span class="name">offset_x</span>, <span class="name">bullet</span>[<span class="literal">'y'</span>] + <span class="name">offset_y</span>),
+                    <span class="highlight"><span class="name">bullet_radius</span></span>, <span class="name">color</span>=(<span class="literal">0</span>, <span class="literal">255</span>, <span class="literal">0</span>)
+                )
 
-    <span class="comment">-- etc.</span>
-end
+            <span class="comment"># etc.</span>
 </pre></div>
 <h3>Breaking asteroids</h3>
 <p>When a bullet and an asteroid collide, two new asteroids are created.</p>
 <p>The first asteroid is given a random angle, and the second asteroid is given the opposite angle by subtracting pi and using the modulo operator to keep the angle greater than or equal to 0 and less than 2 pi.</p>
-<p><a class="fullcodelink" target="_blank" href="17.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="comment">-- etc.</span>
+<p><a class="fullcodelink" target="_blank" href="17.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
 
-    for <span class="name">bulletIndex</span> = #<span class="name">bullets</span>, <span class="literal">1</span>, -<span class="literal">1</span> do
-        <span class="comment">-- etc.</span>
+    for <span class="name">bullet</span> in <span class="call">bullets.copy</span>():
+        <span class="comment"># etc.</span>
 
-        for <span class="name">asteroidIndex</span> = #<span class="name">asteroids</span>, <span class="literal">1</span>, -<span class="literal">1</span> do
-            local <span class="name">asteroid</span> = <span class="name">asteroids</span>[<span class="name">asteroidIndex</span>]
+            for <span class="name">asteroid</span> in <span class="call">asteroids.copy</span>():
+                if <span class="call">are_circles_intersecting</span>(
+                    <span class="name">bullet</span>[<span class="literal">'x'</span>], <span class="name">bullet</span>[<span class="literal">'y'</span>], <span class="name">bullet_radius</span>,
+                    <span class="name">asteroid</span>[<span class="literal">'x'</span>], <span class="name">asteroid</span>[<span class="literal">'y'</span>], <span class="name">asteroid_radius</span>
+                ):
+                    <span class="call">bullets.remove</span>(<span class="name">bullet</span>)
 
-            if <span class="call">areCirclesIntersecting</span>(
-                <span class="name">bullet.x</span>, <span class="name">bullet.y</span>, <span class="name">bulletRadius</span>,
-                <span class="name">asteroid.x</span>, <span class="name">asteroid.y</span>, <span class="name">asteroidRadius</span>
-            ) then
-                <span class="call">table.remove</span>(<span class="name">bullets</span>, <span class="name">bulletIndex</span>)
+                    <span class="highlight"><span class="name">angle1</span> = <span class="call">random.random</span>() * (<span class="literal">2</span> * <span class="name">math.pi</span>)</span>
+                    <span class="highlight"><span class="name">angle2</span> = (<span class="name">angle1</span> - <span class="name">math.pi</span>) % (<span class="literal">2</span> * <span class="name">math.pi</span>)</span>
 
-                <span class="highlight">local <span class="name">angle1</span> = <span class="call">love.math.random</span>() * (<span class="literal">2</span> * <span class="name">math.pi</span>)</span>
-                <span class="highlight">local <span class="name">angle2</span> = (<span class="name">angle1</span> - <span class="name">math.pi</span>) % (<span class="literal">2</span> * <span class="name">math.pi</span>)</span>
+                    <span class="highlight"><span class="call">asteroids.append</span>({</span>
+                    <span class="highlight">    <span class="literal">'x'</span>: <span class="name">asteroid</span>[<span class="literal">'x'</span>],</span>
+                    <span class="highlight">    <span class="literal">'y'</span>: <span class="name">asteroid</span>[<span class="literal">'y'</span>],</span>
+                    <span class="highlight">    <span class="literal">'angle'</span>: <span class="name">angle1</span>,</span>
+                    <span class="highlight">})</span>
+                    <span class="highlight"><span class="call">asteroids.append</span>({</span>
+                    <span class="highlight">    <span class="literal">'x'</span>: <span class="name">asteroid</span>[<span class="literal">'x'</span>],</span>
+                    <span class="highlight">    <span class="literal">'y'</span>: <span class="name">asteroid</span>[<span class="literal">'y'</span>],</span>
+                    <span class="highlight">    <span class="literal">'angle'</span>: <span class="name">angle2</span>,</span>
+                    <span class="highlight">})</span>
 
-                <span class="highlight"><span class="call">table.insert</span>(<span class="name">asteroids</span>, {</span>
-                <span class="highlight">    <span class="name">x</span> = <span class="name">asteroid.x</span>,</span>
-                <span class="highlight">    <span class="name">y</span> = <span class="name">asteroid.y</span>,</span>
-                <span class="highlight">    <span class="name">angle</span> = <span class="name">angle1</span>,</span>
-                <span class="highlight">})</span>
-                <span class="highlight"><span class="call">table.insert</span>(<span class="name">asteroids</span>, {</span>
-                <span class="highlight">    <span class="name">x</span> = <span class="name">asteroid.x</span>,</span>
-                <span class="highlight">    <span class="name">y</span> = <span class="name">asteroid.y</span>,</span>
-                <span class="highlight">    <span class="name">angle</span> = <span class="name">angle2</span>,</span>
-                <span class="highlight">})</span>
-
-                <span class="call">table.remove</span>(<span class="name">asteroids</span>, <span class="name">asteroidIndex</span>)
-                break
-            end
-        end
-    end
-
-    <span class="comment">-- etc.</span>
-end
+                    <span class="call">asteroids.remove</span>(<span class="name">asteroid</span>)
+                    break
 </pre></div>
 <h3>Asteroid stages</h3>
-<p>The different stages an asteroid can be in are stored in a table, indexed by a number given to each asteroid. This number starts at the last stage.</p>
+<p>The different stages an asteroid can be in are stored in a list, indexed by a number given to each asteroid. This number starts at the last stage.</p>
 <p>The two new asteroids created when an asteroid is hit by a bullet are now only created if the asteroid hit is above the first stage. The new asteroids are created with a stage one less than the asteroid that was hit.</p>
 <p>References to an asteroid's speed and radius are changed to refer to the speed and radius at the stage that the asteroid is currently at.</p>
-<p><a class="fullcodelink" target="_blank" href="18.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
-    <span class="comment">-- etc.</span>
+<p><a class="fullcodelink" target="_blank" href="18.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="comment"># etc.</span>
 
-    <span class="name">asteroidStages</span> = {
-        {
-            <span class="name">speed</span> = <span class="literal">120</span>,
-            <span class="name">radius</span> = <span class="literal">15</span>,
-        },
-        {
-            <span class="name">speed</span> = <span class="literal">70</span>,
-            <span class="name">radius</span> = <span class="literal">30</span>,
-        },
-        {
-            <span class="name">speed</span> = <span class="literal">50</span>,
-            <span class="name">radius</span> = <span class="literal">50</span>,
-        },
-        {
-            <span class="name">speed</span> = <span class="literal">20</span>,
-            <span class="name">radius</span> = <span class="literal">80</span>,
-        }
-    }
+<span class="name">asteroid_stages</span> = [
+    {
+        <span class="literal">'speed'</span>: <span class="literal">120</span>,
+        <span class="literal">'radius'</span>: <span class="literal">15</span>,
+    },
+    {
+        <span class="literal">'speed'</span>: <span class="literal">70</span>,
+        <span class="literal">'radius'</span>: <span class="literal">30</span>,
+    },
+    {
+        <span class="literal">'speed'</span>: <span class="literal">50</span>,
+        <span class="literal">'radius'</span>: <span class="literal">50</span>,
+    },
+    {
+        <span class="literal">'speed'</span>: <span class="literal">20</span>,
+        <span class="literal">'radius'</span>: <span class="literal">80</span>,
+    },
+]
 
-    for <span class="name">asteroidIndex</span>, <span class="name">asteroid</span> in <span class="call">ipairs</span>(<span class="name">asteroids</span>) do
-        <span class="name">asteroid.angle</span> = <span class="call">love.math.random</span>() * (<span class="literal">2</span> * <span class="name">math.pi</span>)
-        <span class="highlight"><span class="name">asteroid.stage</span> = #<span class="name">asteroidStages</span></span>
-    end
+for <span class="name">asteroid</span> in <span class="name">asteroids</span>:
+    <span class="name">asteroid</span>[<span class="literal">'angle'</span>] = <span class="call">random.random</span>() * (<span class="literal">2</span> * <span class="name">math.pi</span>)
+    <span class="highlight"><span class="name">asteroid</span>[<span class="literal">'stage'</span>] = <span class="call">len</span>(<span class="name">asteroid_stages</span>) - <span class="literal">1</span></span>
 
-    <span class="highlight"><span class="comment">-- Removed: asteroidRadius = 80</span></span>
-end
+<span class="highlight"><span class="comment"># Removed: asteroid_radius = 80</span></span>
 
-function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="comment">-- etc.</span>
+def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
 
-                if <span class="call">areCirclesIntersecting</span>(
-                    <span class="name">bullet.x</span>, <span class="name">bullet.y</span>, <span class="name">bulletRadius</span>,
-                    <span class="name">asteroid.x</span>, <span class="name">asteroid.y</span>,
-                    <span class="highlight"><span class="name">asteroidStages</span>[<span class="name">asteroid.stage</span>].<span class="name">radius</span></span>
-                ) then
-                    <span class="call">table.remove</span>(<span class="name">bullets</span>, <span class="name">bulletIndex</span>)
+                if <span class="call">are_circles_intersecting</span>(
+                    <span class="name">bullet</span>[<span class="literal">'x'</span>], <span class="name">bullet</span>[<span class="literal">'y'</span>], <span class="name">bullet_radius</span>,
+                    <span class="name">asteroid</span>[<span class="literal">'x'</span>], <span class="name">asteroid</span>[<span class="literal">'y'</span>],
+                    <span class="highlight"><span class="name">asteroid_stages</span>[<span class="name">asteroid</span>[<span class="literal">'stage'</span>]][<span class="literal">'radius'</span>]</span>
+                ):
+                    <span class="call">bullets.remove</span>(<span class="name">bullet</span>)
 
-                    <span class="highlight">if <span class="name">asteroid.stage</span> > <span class="literal">1</span> then</span>
-                        local <span class="name">angle1</span> = <span class="call">love.math.random</span>() * (<span class="literal">2</span> * <span class="name">math.pi</span>)
-                        local <span class="name">angle2</span> = (<span class="name">angle1</span> - <span class="name">math.pi</span>) % (<span class="literal">2</span> * <span class="name">math.pi</span>)
+                    <span class="highlight">if <span class="name">asteroid</span>[<span class="literal">'stage'</span>] > <span class="literal">0</span>:</span>
+                        <span class="name">angle1</span> = <span class="call">random.random</span>() * (<span class="literal">2</span> * <span class="name">math.pi</span>)
+                        <span class="name">angle2</span> = (<span class="name">angle1</span> - <span class="name">math.pi</span>) % (<span class="literal">2</span> * <span class="name">math.pi</span>)
 
-                        <span class="call">table.insert</span>(<span class="name">asteroids</span>, {
-                            <span class="name">x</span> = <span class="name">asteroid.x</span>,
-                            <span class="name">y</span> = <span class="name">asteroid.y</span>,
-                            <span class="name">angle</span> = <span class="name">angle1</span>,
-                            <span class="highlight"><span class="name">stage</span> = <span class="name">asteroid.stage</span> - <span class="literal">1</span>,</span>
+                        <span class="call">asteroids.append</span>({
+                            <span class="literal">'x'</span>: <span class="name">asteroid</span>[<span class="literal">'x'</span>],
+                            <span class="literal">'y'</span>: <span class="name">asteroid</span>[<span class="literal">'y'</span>],
+                            <span class="literal">'angle'</span>: <span class="name">angle1</span>,
+                            <span class="highlight"><span class="literal">'stage'</span>: <span class="name">asteroid</span>[<span class="literal">'stage'</span>] - <span class="literal">1</span>,</span>
                         })
-                        <span class="call">table.insert</span>(<span class="name">asteroids</span>, {
-                            <span class="name">x</span> = <span class="name">asteroid.x</span>,
-                            <span class="name">y</span> = <span class="name">asteroid.y</span>,
-                            <span class="name">angle</span> = <span class="name">angle2</span>,
-                            <span class="highlight"><span class="name">stage</span> = <span class="name">asteroid.stage</span> - <span class="literal">1</span>,</span>
+                        <span class="call">asteroids.append</span>({
+                            <span class="literal">'x'</span>: <span class="name">asteroid</span>[<span class="literal">'x'</span>],
+                            <span class="literal">'y'</span>: <span class="name">asteroid</span>[<span class="literal">'y'</span>],
+                            <span class="literal">'angle'</span>: <span class="name">angle2</span>,
+                            <span class="highlight"><span class="literal">'stage'</span>: <span class="name">asteroid</span>[<span class="literal">'stage'</span>] - <span class="literal">1</span>,</span>
                         })
-                    <span class="highlight">end</span>
 
-    <span class="comment">-- etc.</span>
+    <span class="comment"># etc.</span>
 
-    for <span class="name">asteroidIndex</span>, <span class="name">asteroid</span> in <span class="call">ipairs</span>(<span class="name">asteroids</span>) do
-        <span class="highlight"><span class="comment">-- Removed: local asteroidSpeed = 20</span></span>
-        <span class="name">asteroid.x</span> = (<span class="name">asteroid.x</span> + <span class="call">math.cos</span>(<span class="name">asteroid.angle</span>)
-            * <span class="highlight"><span class="name">asteroidStages</span>[<span class="name">asteroid.stage</span>].<span class="name">speed</span></span> * <span class="name">dt</span>) % <span class="name">arenaWidth</span>
-        <span class="name">asteroid.y</span> = (<span class="name">asteroid.y</span> + <span class="call">math.sin</span>(<span class="name">asteroid.angle</span>)
-            * <span class="highlight"><span class="name">asteroidStages</span>[<span class="name">asteroid.stage</span>].<span class="name">speed</span></span> * <span class="name">dt</span>) % <span class="name">arenaHeight</span>
+    for <span class="name">asteroid</span> in <span class="name">asteroids</span>:
+        <span class="name">asteroid_speed</span> = <span class="highlight"><span class="name">asteroid_stages</span>[<span class="name">asteroid</span>[<span class="literal">'stage'</span>]][<span class="literal">'speed'</span>]</span>
+        <span class="name">asteroid</span>[<span class="literal">'x'</span>] += <span class="call">math.cos</span>(<span class="name">asteroid</span>[<span class="literal">'angle'</span>]) * <span class="name">asteroid_speed</span> * <span class="name">dt</span>
+        <span class="name">asteroid</span>[<span class="literal">'y'</span>] += <span class="call">math.sin</span>(<span class="name">asteroid</span>[<span class="literal">'angle'</span>]) * <span class="name">asteroid_speed</span> * <span class="name">dt</span>
+        <span class="name">asteroid</span>[<span class="literal">'x'</span>] %= <span class="name">arena_width</span>
+        <span class="name">asteroid</span>[<span class="literal">'y'</span>] %= <span class="name">arena_height</span>
 
-        if <span class="call">areCirclesIntersecting</span>(
-            <span class="name">shipX</span>, <span class="name">shipY</span>, <span class="name">shipRadius</span>,
-            <span class="name">asteroid.x</span>, <span class="name">asteroid.y</span>, <span class="highlight"><span class="name">asteroidStages</span>[<span class="name">asteroid.stage</span>].<span class="name">radius</span></span>
-        ) then
-            <span class="call">love.load</span>()
-            break
-        end
-    end
-end
+        if <span class="call">are_circles_intersecting</span>(
+            <span class="name">ship_x</span>, <span class="name">ship_y</span>, <span class="name">ship_radius</span>,
+            <span class="name">asteroid</span>[<span class="literal">'x'</span>], <span class="name">asteroid</span>[<span class="literal">'y'</span>],
+            <span class="highlight"><span class="name">asteroid_stages</span>[<span class="name">asteroid</span>[<span class="literal">'stage'</span>]][<span class="literal">'radius'</span>]</span>
+        ):
+            <span class="call">print</span>(<span class="literal">'collision'</span>)
 
-function <span class="name">love.draw</span>()
-    for <span class="name">y</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
-        for <span class="name">x</span> = -<span class="literal">1</span>, <span class="literal">1</span> do
-            <span class="comment">-- etc.</span>
+def <span class="name">draw</span>():
+    <span class="comment"># etc.</span>
 
-            for <span class="name">asteroidIndex</span>, <span class="name">asteroid</span> in <span class="call">ipairs</span>(<span class="name">asteroids</span>) do
-                <span class="call">love.graphics.setColor</span>(<span class="literal">1</span>, <span class="literal">1</span>, <span class="literal">0</span>)
-                <span class="call">love.graphics.circle</span>(<span class="literal">'fill'</span>, <span class="name">asteroid.x</span>, <span class="name">asteroid.y</span>,
-                    <span class="highlight"><span class="name">asteroidStages</span>[<span class="name">asteroid.stage</span>].<span class="name">radius</span></span>)
-            end
-        end
-    end
-end
-</pre></div>
-<h3>Game over</h3>
-<p>If there are no more asteroids in the asteroids table the game is reset.</p>
-<p><a class="fullcodelink" target="_blank" href="19.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="comment">-- etc.</span>
-
-    if #<span class="name">asteroids</span> == <span class="literal">0</span> then
-        <span class="call">love.load</span>()
-    end
-end
+            for <span class="name">asteroid</span> in <span class="name">asteroids</span>:
+                <span class="call">screen.draw.filled_circle</span>(
+                    (<span class="name">asteroid</span>[<span class="literal">'x'</span>] + <span class="name">offset_x</span>, <span class="name">asteroid</span>[<span class="literal">'y'</span>] + <span class="name">offset_y</span>),
+                    <span class="highlight"><span class="name">asteroid_stages</span>[<span class="name">asteroid</span>[<span class="literal">'stage'</span>]][<span class="literal">'radius'</span>]</span>,
+                    <span class="name">color</span>=(<span class="literal">255</span>, <span class="literal">255</span>, <span class="literal">0</span>)
+                )
 </pre></div>
 <h3>Resetting the game</h3>
-<p>When the game is over, only some variables need to be reset, so a function is made.</p>
-<p><a class="fullcodelink" target="_blank" href="20.html">Full code at this point</a></p><div class="pre"><pre class="code">function <span class="name">love.load</span>()
-    <span class="name">arenaWidth</span> = <span class="literal">800</span>
-    <span class="name">arenaHeight</span> = <span class="literal">600</span>
+<p>A function is made which sets the initial state of the game.</p>
+<p>This function is called before the game begins and when an asteroid collides with the ship.</p>
+<p><a class="fullcodelink" target="_blank" href="19.html">Full code at this point</a></p><div class="pre"><pre class="code"><span class="highlight">def <span class="name">reset</span>():</span>
+    <span class="highlight">global <span class="name">ship_x</span></span>
+    <span class="highlight">global <span class="name">ship_y</span></span>
+    <span class="highlight">global <span class="name">ship_speed_x</span></span>
+    <span class="highlight">global <span class="name">ship_speed_y</span></span>
+    <span class="highlight">global <span class="name">ship_angle</span></span>
+    <span class="highlight">global <span class="name">bullet_timer</span></span>
+    <span class="highlight">global <span class="name">bullets</span></span>
+    <span class="highlight">global <span class="name">asteroids</span></span>
 
-    <span class="name">shipRadius</span> = <span class="literal">30</span>
+    <span class="name">ship_x</span> = <span class="name">arena_width</span> / <span class="literal">2</span>
+    <span class="name">ship_y</span> = <span class="name">arena_height</span> / <span class="literal">2</span>
+    <span class="name">ship_speed_x</span> = <span class="literal">0</span>
+    <span class="name">ship_speed_y</span> = <span class="literal">0</span>
+    <span class="name">ship_angle</span> = <span class="literal">0</span>
 
-    <span class="name">bulletRadius</span> = <span class="literal">5</span>
+    <span class="name">bullets</span> = []
+    <span class="name">bullet_timer</span> = <span class="name">bullet_timer_limit</span>
 
-    <span class="name">asteroidStages</span> = {
+    <span class="name">asteroids</span> = [
         {
-            <span class="name">speed</span> = <span class="literal">120</span>,
-            <span class="name">radius</span> = <span class="literal">15</span>,
+            <span class="literal">'x'</span>: <span class="literal">100</span>,
+            <span class="literal">'y'</span>: <span class="literal">100</span>,
         },
         {
-            <span class="name">speed</span> = <span class="literal">70</span>,
-            <span class="name">radius</span> = <span class="literal">30</span>,
+            <span class="literal">'x'</span>: <span class="name">arena_width</span> - <span class="literal">100</span>,
+            <span class="literal">'y'</span>: <span class="literal">100</span>,
         },
         {
-            <span class="name">speed</span> = <span class="literal">50</span>,
-            <span class="name">radius</span> = <span class="literal">50</span>,
-        },
-        {
-            <span class="name">speed</span> = <span class="literal">20</span>,
-            <span class="name">radius</span> = <span class="literal">80</span>,
+            <span class="literal">'x'</span>: <span class="name">arena_width</span> / <span class="literal">2</span>,
+            <span class="literal">'y'</span>: <span class="name">arena_height</span> - <span class="literal">100</span>,
         }
-    }
+    ]
 
-    <span class="highlight">function <span class="name">reset</span>()</span>
-        <span class="name">shipX</span> = <span class="name">arenaWidth</span> / <span class="literal">2</span>
-        <span class="name">shipY</span> = <span class="name">arenaHeight</span> / <span class="literal">2</span>
-        <span class="name">shipAngle</span> = <span class="literal">0</span>
-        <span class="name">shipSpeedX</span> = <span class="literal">0</span>
-        <span class="name">shipSpeedY</span> = <span class="literal">0</span>
+    for <span class="name">asteroid</span> in <span class="name">asteroids</span>:
+        <span class="name">asteroid</span>[<span class="literal">'angle'</span>] = <span class="call">random.random</span>() * (<span class="literal">2</span> * <span class="name">math.pi</span>)
+        <span class="name">asteroid</span>[<span class="literal">'stage'</span>] = <span class="call">len</span>(<span class="name">asteroid_stages</span>) - <span class="literal">1</span>
 
-        <span class="name">bullets</span> = {}
-        <span class="name">bulletTimer</span> = <span class="literal">0</span>
+<span class="highlight"><span class="call">reset</span>()</span>
 
-        <span class="name">asteroids</span> = {
-            {
-                <span class="name">x</span> = <span class="literal">100</span>,
-                <span class="name">y</span> = <span class="literal">100</span>,
-            },
-            {
-                <span class="name">x</span> = <span class="name">arenaWidth</span> - <span class="literal">100</span>,
-                <span class="name">y</span> = <span class="literal">100</span>,
-            },
-            {
-                <span class="name">x</span> = <span class="name">arenaWidth</span> / <span class="literal">2</span>,
-                <span class="name">y</span> = <span class="name">arenaHeight</span> - <span class="literal">100</span>,
-            }
-        }
+def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
 
-        for <span class="name">asteroidIndex</span>, <span class="name">asteroid</span> in <span class="call">ipairs</span>(<span class="name">asteroids</span>) do
-            <span class="name">asteroid.angle</span> = <span class="call">love.math.random</span>() * (<span class="literal">2</span> * <span class="name">math.pi</span>)
-            <span class="name">asteroid.stage</span> = #<span class="name">asteroidStages</span>
-        end
-    <span class="highlight">end</span>
-
-    <span class="highlight"><span class="call">reset</span>()</span>
-end
-
-function <span class="name">love.update</span>(<span class="name">dt</span>)
-    <span class="comment">-- etc.</span>
-
-    for <span class="name">asteroidIndex</span>, <span class="name">asteroid</span> in <span class="call">ipairs</span>(<span class="name">asteroids</span>) do
-        <span class="comment">-- etc.</span>
-
-        if <span class="call">areCirclesIntersecting</span>(
-            <span class="name">shipX</span>, <span class="name">shipY</span>, <span class="name">shipRadius</span>,
-            <span class="name">asteroid.x</span>, <span class="name">asteroid.y</span>, <span class="name">asteroidStages</span>[<span class="name">asteroid.stage</span>].<span class="name">radius</span>
-        ) then
+        if <span class="call">are_circles_intersecting</span>(
+            <span class="name">ship_x</span>, <span class="name">ship_y</span>, <span class="name">ship_radius</span>,
+            <span class="name">asteroid</span>[<span class="literal">'x'</span>], <span class="name">asteroid</span>[<span class="literal">'y'</span>],
+            <span class="name">asteroid_stages</span>[<span class="name">asteroid</span>[<span class="literal">'stage'</span>]][<span class="literal">'radius'</span>]
+        ):
             <span class="highlight"><span class="call">reset</span>()</span>
-            break
-        end
-    end
+            <span class="highlight">break</span>
+</pre></div>
+<h3>Game over</h3>
+<p>If there are no more asteroids in the asteroids list then the game is reset.</p>
+<p><a class="fullcodelink" target="_blank" href="20.html">Full code at this point</a></p><div class="pre"><pre class="code">def <span class="name">update</span>(<span class="name">dt</span>):
+    <span class="comment"># etc.</span>
 
-    if #<span class="name">asteroids</span> == <span class="literal">0</span> then
-        <span class="highlight"><span class="call">reset</span>()</span>
-    end
-end
+    if <span class="call">len</span>(<span class="name">asteroids</span>) == <span class="literal">0</span>:
+        <span class="call">reset</span>()
 </pre></div>
 </div></body></html>
