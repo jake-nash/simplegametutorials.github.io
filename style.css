@@ -1,5 +1,5 @@
 body {
-    font-family: Calibri, sans-serif;
+    font-family: 'Calibri', sans-serif;
     margin: 20px;
 }
 p, li, td, h1, h2, h3, h4 {
@@ -10,9 +10,16 @@ p, li, td, pre {
     font-weight: 500;
     font-size: 16px;
 }
-p, ul {
+p, ul, hr {
     max-width: 637px;
     line-height: 1.4;
+}
+hr {
+    margin: 0;
+}
+h1 {
+    font-size: 43px;
+    margin: 0;
 }
 a {
     color: #059dc5;
@@ -25,10 +32,6 @@ a:hover {
 .container {
     width: 800px;
     margin: 0 auto;
-}
-h1 {
-    font-size: 43px;
-    margin: 0;
 }
 .subheading {
     font-size: 24px;
